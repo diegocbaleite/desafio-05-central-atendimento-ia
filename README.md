@@ -3,7 +3,6 @@
 **Desafio Prático 1 — Inteligência Artificial Generativa (FIC_DEV, Aulas 01 a 07)**  
 **Equipe:** Diego · Ayron · Guilherme  
 **Instituição:** SECITECI — Escola Técnica Estadual de Cuiabá | **Versão:** 1.0 (2026)  
-**Referência de organização:** [Desafio 03 — Pipeline de Recomendação](https://github.com/diegocbaleite/desafio-03-pipeline-recomendacao).
 
 > **Protótipo educacional, sem atendimento real.** Não há envio automático para cidadão. Os documentos são fictícios e toda aprovação tem que passar por uma pessoa responsável.
 

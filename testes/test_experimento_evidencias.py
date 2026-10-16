@@ -18,12 +18,10 @@ class TestExperimento(unittest.TestCase):
             self.assertTrue(b.is_dir())
 
     @patch("src.experimento.ROOT")
-    @patch("src.experimento.carregar_casos")
+    @patch("src.main.carregar_casos")
     @patch("src.experimento.carregar")
     @patch("src.experimento.conversar")
     def test_erro_de_uma_chamada_nao_apaga_evidencias(self, conversar, carregar, casos, raiz):
-        from src.config import ROOT
-        from shutil import copytree
         from pathlib import Path
         with tempfile.TemporaryDirectory() as tmp:
             base=Path(tmp)

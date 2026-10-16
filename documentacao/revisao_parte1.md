@@ -18,7 +18,9 @@
 - [ ] Revisar ou substituir as notas técnicas preliminares por notas dos estudantes, registrando data e responsável.
 - [ ] Conferir que o metaprompt v2 não foi confundido com o C original ou avaliado como se tivesse sido executado.
 - [ ] Rodar `python -m unittest discover -s testes -t .` no HEAD final do PR e conferir o GitHub Actions.
-- [ ] Atualizar a branch com `main`, resolver conflitos e revisar o diff resultante antes do merge.
+- [ ] Validar a nova execução opcional de `python -m src.main experimento --metaprompt-v2` (somente se houver cota); nunca alterar a matriz original.
+- [x] Integrar `origin/main` na feature: merge `c2719ef`, conflitos de configuração/cliente/experimento resolvidos, 13 testes locais aprovados.
+- [ ] Revisar após as correções adicionais desta feature e validar os testes no GitHub Actions.
 
 ## Registro de revisão humana
 
@@ -29,3 +31,11 @@
 | Guilherme | não localizado | pendente | não localizado |
 
 **Não assinar nem marcar itens como concluídos sem revisão efetiva.**
+
+## Correções posteriores à comparação original
+- `src/experimento.py` agora salva cada execução em subpasta de identificador UTC, prevenindo sobrescrita das evidências.
+- Grava `matriz.csv` após cada chamada; falhas isoladas não são confundidas com sucesso.
+- `python -m src.main experimento --metaprompt-v2` gera uma **nova** execução. A versão revisada ainda não possui resultados reais validados.
+- Experimento anterior de 9 resultados, já versionado em `real/`, permanece intocado.
+
+**Importante:** aprovação de PR, notas humanas e revisão de privacidade dependem de pessoas, não de código.

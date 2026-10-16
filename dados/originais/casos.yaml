@@ -1,0 +1,6 @@
+casos:
+  - {id: C01, modalidade: texto, arquivo: dados/originais/C01.txt}
+  - {id: C02, modalidade: texto, arquivo: dados/originais/C02_transcricao_ficticia.txt}
+  - {id: C03, modalidade: texto, arquivo: dados/originais/C03_ocr_ficticio.txt}
+  - {id: C05, modalidade: texto, arquivo: dados/originais/C05.txt}
+  - {id: C06, modalidade: texto, arquivo: dados/originais/C06.txt}

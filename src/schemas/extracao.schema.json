@@ -1,0 +1,24 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "title":"Extração de atendimento v1",
+ "type":"object","additionalProperties":false,
+ "required":["versao_schema","caso_id","fonte","campos","categoria","campos_ausentes","alerta_injecao","achados_injecao","requer_revisao","motivos_revisao","confianca_geral"],
+ "properties":{
+  "versao_schema":{"const":"1.0"},"caso_id":{"type":"string"},
+  "fonte":{"type":"object","required":["arquivo","sha256","modalidade","texto_fonte"],"additionalProperties":false,
+    "properties":{"arquivo":{"type":"string"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "modalidade":{"enum":["texto","audio","imagem"]},"texto_fonte":{"type":"string"}}},
+  "campos":{"type":"object","additionalProperties":false,
+    "required":["protocolo","data_solicitacao","solicitante","assunto","pedido"],
+    "properties":{"protocolo":{"$ref":"#/$defs/campo"},"data_solicitacao":{"$ref":"#/$defs/campo"},"solicitante":{"$ref":"#/$defs/campo"},"assunto":{"$ref":"#/$defs/campo"},"pedido":{"$ref":"#/$defs/campo"}}},
+  "categoria":{"type":"object","required":["codigo","justificativa"],"additionalProperties":false,
+    "properties":{"codigo":{"enum":["segunda_via_documento","andamento_processo","atualizacao_cadastral","agendamento","reclamacao","outros"]},
+    "justificativa":{"type":"string"}}},
+  "campos_ausentes":{"type":"array","items":{"type":"string"}},"alerta_injecao":{"type":"boolean"},
+  "achados_injecao":{"type":"array","items":{"type":"string"}}},"requer_revisao":{"const":true},
+  "motivos_revisao":{"type":"array","items":{"type":"string"}}},"confianca_geral":{"enum":["alta","media","baixa"]}
+ },
+ "$defs":{"campo":{"type":"object","additionalProperties":false,"required":["valor","evidencia","confianca"],
+  "properties":{"valor":{"type":"string","minLength":1},"evidencia":{"type":["string","null"]},
+  "confianca":{"enum":["alta","media","baixa"]}}}}
+}

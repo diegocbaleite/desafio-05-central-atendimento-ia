@@ -1,0 +1,6 @@
+Canal: roteiro fictício de voz (não é resultado STT)
+Nome: João Exemplo Pereira
+Protocolo: 2026.000456
+Data: 15/09/2026
+Assunto: atualização de endereço cadastral
+Pedido: Desejo consultar o andamento do protocolo.

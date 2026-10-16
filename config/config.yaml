@@ -4,9 +4,9 @@ projeto:
 
 llm:
   provider: "openrouter"
-  modelo: "google/gemma-4-26b-a4b-it:free"
+  modelo: "nvidia/nemotron-3-super-120b-a12b:free"
   temperatura: 0.2
-  max_tokens: 1200
+  max_tokens: 2400
   timeout_s: 45
 
 provedores:

@@ -12,8 +12,8 @@ Receber solicitações fictícias em **texto, áudio e imagem**, transcrever ou 
 ## Integrantes e atribuições sugeridas
 | Integrante | Frente inicial |
 |---|---|
-| Diego | Integração Python/API, segurança, tratamento de erros e auditoria |
-| Ayron | Prompts A/B/C, métricas, revisão dos gabaritos e relatório |
+| Diego | Engenharia de Prompts, métricas, revisão dos gabaritos e relatório |
+| Ayron | Integração Python/API, segurança, tratamento de erros e auditoria |
 | Guilherme | STT/TTS, OCR, peça visual, testes e acessibilidade |
 
 A distribuição é sugerida: **todos devem compreender o projeto inteiro**.

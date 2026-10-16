@@ -61,7 +61,7 @@ python -m src.main imagem
 
 Para usar LLM real: ajuste `llm.provider` de `mock` para `groq`, `openai` ou `gemini` em `config/config.yaml`, ajuste `llm.modelo` e a chave correspondente no `.env`. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
 
-## Requisitos funcionais (RF01–RF13)
+# Requisitos Funcionais — RF01 a RF13
 | RF | Como demonstrar | Evidência |
 |---|---|---|
 | RF01 Configuração | `verificar` | README, versões, `.env.example`, config |
@@ -78,7 +78,7 @@ Para usar LLM real: ajuste `llm.provider` de `mock` para `groq`, `openai` ou `ge
 | RF12 LGPD | uso fictício e minimização | `documentacao/lgpd.md` |
 | RF13 Avaliação | grade de cinco critérios, caso aprovado e rejeitado | `documentacao/protocolo_avaliacao.md` |
 
-## Estrutura
+# Estrutura do projeto
 ```text
 config/         parâmetros não sensíveis
 dados/originais/  entradas fictícias intocadas pelo processamento
@@ -91,7 +91,7 @@ resultados/     saídas de execução (não versionar dados/segredos reais)
 documentacao/  arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA
 ```
 
-## Segurança, custos e limitações
+# Segurança, custos e limitações
 - A entrada externa é dado **não confiável**. A detecção de injeção por expressões regulares não é completa.
 - Campos ausentes tornam-se **`não localizado`**. Valores críticos precisam ser conferidos na fonte pelo servidor; texto gerado pelo modelo pode alucinar.
 - **Jamais** usar nomes, CPFs, vozes ou fotografias de pessoas reais nas demonstrações. Nunca publicar `.env`.
@@ -99,5 +99,47 @@ documentacao/  arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA
 - A composição local com Pillow é **gráfica programática**, e não imagem criada por IA. Diferencie no relatório.
 - Este repositório é **protótipo pedagógico**, não sistema pronto para produção, integração com GOV.MT ou envio de atos oficiais.
 
-## Documentação e entrega
+# Documentação e entregáveis
 Consulte `documentacao/plano_projeto.md`, `lgpd.md`, `protocolo_avaliacao.md`, `roteiro_12h.md`, `relatorio_tecnico.md` e `uso_da_ia.md`. Gere o ZIP excluindo `.env`, ambientes virtuais, credenciais e arquivos pessoais reais. Todos os integrantes devem revisar o resultado antes de entregar.
+
+---
+
+# Execução do pipeline
+
+O processo percorre validação da entrada, reconhecimento de texto/voz quando pertinente, extração com evidências, classificação, minuta de resposta, conferência, aprovação ou rejeição, geração de acessibilidade e auditoria. **Nenhuma etapa envia a minuta ao cidadão.**
+
+Ao usar `--mock`, não há medição de desempenho de modelos generativos. Para uma demonstração multimodal real, configure as credenciais e gere os arquivos fictícios de áudio e imagem conforme o roteiro de preparação.
+
+# Testes automatizados
+
+```bash
+python -m unittest discover -s testes -t .
+```
+
+O projeto inclui testes básicos, verificações de segurança e testes de insumos fictícios. **A aprovação do conjunto completo precisa ser confirmada no ambiente local ou no GitHub Actions**; a existência dos testes não prova que todos passaram.
+
+# Controle de versão
+
+A `main` contém a versão integrada em construção. Para contribuições da equipe, sugerem-se branches:
+- `feature/diego-api-seguranca-auditoria`
+- `feature/ayron-prompts-avaliacao`
+- `feature/guilherme-audio-ocr-imagens`
+
+Os nomes acima são uma proposta, **não** branches que já tenham sido criadas.
+
+# Checklist final de validação
+
+```bash
+git status -sb
+python -m unittest discover -s testes -t .
+python -m src.main verificar
+python -m testes.gerar_dados_ficticios
+python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
+```
+
+Registrar separadamente as **execuções com IA real**, a matriz A/B/C, o WER/CER, as avaliações de Diego, Ayron e Guilherme e as evidências da peça visual antes de declarar o trabalho finalizado.
+
+# Autores
+
+**Diego · Ayron · Guilherme**  
+FIC_DEV — SECITECI / Escola Técnica Estadual de Cuiabá — 2026

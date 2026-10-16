@@ -1,0 +1,56 @@
+{
+  "extracao": {
+    "versao_schema": "1.0",
+    "caso_id": "entrada_pdf-imagem",
+    "fonte": {
+      "arquivo": "arquivos/entrada_pdf-imagem.pdf",
+      "sha256": "a4b3bc0518df73244856ab27e010b561680b5f60ee8e730be4df83b3b567505f",
+      "modalidade": "imagem",
+      "texto_fonte": "entrada_pdf-imagem.texto_fonte.txt"
+    },
+    "campos": {
+      "protocolo": {
+        "valor": "2024-000142",
+        "evidencia": "CÓDIGO: 2024-000142",
+        "confianca": "alta"
+      },
+      "data_solicitacao": {
+        "valor": "14/10/2026",
+        "evidencia": "DATA MATRICULA: 14/10/2026",
+        "confianca": "alta"
+      },
+      "solicitante": {
+        "valor": "MARCUS VINICIUS DE ALMEIDA SANTOS",
+        "evidencia": "NOME: MARCUS VINICIUS DE ALMEIDA SANTOS",
+        "confianca": "alta"
+      },
+      "assunto": {
+        "valor": "Matrícula no curso Técnico em Enfermagem",
+        "evidencia": "CURSO: TECNICO EM ENFERMAGEM",
+        "confianca": "alta"
+      },
+      "pedido": {
+        "valor": "Solicitação de matrícula",
+        "evidencia": "FICHA DE MATRÍCULA",
+        "confianca": "alta"
+      }
+    },
+    "categoria": {
+      "codigo": "atualizacao_cadastral",
+      "justificativa": "O documento trata-se de uma ficha de matrícula, que representa uma solicitação de registro/atualização cadastral de aluno em curso técnico."
+    },
+    "campos_ausentes": [],
+    "alerta_injecao": false,
+    "achados_injecao": [],
+    "requer_revisao": true,
+    "motivos_revisao": [
+      "Saída de LLM: conferir campos críticos com o original"
+    ],
+    "confianca_geral": "media"
+  },
+  "execucao": {
+    "leitura": "gemini:gemini-3.8-flash",
+    "estruturacao": "openrouter:nvidia/nemotron-3-super-120b-a12b:free",
+    "duracao_s": 20.212
+  }
+}

@@ -127,7 +127,7 @@ def main():
     p.add_argument(
         "comando",
         nargs="?",
-        choices=["verificar", "processar", "experimento", "imagem"],
+        choices=["verificar", "processar", "experimento", "imagem", "arquivos"],
         default="processar",
     )
     p.add_argument("--mock", action="store_true", help="simulação sem APIs reais")
@@ -153,6 +153,18 @@ def main():
         return
     if a.comando == "imagem":
         print(imagem_local(ROOT / "resultados/peca_visual.png"))
+        return
+    if a.comando == "arquivos":
+        from .extracao_llm import extrair_pasta
+
+        for nome, r in extrair_pasta().items():
+            print("==", nome)
+            if "erro" in r:
+                print("ERRO:", r["erro"])
+                continue
+            for k, v in r["campos"].items():
+                print(f"  {k}: {v['valor']} ({v['confianca']})")
+            print("  categoria:", r["categoria"]["codigo"], "| revisão humana obrigatória")
         return
     if a.comando == "experimento":
         from .experimento import executar

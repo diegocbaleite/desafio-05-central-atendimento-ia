@@ -16,8 +16,10 @@ def preparar_entrada(path, modo, mock=False):
     if modo=="imagem": return ler_imagem(path)
     if modo=="audio":
         if mock:
-            trans=path.with_suffix(".mock.txt")
-            if not trans.exists(): raise ValueError("Arquivo de transcrição mock fictícia não encontrado: "+str(trans))
+            # O modo mock lê somente uma referência fictícia explicitamente rotulada;
+            # não afirma ter transcrito o arquivo de áudio.
+            trans=path.parent / (path.name.split("_audio")[0] + "_transcricao_ficticia.txt")
+            if not trans.exists(): raise ValueError("Transcrição fictícia de referência ausente: "+str(trans))
             return trans.read_text(encoding="utf-8")
         return transcrever(path)
     raise ValueError("Modalidade inválida")

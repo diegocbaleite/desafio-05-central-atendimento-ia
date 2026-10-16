@@ -7,7 +7,7 @@
 - Matriz real: `resultados/experimento_prompts/real/matriz.csv`: nove respostas com status sucesso, mesmo modelo (`nvidia/nemotron-3-super-120b-a12b:free`) e temperatura 0,2.
 - Nove saídas textuais e metaprompt executado estão na mesma pasta.
 - Notas **preliminares assistidas por IA** e justificativas: `documentacao/relatorio_tecnico.md`.
-- Prompt C original preservado; `prompts/experimento/metaprompt_v2_atendimento.md` é uma proposta de correção **ainda não testada**.
+- Prompt C original preservado; `prompts/experimento/metaprompt_v2_atendimento.md` foi **executada em 16/10/2026**, segundo logs e saídas apresentados pelo estudante (nova rodada 8/9; uma falha no C01/A). Não se confunde com a comparação original.
 - Nenhuma mensagem foi enviada automaticamente.
 
 ## Checklist de validação a preencher por uma pessoa
@@ -18,7 +18,8 @@
 - [ ] Revisar ou substituir as notas técnicas preliminares por notas dos estudantes, registrando data e responsável.
 - [ ] Conferir que o metaprompt v2 não foi confundido com o C original ou avaliado como se tivesse sido executado.
 - [ ] Rodar `python -m unittest discover -s testes -t .` no HEAD final do PR e conferir o GitHub Actions.
-- [ ] Validar a nova execução opcional de `python -m src.main experimento --metaprompt-v2` (somente se houver cota); nunca alterar a matriz original.
+- [x] Execução de `python -m src.main experimento --metaprompt-v2` apresentada em 16/10/2026; 8 chamadas com sucesso e C01/A falhou por `finish_reason=length`. Matriz V2 permaneceu **local**, sem publicação no GitHub.
+- [ ] Homologar manualmente as três minutas V2 e registrar avaliações humanas.
 - [x] Integrar `origin/main` na feature: merge `c2719ef`, conflitos de configuração/cliente/experimento resolvidos, 13 testes locais aprovados.
 - [ ] Revisar após as correções adicionais desta feature e validar os testes no GitHub Actions.
 
@@ -35,7 +36,7 @@
 ## Correções posteriores à comparação original
 - `src/experimento.py` agora salva cada execução em subpasta de identificador UTC, prevenindo sobrescrita das evidências.
 - Grava `matriz.csv` após cada chamada; falhas isoladas não são confundidas com sucesso.
-- `python -m src.main experimento --metaprompt-v2` gera uma **nova** execução. A versão revisada ainda não possui resultados reais validados.
+- `python -m src.main experimento --metaprompt-v2` gera uma **nova** execução. Há três saídas C V2 fornecidas pelo estudante e avaliadas preliminarmente (C01/C05/C06), mas **sem homologação humana**.
 - Experimento anterior de 9 resultados, já versionado em `real/`, permanece intocado.
 
 **Importante:** aprovação de PR, notas humanas e revisão de privacidade dependem de pessoas, não de código.

@@ -30,6 +30,7 @@ def conversar(mensagens, modelo=None, provider=None):
     if not token: raise ErroAPI("Chave ausente; configure o .env")
     inicio=time.monotonic()
     erro=None
+    espera=0
     for tentativa in range(3):
         try:
             r=requests.post(perfil["base_url"].rstrip("/")+"/chat/completions",
@@ -39,6 +40,7 @@ def conversar(mensagens, modelo=None, provider=None):
                 timeout=conf["timeout_s"])
         except (requests.Timeout,requests.ConnectionError) as exc:
             erro=type(exc).__name__
+            espera=min(20,2**tentativa)
         else:
             try: data=r.json()
             except ValueError: data=None
@@ -46,13 +48,24 @@ def conversar(mensagens, modelo=None, provider=None):
                 raise ErroAPI(f"Autenticação recusada (HTTP {r.status_code})")
             if r.status_code==429 or r.status_code>=500:
                 erro=f"HTTP {r.status_code}: {_erro_provedor(data)}"
+                try: espera=min(20,max(0,float(r.headers.get("Retry-After",2**tentativa))))
+                except (ValueError,TypeError): espera=min(20,2**tentativa)
             elif r.status_code>=400:
                 raise ErroAPI(f"HTTP {r.status_code}: {_erro_provedor(data)}")
             else:
                 if not isinstance(data,dict):
                     raise ErroAPI("HTTP 200 sem objeto JSON na resposta")
                 if "choices" not in data:
-                    raise ErroAPI("HTTP 200 sem choices: "+_erro_provedor(data))
+                    detail=_erro_provedor(data)
+                    err=data.get("error") if isinstance(data.get("error"),dict) else {}
+                    if str(err.get("code")) in ("429","500","502","503","504"):
+                        erro="Provedor: "+detail
+                        espera=min(20,2**tentativa)
+                        if tentativa<2:
+                            time.sleep(espera)
+                            continue
+                        break
+                    raise ErroAPI("HTTP 200 sem choices: "+detail)
                 try:
                     choice=data["choices"][0]
                     message=choice["message"]
@@ -70,5 +83,5 @@ def conversar(mensagens, modelo=None, provider=None):
                         "tokens_entrada":usage.get("prompt_tokens"),
                         "tokens_saida":usage.get("completion_tokens"),
                         "custo_usd":None}
-        if tentativa<2: time.sleep(tentativa+1)
-    raise ErroAPI("Provedor temporariamente indisponível: "+str(erro))
+        if tentativa<2: time.sleep(espera)
+    raise ErroAPI("Provedor temporariamente indisponível após 3 tentativas: "+str(erro))

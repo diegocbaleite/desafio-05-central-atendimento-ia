@@ -296,7 +296,7 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
                 valor, evidencia, confianca = AUSENTE, None, "baixa"
                 ausentes.append(nome)
             campos[nome] = {
-                "valor": valor.strip(),
+                "valor": valor.strip() if isinstance(valor, str) else AUSENTE,
                 "evidencia": evidencia,
                 "confianca": confianca,
             }

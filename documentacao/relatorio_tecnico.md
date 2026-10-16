@@ -64,3 +64,10 @@ O código não deve publicar credenciais nem dados pessoais reais, e deve preser
 5. Validar o timbre institucional fictício, concluir checklist de LGPD e repetir testes no ambiente de entrega.
 
 > **Nota de integridade:** resultados quantitativos acima são provenientes do terminal compartilhado pelo estudante e das saídas textuais fornecidas na conversa; não representam auditoria independente do provedor. O relatório é **parcial**, e as notas permanecem provisórias até a validação humana.
+
+## Complemento de avaliação — Metaprompt V2 (16/10/2026)
+A equipe executou localmente `python -m src.main experimento --metaprompt-v2` com o modelo Nemotron 3 Super. O estudante apresentou mensagem de **8 chamadas bem-sucedidas e uma falha C01/A** (`finish_reason=length`). A matriz dessa nova rodada **não foi incorporada ao repositório**, e não deve ser confundida com a matriz original de nove sucessos.
+
+Foram apresentados os textos dos prompts C V2 para C01, C05 e C06. A avaliação técnica assistida por IA encontrou melhoria estrutural: as saídas passaram a ter cabeçalho `MINUTA — NÃO ENVIADA`, referência à demanda, fontes e advertência de revisão, sem decisões de deferimento ou prazos inventados nas três saídas examinadas. Limitações: C01 sugeriu documentos e finalidade sem comprovação de obrigatoriedade; C05 presumiu que contatos e documentos comprobatórios estavam ausentes; C06 deixou de sinalizar `não localizado` para nome/data/protocolo. **Todas permanecem sujeitas a correção e homologação humana.**
+
+**Conclusão da responsabilidade do Estudante 1:** implementação e avaliação técnica concluídas, evidências originais preservadas; a avaliação humana e a decisão administrativa de incorporar o PR são tarefas posteriores, não substituíveis pela IA. O estudo compara **três técnicas de prompt com o mesmo modelo**, não três modelos distintos. Para eventual critério de *comparação de modelos*, será necessária uma segunda execução controlada com outro identificador de modelo e análise equivalente, caso o enunciado exija comparação entre modelos.

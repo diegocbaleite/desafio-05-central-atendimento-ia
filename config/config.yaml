@@ -2,12 +2,13 @@ projeto:
   nome: "Central Inteligente de Atendimento e Comunicação Institucional"
   orgao: "Secretaria Fictícia de Serviços ao Cidadão"
 llm:
-  provider: "mock" # mock | groq | openai | gemini
-  modelo: "llama-3.3-70b-versatile"
+  provider: "openrouter" # mock | openrouter | groq | openai | gemini
+  modelo: "openrouter/free" # teste de conectividade; para RF02 escolha um modelo específico e fixo
   temperatura: 0.2
   max_tokens: 1200
   timeout_s: 45
 provedores:
+  openrouter: {base_url: "https://openrouter.ai/api/v1", env_chave: "OPENROUTER_API_KEY"}
   groq: {base_url: "https://api.groq.com/openai/v1", env_chave: "GROQ_API_KEY"}
   openai: {base_url: "https://api.openai.com/v1", env_chave: "OPENAI_API_KEY"}
   gemini: {base_url: "https://generativelanguage.googleapis.com/v1beta/openai", env_chave: "GEMINI_API_KEY"}

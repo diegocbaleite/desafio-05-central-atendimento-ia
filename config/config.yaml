@@ -1,25 +1,42 @@
 projeto:
   nome: "Central Inteligente de Atendimento e Comunicação Institucional"
   orgao: "Secretaria Fictícia de Serviços ao Cidadão"
+
 llm:
-  provider: "openrouter" # mock | openrouter | groq | openai | gemini
-  modelo: "openrouter/free" # teste de conectividade; para RF02 escolha um modelo específico e fixo
+  provider: "openrouter"
+  modelo: "nvidia/nemotron-3-super-120b-a12b:free"
   temperatura: 0.2
-  max_tokens: 1200
+  max_tokens: 2400
   timeout_s: 45
+
 provedores:
-  openrouter: {base_url: "https://openrouter.ai/api/v1", env_chave: "OPENROUTER_API_KEY"}
-  groq: {base_url: "https://api.groq.com/openai/v1", env_chave: "GROQ_API_KEY"}
-  openai: {base_url: "https://api.openai.com/v1", env_chave: "OPENAI_API_KEY"}
-  gemini: {base_url: "https://generativelanguage.googleapis.com/v1beta/openai", env_chave: "GEMINI_API_KEY"}
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    env_chave: "OPENROUTER_API_KEY"
+
+  groq:
+    base_url: "https://api.groq.com/openai/v1"
+    env_chave: "GROQ_API_KEY"
+
+  openai:
+    base_url: "https://api.openai.com/v1"
+    env_chave: "OPENAI_API_KEY"
+
+  gemini:
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    env_chave: "GEMINI_API_KEY"
+
 multimodal:
   stt_provider: "groq"
   stt_modelo: "whisper-large-v3-turbo"
-  tts_provider: "espeak" # espeak | openai
+
+  tts_provider: "espeak"
   tts_modelo: "gpt-4o-mini-tts"
   tts_voz: "coral"
-  imagem_provider: "local" # local | openai
+
+  imagem_provider: "local"
   imagem_modelo: "gpt-image-1-mini"
+
 seguranca:
   marcador_ausente: "não localizado"
   envio_automatico: false

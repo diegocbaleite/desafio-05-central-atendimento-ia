@@ -23,7 +23,8 @@ def conversar(mensagens, modelo=None, provider=None):
     if provider=="mock":
         return {"texto":"MINUTA SIMULADA: revisar informações e confirmar dados disponíveis.",
                 "modelo":"mock","provider":"mock","duracao_s":0,
-                "tokens_entrada":None,"tokens_saida":None,"custo_usd":None}
+                "tokens_entrada":None,"tokens_saida":None,"custo_usd":None,
+                "tentativas":0}
     perfil=cfg["provedores"].get(provider)
     if not perfil: raise ErroAPI("Provedor desconhecido")
     token=chave(cfg,provider)
@@ -82,6 +83,7 @@ def conversar(mensagens, modelo=None, provider=None):
                         "duracao_s":round(time.monotonic()-inicio,3),
                         "tokens_entrada":usage.get("prompt_tokens"),
                         "tokens_saida":usage.get("completion_tokens"),
-                        "custo_usd":None}
+                        "custo_usd":usage.get("cost",data.get("cost")),
+                        "tentativas":tentativa+1}
         if tentativa<2: time.sleep(espera)
     raise ErroAPI("Provedor temporariamente indisponível após 3 tentativas: "+str(erro))

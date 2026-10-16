@@ -55,10 +55,13 @@ python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
 python -m src.main experimento --mock
 python -m src.main experimento
 python -m src.main imagem
+python -m src.main arquivos
 ```
 `--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana. Sem a opção, a CLI pergunta a decisão no terminal.
 
 Para usar LLM real: ajuste `llm.provider` de `mock` para `groq`, `openai` ou `gemini` em `config/config.yaml`, ajuste `llm.modelo` e a chave correspondente no `.env`. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
+
+Para extrair arquivos fictícios da pasta `arquivos/`, configure as chaves Gemini e OpenRouter e execute `python -m src.main arquivos`. PDF e áudio são enviados ao Gemini para leitura; texto transcrito e texto simples seguem minimizados (CPF, e-mail e telefone substituídos) ao OpenRouter para estruturar o JSON. Arquivos são limitados a 14 MiB e não podem sair da pasta de entrada autorizada. A transcrição é salva localmente e a auditoria registra provedor, modelo, latência, tokens disponíveis, hash e falhas, sem guardar prompts nem credenciais. Saídas ficam em `resultados/arquivos_fornecidos/` e são ignoradas pelo git. **Não use documentos, vozes ou dados reais:** a leitura remota de PDF/áudio ainda transmite o original ao Gemini; para dados reais, substitua por OCR/STT local e faça avaliação de privacidade antes do uso.
 
 # Requisitos Funcionais — RF01 a RF13
 | RF | Como demonstrar | Evidência |
@@ -92,7 +95,7 @@ documentacao/  arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA
 
 # Segurança, custos e limitações
 - A entrada externa é dado **não confiável**. A detecção de injeção por expressões regulares não é completa.
-- Campos ausentes tornam-se **`não localizado`**. Valores críticos precisam ser conferidos na fonte pelo servidor; texto gerado pelo modelo pode alucinar.
+- Campos ausentes ou sem valor sustentado pela própria evidência tornam-se **`não localizado`**. Valores críticos ainda precisam ser conferidos na fonte por uma pessoa; texto gerado pelo modelo pode alucinar.
 - **Jamais** usar nomes, CPFs, vozes ou fotografias de pessoas reais nas demonstrações. Nunca publicar `.env`.
 - Sem valor oficial conferido de preço, custo é **indisponível**: não inventar tarifas. Registre tokens/latência reais quando a API fornecer.
 - A composição local com Pillow é **gráfica programática**, e não imagem criada por IA. Diferencie no relatório.

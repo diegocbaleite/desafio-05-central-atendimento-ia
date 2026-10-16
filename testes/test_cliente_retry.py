@@ -23,7 +23,9 @@ class TestRateLimit(unittest.TestCase):
             Mock(status_code=200,headers={},json=lambda:{"error":{"code":502,"message":"Busy"}}),
             Mock(status_code=200,headers={},json=lambda:{"choices":[{"message":{"content":"OK"}}],"usage":{}})
         ]
-        self.assertEqual(conversar([{"role":"user","content":"teste"}],provider="openrouter")["texto"],"OK")
+        resposta=conversar([{"role":"user","content":"teste"}],provider="openrouter")
+        self.assertEqual(resposta["texto"],"OK")
+        self.assertEqual(resposta["tentativas"],2)
         self.assertEqual(post.call_count,2)
 
 if __name__=="__main__":

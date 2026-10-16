@@ -4,4 +4,3 @@ jsonschema>=4.20,<5
 python-dotenv>=1,<2
 pillow>=10,<13
 pytesseract>=0.3.10,<0.4
-python-docx>=1.1,<2

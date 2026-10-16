@@ -2,7 +2,7 @@ projeto:
   nome: "Central Inteligente de Atendimento e Comunicação Institucional"
   orgao: "Secretaria Fictícia de Serviços ao Cidadão"
 llm:
-  provider: "mock"
+  provider: "mock" # mock | groq | openai | gemini
   modelo: "llama-3.3-70b-versatile"
   temperatura: 0.2
   max_tokens: 1200
@@ -14,10 +14,11 @@ provedores:
 multimodal:
   stt_provider: "groq"
   stt_modelo: "whisper-large-v3-turbo"
-  tts_provider: "openai"
+  tts_provider: "espeak" # espeak | openai
   tts_modelo: "gpt-4o-mini-tts"
   tts_voz: "coral"
-  imagem_provider: "local"
+  imagem_provider: "local" # local | openai
+  imagem_modelo: "gpt-image-1-mini"
 seguranca:
   marcador_ausente: "não localizado"
   envio_automatico: false

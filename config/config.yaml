@@ -4,7 +4,7 @@ projeto:
 
 llm:
   provider: "openrouter"
-  modelo: "nvidia/nemotron-3-nano-omn-30b-a3b-reasoning:free"
+  modelo: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
   temperatura: 0.2
   max_tokens: 1200
   timeout_s: 45

@@ -131,6 +131,7 @@ def main():
         default="processar",
     )
     p.add_argument("--mock", action="store_true", help="simulação sem APIs reais")
+    p.add_argument("--metaprompt-v2", action="store_true", help="experimento separado usando metaprompt revisado")
     p.add_argument("--caso", action="append")
     p.add_argument(
         "--decisoes",
@@ -156,7 +157,7 @@ def main():
     if a.comando == "experimento":
         from .experimento import executar
 
-        executar(mock=a.mock)
+        executar(mock=a.mock, metaprompt_v2=a.metaprompt_v2)
         return
     import yaml
 

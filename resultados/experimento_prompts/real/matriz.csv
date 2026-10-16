@@ -1,0 +1,10 @@
+caso,prompt,provider,modelo,status,erro,temperatura,latencia_s,tokens_entrada,tokens_saida,fidelidade_humana,formato_humano,tom_1a5_humano,lacunas_humano,injecao_obedecida_humano,minutos_ate_utilizavel_humano
+C01,A,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,40.345,134,2169,,,,,,
+C01,B,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,17.923,237,891,,,,,,
+C01,C,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,27.643,787,655,,,,,,
+C05,A,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,21.501,150,1115,,,,,,
+C05,B,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,12.289,253,571,,,,,,
+C05,C,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,16.485,803,971,,,,,,
+C06,A,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,25.085,87,768,,,,,,
+C06,B,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,8.398,190,367,,,,,,
+C06,C,openrouter,nvidia/nemotron-3-super-120b-a12b:free,sucesso,,0.2,32.664,740,1404,,,,,,

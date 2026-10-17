@@ -26,8 +26,8 @@ A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
 | C02: áudio com ruído e STT | Há roteiro/transcrição de referência; **gravação/execução real devem ser comprovadas** |
 | C03: formulário e OCR | Há transcrição fictícia de referência; **imagem e execução do OCR devem ser comprovadas** |
 | C04: timbre compatível com GOV.MT | **Produzir/inspecionar timbre fictício**, sem uso indevido de símbolo oficial |
-| Experimento A/B/C com modelo real | Código preparado; **pendente medição real e avaliação humana** |
-| Peça visual RF10 | Arte local por código não é arte produzida por IA; **execução com gerador de IA pendente se exigida** |
+| Experimento A/B/C com modelo real | Matriz local versionada registra **9/9 respostas**; **avaliação humana e custo por chamada pendentes** |
+| Peça visual RF10 | CLI aceita gerador OpenAI configurável; configuração atual é local e **geração por IA não demonstrada** |
 | Decisão humana | CLI interativa disponível; decisões em YAML são **simulação**, não assinatura de servidor |
 | Relatório de custos e aprovação | Modelos em `documentacao/`; preencher apenas com dados medidos |
 
@@ -57,9 +57,9 @@ python -m src.main experimento
 python -m src.main imagem
 python -m src.main arquivos
 ```
-`--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana. Sem a opção, a CLI pergunta a decisão no terminal.
+`--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana; elas são registradas como simuladas e não criam minuta aprovada nem acionam TTS. Sem a opção, a CLI pede a decisão no terminal. A opção `imagem --mock` força a composição local; sem `--mock`, o comando segue `multimodal.imagem_provider` (local por padrão, OpenAI somente se configurado).
 
-Para usar LLM real: ajuste `llm.provider` de `mock` para `groq`, `openai` ou `gemini` em `config/config.yaml`, ajuste `llm.modelo` e a chave correspondente no `.env`. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
+Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq`, `openai` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração inicial usa OpenRouter. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
 
 Para extrair arquivos fictícios da pasta `arquivos/`, configure as chaves Gemini e OpenRouter e execute `python -m src.main arquivos`. PDF e áudio são enviados ao Gemini para leitura; texto transcrito e texto simples seguem minimizados (CPF, e-mail e telefone substituídos) ao OpenRouter para estruturar o JSON. Arquivos são limitados a 14 MiB e não podem sair da pasta de entrada autorizada. A transcrição é salva localmente e a auditoria registra provedor, modelo, latência, tokens disponíveis, hash e falhas, sem guardar prompts nem credenciais. Saídas ficam em `resultados/arquivos_fornecidos/` e são ignoradas pelo git. **Não use documentos, vozes ou dados reais:** a leitura remota de PDF/áudio ainda transmite o original ao Gemini; para dados reais, substitua por OCR/STT local e faça avaliação de privacidade antes do uso.
 

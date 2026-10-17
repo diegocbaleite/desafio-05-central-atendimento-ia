@@ -4,13 +4,25 @@ import argparse
 import hashlib
 import json
 import platform
+import subprocess
 from pathlib import Path
 
+import jsonschema
+
 from .auditoria import nova_execucao, registrar
+from .cliente import ErroAPI
 from .config import ROOT, carregar, chave
 from .extracao import extrair
 from .minuta import redigir
 from .multimodal import imagem_local, ler_imagem, sintetizar, transcrever
+
+
+def _mensagem_erro(exc):
+    if isinstance(exc, (ErroAPI, ValueError)):
+        return str(exc)[:200]
+    if isinstance(exc, jsonschema.ValidationError):
+        return "Saída inválida conforme JSON Schema"
+    return "Falha no processamento; conteúdo da solicitação omitido"
 
 
 def preparar_entrada(path, modo, mock=False):
@@ -42,9 +54,7 @@ def carregar_casos():
     )["casos"]
 
 
-def executar_caso(caso, execucao, mock=False, decisao=None):
-    import jsonschema
-
+def executar_caso(caso, execucao, mock=False, decisao=None, decisao_simulada=False):
     entrada = ROOT / caso["arquivo"]
     texto = preparar_entrada(entrada, caso["modalidade"], mock)
     hash_arquivo = hashlib.sha256(entrada.read_bytes()).hexdigest()
@@ -79,15 +89,40 @@ def executar_caso(caso, execucao, mock=False, decisao=None):
     (pasta_caso / "minuta_pendente.md").write_text(minuta, encoding="utf-8")
     registrar(execucao, caso["id"], "geracao_minuta", **meta)
     if decisao is None:
-        print("\n--- " + caso["id"] + " ---\n" + minuta + "\n")
-        decisao = (
-            input("Decisão humana [aprovar/rejeitar/corrigir/nova]: ").strip().lower()
-        )
+        while decisao not in ("aprovar", "rejeitar", "corrigir", "nova"):
+            print("\n--- " + caso["id"] + " ---\n" + minuta + "\n")
+            try:
+                decisao = input(
+                    "Decisão humana [aprovar/rejeitar/corrigir/nova]: "
+                ).strip().lower()
+            except EOFError as exc:
+                raise ValueError(
+                    "Decisão humana necessária; nenhum resultado foi aprovado"
+                ) from exc
+            if decisao not in ("aprovar", "rejeitar", "corrigir", "nova"):
+                print("Decisão inválida; escolha aprovar, rejeitar, corrigir ou nova.")
     if decisao not in ("aprovar", "rejeitar", "corrigir", "nova"):
         raise ValueError("Decisão inválida")
-    if decisao in ("aprovar", "corrigir"):
+    simulacao = decisao_simulada or mock
+    if decisao_simulada:
+        estado_revisao = "decisao_simulada"
+    elif mock:
+        estado_revisao = "revisao_mock"
+    else:
+        estado_revisao = "revisao_humana"
+    if simulacao:
+        estado = "decisao_simulada"
+    elif decisao == "aprovar":
+        estado = "aprovada"
+    elif decisao == "corrigir":
+        estado = "correcao_pendente"
+    elif decisao == "nova":
+        estado = "nova_geracao_pendente"
+    else:
+        estado = "rejeitada"
+
+    if not simulacao and decisao in ("aprovar", "corrigir"):
         if decisao == "corrigir":
-            # Uma correção manual deve substituir o arquivo pendente ANTES de executar a aprovação.
             (pasta_caso / "PENDENTE_CORRECAO.txt").write_text(
                 "Revisor deve corrigir a minuta e executar novamente.", encoding="utf-8"
             )
@@ -100,18 +135,60 @@ def executar_caso(caso, execucao, mock=False, decisao=None):
             )
             if not mock:
                 try:
-                    sintetizar(texto_aprovado, pasta_caso / "minuta_acessivel.mp3")
-                except Exception as exc:
+                    arquivo_audio = sintetizar(
+                        texto_aprovado, pasta_caso / "minuta_acessivel.mp3"
+                    )
+                    if arquivo_audio:
+                        registrar(
+                            execucao,
+                            caso["id"],
+                            "tts",
+                            arquivo=arquivo_audio,
+                            status="sucesso",
+                        )
+                    else:
+                        registrar(
+                            execucao,
+                            caso["id"],
+                            "tts_nao_gerado",
+                            status="mock",
+                        )
+                except (ErroAPI, OSError, subprocess.CalledProcessError) as exc:
                     registrar(
-                        execucao, caso["id"], "tts_falha", erro=type(exc).__name__
+                        execucao,
+                        caso["id"],
+                        "tts_falha",
+                        erro=type(exc).__name__,
+                        detalhe=(
+                            _mensagem_erro(exc)
+                            if isinstance(exc, ErroAPI)
+                            else "Falha na síntese de áudio"
+                        ),
                     )
             (pasta_caso / "roteiro_acessivel.txt").write_text(
                 texto_aprovado, encoding="utf-8"
             )
-    registrar(execucao, caso["id"], "revisao_humana", decisao=decisao)
+    registrar(
+        execucao,
+        caso["id"],
+        estado_revisao,
+        decisao=decisao,
+        simulada=simulacao,
+        origem=(
+            "arquivo_yaml"
+            if decisao_simulada
+            else "terminal_mock"
+            if mock
+            else "terminal"
+        ),
+    )
     resumo = {
         "caso": caso["id"],
         "decisao": decisao,
+        "estado_revisao": estado,
+        "decisao_simulada": decisao_simulada,
+        "execucao_mock": mock,
+        "simulada": simulacao,
         "categoria": ext["categoria"]["codigo"],
         "alerta_injecao": ext["alerta_injecao"],
         "ausentes": ext["campos_ausentes"],
@@ -152,7 +229,13 @@ def main():
         print("envio automatico:", cfg["seguranca"]["envio_automatico"])
         return
     if a.comando == "imagem":
-        print(imagem_local(ROOT / "resultados/peca_visual.png"))
+        if a.mock:
+            caminho = imagem_local(ROOT / "resultados/peca_visual.png")
+        else:
+            from .arte_ia import gerar
+
+            caminho = gerar(ROOT / "resultados/peca_visual.png")
+        print(caminho)
         return
     if a.comando == "arquivos":
         from .extracao_llm import extrair_pasta
@@ -179,13 +262,44 @@ def main():
         print("ATENÇÃO: decisões carregadas de arquivo, apenas para demonstração.")
     execucao = nova_execucao()
     resumo = []
+    falhas = []
     for caso in carregar_casos():
         if a.caso and caso["id"] not in a.caso:
             continue
-        resumo.append(executar_caso(caso, execucao, a.mock, decisoes.get(caso["id"])))
+        simulada = caso["id"] in decisoes and decisoes[caso["id"]] is not None
+        try:
+            resumo.append(
+                executar_caso(
+                    caso,
+                    execucao,
+                    a.mock,
+                    decisoes.get(caso["id"]),
+                    decisao_simulada=simulada,
+                )
+            )
+        except (ErroAPI, ValueError, OSError, EOFError, jsonschema.ValidationError) as exc:
+            falha = {
+                "caso": caso["id"],
+                "erro": type(exc).__name__,
+                "detalhe": _mensagem_erro(exc),
+            }
+            registrar(
+                execucao,
+                caso["id"],
+                "falha_caso",
+                erro=falha["erro"],
+                detalhe=falha["detalhe"],
+            )
+            falhas.append(falha)
+            print(
+                f"Falha no caso {caso['id']}: {type(exc).__name__}: "
+                f"{_mensagem_erro(exc)}"
+            )
     print(
         json.dumps(
-            {"execucao": execucao, "casos": resumo}, ensure_ascii=False, indent=2
+            {"execucao": execucao, "casos": resumo, "falhas": falhas},
+            ensure_ascii=False,
+            indent=2,
         )
     )
 

@@ -85,6 +85,10 @@ def sintetizar(texto, destino, provider=None):
     # Áudio só é chamado após aprovação pela camada de revisão.
     if provider == "mock":
         return None
+    if len(texto) > 3500:
+        raise ErroAPI(
+            "Texto excede o limite de 3500 caracteres para TTS; áudio não foi gerado"
+        )
     if provider == "espeak":
         if not shutil.which("espeak"):
             raise ErroAPI("Instale espeak para TTS offline")
@@ -98,7 +102,7 @@ def sintetizar(texto, destino, provider=None):
                 "145",
                 "-w",
                 str(destino),
-                texto[:3500].replace("#", " ").replace("*", " "),
+                texto.replace("#", " ").replace("*", " "),
             ],
             check=True,
         )
@@ -116,7 +120,7 @@ def sintetizar(texto, destino, provider=None):
             json={
                 "model": cfg["multimodal"]["tts_modelo"],
                 "voice": cfg["multimodal"]["tts_voz"],
-                "input": texto[:3500],
+                "input": texto,
                 "response_format": "mp3",
             },
             timeout=120,

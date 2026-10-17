@@ -9,7 +9,7 @@ Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e c
 ## Modelos e parâmetros
 | Etapa | Provedor/modelo | Execução e configuração | Estado |
 |---|---|---|---|
-| LLM | OpenRouter / `nvidia/nemotron-3-super-120b-a12b:free` | 16/10/2026; temperatura 0,2; `max_tokens=2400`; `timeout_s=45` conforme configuração informada | **9/9 chamadas A/B/C com sucesso**, conforme matriz enviada pela equipe |
+| LLM | OpenRouter / `nvidia/nemotron-3-super-120b-a12b:free` | 16/10/2026; temperatura 0,2; `max_tokens=2400`; `timeout_s=45` conforme configuração informada | **9/9 linhas de sucesso** na matriz rastreada; avaliação humana pendente |
 | STT | Groq / `whisper-large-v3-turbo` | API prevista, português | **Sem evidência de transcrição real**; C02 em mock utiliza referência fictícia |
 | TTS | eSpeak, português | geração local após aprovação | **Não comprovado em execução validada** |
 | OCR | Tesseract local, idioma `por` | imagem C03 gerada para teste | OCR executado no pipeline mock; **CER ainda não medida** |
@@ -48,7 +48,7 @@ Comparação de A (zero-shot), B (Persona, Contexto, Tarefa, Formato, Critérios
 - **Segurança:** C05 e C03 testam entradas maliciosas; detector identificou alerta no pipeline mock. Nas respostas A/C ocorreram invenções de ações e prazos — alerta de injeção não basta para assegurar fidelidade.
 
 ## Custos, limites e falhas observadas
-- Para as **nove chamadas** da matriz: **3.381 tokens de entrada + 8.911 tokens de saída = 12.292 tokens reportados**; não inclui a geração prévia do prompt C nem tentativas anteriores. Tarifas/custo exato por chamada **não localizado** na matriz.
+- Para as **nove chamadas** da matriz: **3.381 tokens de entrada + 8.911 tokens de saída = 12.292 tokens reportados**; não inclui a geração prévia do prompt C nem tentativas anteriores. A matriz atual não contém custo por chamada; custo exato **não localizado**.
 - Painel compartilhado do OpenRouter mostrava gerações gratuitas a **US$ 0,00** em chamadas anteriores; não atribuir automaticamente esse custo a todas as nove chamadas.
 - Foram observados erros **HTTP 429**, erro NVIDIA encapsulado em HTTP 200 (código 502) e `finish_reason=length` com resposta sem texto. O cliente recebeu tratamento de erro e novas tentativas limitadas; falhas de infraestrutura não equivalem a validação de qualidade.
 - STT/TTS/imagem podem ter unidades de cobrança diferentes: custos **a medir conforme provedor**, sem extrapolar de tokens de LLM.

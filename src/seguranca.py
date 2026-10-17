@@ -4,11 +4,13 @@ import re
 
 AUSENTE = "não localizado"
 PADROES = [
-    r"ignore.{0,60}(instruções|regras)",
+    r"ignore.{0,80}(instruções|instrucoes|regras|instructions|rules|previous|prior)",
+    r"disregard.{0,80}(instructions|rules|previous|prior)",
     r"(^|\n)\s*(sistema|system)\s*:",
     r"revele.{0,50}(prompt|segredo|chave)",
+    r"reveal.{0,60}(prompt|system|secret|key)",
     r"(?i)deferido.{0,35}(prazo|dias)",
-    r"(?i)desconsidere.{0,50}(instruções|regras)",
+    r"desconsidere.{0,60}(instruções|instrucoes|regras)",
 ]
 
 

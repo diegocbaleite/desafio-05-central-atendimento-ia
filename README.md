@@ -54,8 +54,8 @@ python -m src.main --mock --caso C01
 python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
 python -m src.main experimento --mock
 python -m src.main experimento
-python -m src.main imagem
-python -m src.main arquivos
+python -m src.main imagem 
+python -m src.main arquivos  # comando padrão
 ```
 `--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana; elas são registradas como simuladas e não criam minuta aprovada nem acionam TTS. Sem a opção, a CLI pede a decisão no terminal. A opção `imagem --mock` força a composição local; sem `--mock`, o comando segue `multimodal.imagem_provider` (local por padrão, OpenAI somente se configurado).
 

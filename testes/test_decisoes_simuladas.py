@@ -135,5 +135,19 @@ class TestComandoImagem(unittest.TestCase):
         gerar.assert_not_called()
 
 
+class TestComandoArquivos(unittest.TestCase):
+    @patch("src.extracao_llm.extrair_pasta", return_value={})
+    def test_anuncia_fluxo_de_extracao(self, extrair_pasta):
+        saida = StringIO()
+        with (
+            patch.object(sys, "argv", ["main", "arquivos"]),
+            redirect_stdout(saida),
+        ):
+            main.main()
+
+        self.assertIn("extração multimodal de arquivos", saida.getvalue())
+        self.assertTrue(callable(extrair_pasta.call_args.kwargs["progresso"]))
+
+
 if __name__ == "__main__":
     unittest.main()

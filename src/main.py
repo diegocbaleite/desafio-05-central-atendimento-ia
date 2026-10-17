@@ -240,7 +240,13 @@ def main():
     if a.comando == "arquivos":
         from .extracao_llm import extrair_pasta
 
-        for nome, r in extrair_pasta().items():
+        print("Parte do sistema: extração multimodal de arquivos.")
+        print(
+            "Fluxo: validação da entrada, leitura/OCR/transcrição, "
+            "estruturação dos campos, validação do JSON e auditoria."
+        )
+        resultados = extrair_pasta(progresso=print)
+        for nome, r in resultados.items():
             print("==", nome)
             if "erro" in r:
                 print("ERRO:", r["erro"])

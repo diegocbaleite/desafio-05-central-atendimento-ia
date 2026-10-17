@@ -173,6 +173,7 @@ class TestExtracaoAuditada(unittest.TestCase):
             raiz.mkdir()
             arquivo = raiz / "pedido.txt"
             arquivo.write_text(texto, encoding="utf-8")
+            progresso = []
             with (
                 patch("src.extracao_llm.conversar", return_value=modelo_resposta) as call,
                 patch("src.extracao_llm.registrar") as audit,
@@ -182,6 +183,7 @@ class TestExtracaoAuditada(unittest.TestCase):
                     saida=saida,
                     pasta_entrada=raiz,
                     execucao="execucao-teste",
+                    progresso=progresso.append,
                 )
                 self.assertTrue((saida / "pedido.txt.texto_fonte.txt").exists())
                 json_saida = json.loads(
@@ -208,6 +210,10 @@ class TestExtracaoAuditada(unittest.TestCase):
         self.assertNotIn("ana.teste@example.com", conteudo_enviado)
         self.assertEqual(resultado["campos"]["pedido"]["valor"], campos["pedido"]["valor"])
         self.assertEqual(resultado["campos"]["solicitante"]["valor"], "Ana Silva")
+        self.assertTrue(any("Lendo texto local" in item for item in progresso))
+        self.assertTrue(any("Estruturando campos com openrouter" in item for item in progresso))
+        self.assertTrue(any("Validando evidências" in item for item in progresso))
+        self.assertTrue(any("registrando resultado na auditoria" in item for item in progresso))
 
 
 if __name__ == "__main__":

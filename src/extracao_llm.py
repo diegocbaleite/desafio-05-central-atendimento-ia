@@ -190,7 +190,14 @@ def _erro_seguro(exc):
     return "Falha durante o processamento; conteúdo do documento omitido"
 
 
-def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
+def _notificar(progresso, mensagem):
+    if progresso is not None:
+        progresso(mensagem)
+
+
+def extrair_arquivo(
+    caminho, saida=None, pasta_entrada=None, execucao=None, progresso=None
+):
     cfg = carregar()
     raiz_entrada = Path(pasta_entrada or ROOT / "arquivos")
     id_execucao = execucao or nova_execucao()
@@ -198,6 +205,7 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
     inicio_monotonic = time.monotonic()
     candidato = Path(caminho)
     caso = candidato.name
+    _notificar(progresso, f"[{caso}] Validando pasta autorizada, formato e tamanho.")
     try:
         caminho, sufixo = _validar_entrada(candidato, raiz_entrada)
     except (ValueError, OSError) as exc:
@@ -237,6 +245,7 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
     etapa_atual = "leitura"
     try:
         if sufixo == ".txt":
+            _notificar(progresso, f"[{caso}] Lendo texto local.")
             texto = caminho.read_text(encoding="utf-8")
             api_chamadas.append(
                 {
@@ -250,6 +259,8 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
                 }
             )
         else:
+            tipo_leitura = "OCR" if sufixo == ".pdf" else "transcrição de áudio"
+            _notificar(progresso, f"[{caso}] Executando {tipo_leitura} com Gemini.")
             texto, meta_leitura = _gemini_ler(
                 caminho, gemini_modelo, cfg["llm"]["timeout_s"]
             )
@@ -262,6 +273,10 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
         arq_texto.write_text(texto, encoding="utf-8")
 
         etapa_atual = "estruturacao"
+        _notificar(
+            progresso,
+            f"[{caso}] Estruturando campos com {provider} ({modelo}).",
+        )
         bruto, meta_estrutura = _estruturar(texto, provider, modelo)
         meta_estrutura = {
             "provider": meta_estrutura["provider"],
@@ -333,6 +348,10 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
         schema = json.loads(
             (ROOT / "src/schemas/extracao.schema.json").read_text(encoding="utf-8")
         )
+        _notificar(
+            progresso,
+            f"[{caso}] Validando evidências dos campos e JSON Schema.",
+        )
         jsonschema.validate(ext, schema)
         saida_json = {
             "extracao": ext,
@@ -345,6 +364,10 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
         }
         (destino / (caminho.name + ".extracao_llm.json")).write_text(
             json.dumps(saida_json, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        _notificar(
+            progresso,
+            f"[{caso}] Salvando extração e registrando resultado na auditoria.",
         )
         registrar(
             id_execucao,
@@ -385,7 +408,7 @@ def extrair_arquivo(caminho, saida=None, pasta_entrada=None, execucao=None):
         raise
 
 
-def extrair_pasta(pasta=None):
+def extrair_pasta(pasta=None, progresso=None):
     pasta = Path(pasta or ROOT / "arquivos").resolve()
     if not pasta.exists() or not pasta.is_dir():
         raise ValueError("Pasta de entrada não encontrada")
@@ -396,7 +419,10 @@ def extrair_pasta(pasta=None):
             continue
         try:
             resultados[caminho.name] = extrair_arquivo(
-                caminho, pasta_entrada=pasta, execucao=id_execucao
+                caminho,
+                pasta_entrada=pasta,
+                execucao=id_execucao,
+                progresso=progresso,
             )
         except (
             ErroAPI,
@@ -411,4 +437,6 @@ def extrair_pasta(pasta=None):
             resultados[caminho.name] = {
                 "erro": type(exc).__name__ + ": " + _erro_seguro(exc)
             }
+    if not resultados:
+        _notificar(progresso, "Nenhum arquivo compatível encontrado na pasta.")
     return resultados

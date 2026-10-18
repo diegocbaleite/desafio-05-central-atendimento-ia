@@ -1,4 +1,4 @@
-"""Executa Prompt B V2 ou V3 com OpenRouter real; sem homologação automática.
+"""Executa Prompt B V2, V3 ou V4 com OpenRouter real; sem homologação automática.
 
 Uso: python -m src.experimento_b_v2_real
 Pré-requisitos: .env local com OPENROUTER_API_KEY válida; dados fictícios.
@@ -28,6 +28,7 @@ PROMPT = "prompts/experimento/prompt_B_v2_seguro.md"  # compatibilidade com test
 PROMPTS = {
     "v2": PROMPT,
     "v3": "prompts/experimento/prompt_B_v3_seguro.md",
+    "v4": "prompts/experimento/prompt_B_v4_seguro.md",
 }
 COLUNAS = [
     "caso", "versao_prompt", "provider", "modelo", "status", "erro",
@@ -154,12 +155,12 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Executa Prompt B V2 ou V3 com modelo real OpenRouter.")
+    p = argparse.ArgumentParser(description="Executa Prompt B V2, V3 ou V4 com modelo real OpenRouter.")
     p.add_argument("--caso", action="append", choices=list(ARQUIVOS),
                    help="Executar só casos específicos (repetível); padrão: C01,C05,C06")
     p.add_argument("--modelo", help="Modelo OpenRouter opcional; padrão do config.yaml")
     p.add_argument("--versao", choices=tuple(PROMPTS), default="v2",
-                   help="Versão isolada (padrão v2; use v3 para a versão corrigida)")
+                   help="Versão isolada (padrão v2; use v4 para a versão atual em avaliação)")
     p.add_argument("--checar", action="store_true",
                    help="Apenas verifica chave/entradas/prompt, sem chamada de API")
     a = p.parse_args()

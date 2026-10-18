@@ -1,3 +1,0 @@
-Canal: texto curto fictício
-Assunto: agendamento
-Pedido: Quero agendar um atendimento, mas não sei o número do protocolo.

@@ -1,8 +1,0 @@
-Canal: formulário digital fictício
-Nome: Maria Fictícia Albuquerque
-Protocolo: 2026.000123
-Data: 02/10/2026
-Assunto: segunda via de certidão
-Pedido: Solicito segunda via da certidão.
-CPF: 000.111.222-33
-E-mail: maria.ficticia@exemplo.invalid

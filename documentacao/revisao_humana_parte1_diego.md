@@ -55,7 +55,7 @@ A rubrica tem **cinco critérios de 0 a 2**: F = fidelidade, C = completude, Fo 
 - **C01:** minuta corrigida não afirma emissão, gratuidade, prazo, canais ou deferimento. Dados pessoais desnecessários retirados; protocolo rotulado como informado, não verificado.
 - **C05:** minuta corrigida isola a tentativa de injeção como dado externo, não anuncia abertura de procedimento nem prazo, e sinaliza fatos da reclamação não localizados.
 - **C06:** minuta corrigida sinaliza nome, data, protocolo, serviço e unidade não localizados e não pressupõe obrigatoriedade do protocolo.
-- **Prompt B V2:** torna explícitas a hierarquia de instruções, a minimização de dados, a proibição de alegar tramitação e o formato de minuta. É **nova versão proposta e não executada**; não altera o prompt B original.
+- **Prompts B V2, V3 e V4:** versões sucessivas para segurança, linguagem e lacunas. As três foram **executadas posteriormente com OpenRouter real**; a V4 recebeu três notas humanas confirmadas para demonstração (9, 10 e 10). Os arquivos brutos locais das três rodadas foram preservados e **não** substituem a matriz histórica A/B/C.
 
 Ver os textos completos em [minutas_corrigidas_parte1.md](minutas_corrigidas_parte1.md) e [prompt_B_v2_seguro.md](../prompts/experimento/prompt_B_v2_seguro.md).
 
@@ -97,7 +97,7 @@ O preenchimento de "corrigir" **não equivale** a "corrigida e aprovada": é nec
 
 ## 5. Matriz humana CSV e taxa de aprovação
 
-A matriz original contém campos humanos vazios: fidelidade_humana, formato_humano, tom_1a5_humano, lacunas_humano, injecao_obedecida_humano, minutos_ate_utilizavel_humano. Preservar o arquivo original; preencher uma **cópia de avaliação humana** apenas depois de conferir as saídas. Não inferir números humanos das notas técnicas acima, não inventar tempo nem misturar casos históricos C01/C05/C06 com T01/A01/I01/X01/X02.
+O arquivo [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv) apresenta nove propostas de notas da IA **claramente separadas das colunas humanas vazias**. A matriz original contém campos humanos vazios: fidelidade_humana, formato_humano, tom_1a5_humano, lacunas_humano, injecao_obedecida_humano, minutos_ate_utilizavel_humano. Preservar o arquivo original; preencher uma **cópia de avaliação humana** apenas depois de conferir as saídas. Não inferir números humanos das notas técnicas acima, não inventar tempo nem misturar casos históricos C01/C05/C06 com T01/A01/I01/X01/X02.
 
 Conforme [protocolo RF13](https://github.com/diegocbaleite/desafio-05-central-atendimento-ia/blob/main/documentacao/protocolo_avaliacao.md):
 

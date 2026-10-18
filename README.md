@@ -67,6 +67,7 @@ As chaves de API ficam **somente no `.env`**, que está no `.gitignore`; `.env.e
 
 ## Comandos
 ```bash
+python -m src.main #comando padrão
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 python -m src.main --mock --caso T01
@@ -74,7 +75,7 @@ python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
 python -m src.main experimento
 python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider local
-python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq --autorizar-api   # áudio vai a provedor externo: só dados fictícios
+python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
 python -m src.main voz resultados/execucoes/<id>/<caso>/minuta_aprovada.md --revisao resultados/execucoes/<id>/<caso>/revisao.json
 python -m src.main arte --referencia dados/originais/brasao.png
 ```
@@ -84,7 +85,7 @@ O comando sem argumentos (`python -m src.main`) processa os casos de `dados/orig
 Sem `--decisoes`, a CLI pede, para cada minuta, a decisão (`aprovar`, `rejeitar`, `corrigir` ou `nova`), o **responsável** e a **justificativa**; nada é preenchido pelo código. A auditoria registra revisor, justificativa, data, versão e SHA-256 da minuta. `nova` gera outra versão (`minuta_v2.md`…), que precisa ser revisada de novo; uma aprovação vale somente para a versão aprovada (`minuta_aprovada.md` + `revisao.json`, no formato aceito por `python -m src.main voz`). Para casos de áudio e imagem, a CLI exige antes da minuta a **conferência de protocolo, data e solicitante com o original**. `--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana: são registradas como simuladas e não criam minuta aprovada nem acionam TTS. O comando `arte` produz a peça visual conforme `multimodal.imagem_provider`; o modo local com Pillow é composição programática, não geração de imagem por IA.
 
 ### Envio a provedores externos
-Nada sai da máquina por padrão. O áudio de entrada (voz é dado pessoal) só é enviado a um provedor de STT (Groq) com **`--autorizar-api`**, inclusive no fluxo principal (`python -m src.main --autorizar-api` quando `multimodal.stt_provider` for remoto); a voz da minuta e a peça visual por API também exigem `--autorizar-api`. OCR (Tesseract), Whisper local e eSpeak funcionam offline. Na geração da minuta com LLM real, apenas `assunto` e `pedido` seguem ao provedor, com CPF, e-mail e telefone substituídos por marcadores. Use somente dados fictícios.
+O modo `--mock` não chama APIs. Fora dele, o envio de dados depende dos provedores selecionados no comando ou configurados em `config/config.yaml`; no padrão atual, `multimodal.stt_provider` é `groq`, então o fluxo principal envia o áudio original ao Groq. Para manter o STT local, configure `local` e instale `faster-whisper`. OCR (Tesseract) e eSpeak funcionam offline; TTS e imagem também usam seus provedores configurados. Na geração da minuta com LLM real, apenas `assunto` e `pedido` seguem ao provedor, com CPF, e-mail e telefone substituídos por marcadores. Use somente dados fictícios; não envie os arquivos de `dados/originais/` a serviços externos sem confirmar que não contêm dados pessoais reais.
 Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq`, `openai` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração inicial usa OpenRouter. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
 
 # Requisitos Funcionais — RF01 a RF13

@@ -239,25 +239,23 @@ class TestCli(unittest.TestCase):
         self.assertEqual(codigo, 2)
         self.assertIn("--revisao", saida)
 
-    def test_audio_despacha_com_autorizacao_explicita(self):
+    def test_audio_despacha_sem_sinalizador_de_autorizacao(self):
         with patch("src.main.avaliar_audio", return_value=Path("pasta")) as avaliar:
             codigo, saida = self._executar(
-                ["audio", "fala.mp3", "--provider", "groq", "--autorizar-api"]
+                ["audio", "fala.mp3", "--provider", "groq"]
             )
         self.assertEqual(codigo, 0)
         self.assertEqual(avaliar.call_args.kwargs["provider"], "groq")
-        self.assertTrue(avaliar.call_args.kwargs["permitir_api"])
         self.assertIn("Nenhum envio externo", saida)
 
-    def test_audio_remoto_no_fluxo_principal_exige_autorizacao(self):
+    def test_fluxo_principal_encaminha_audio_ao_provedor_configurado(self):
         with tempfile.TemporaryDirectory() as d:
             arq = Path(d) / "fala.mp3"
             arq.write_bytes(b"ID3fake")
-            with patch(
-                "src.audio.carregar", return_value={"multimodal": {"stt_provider": "groq"}}
-            ):
-                with self.assertRaises(PermissionError):
-                    main.preparar_entrada(arq, "audio")
+            with patch("src.main.transcrever", return_value="transcrição fictícia") as stt:
+                texto = main.preparar_entrada(arq, "audio")
+            self.assertEqual(texto, "transcrição fictícia")
+            stt.assert_called_once_with(arq)
 
 
 class TestAvaliacao(unittest.TestCase):

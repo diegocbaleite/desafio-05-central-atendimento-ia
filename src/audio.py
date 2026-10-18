@@ -1,7 +1,7 @@
 """Áudio: STT (Whisper local ou API), TTS e versão falada da minuta aprovada.
 
-Nada aqui envia respostas a cidadãos; áudio de entrada só vai a provedor externo
-com autorização explícita e a locução só é gerada para minuta aprovada por pessoa.
+Nada aqui envia respostas a cidadãos; provedores remotos seguem a configuração,
+e a locução só é gerada para minuta aprovada por pessoa.
 """
 
 from __future__ import annotations
@@ -35,8 +35,8 @@ def _whisper_local(caminho: Path, modelo: str) -> str:
     return " ".join(p.text.strip() for p in partes).strip()
 
 
-def transcrever(caminho, provider=None, *, modelo_local="small", permitir_api=False):
-    """Transcreve áudio. Provedor externo exige permitir_api=True (áudio é dado pessoal)."""
+def transcrever(caminho, provider=None, *, modelo_local="small"):
+    """Transcreve áudio com o provedor selecionado ou configurado."""
     entrada = validar_arquivo(caminho, FORMATOS_AUDIO, 20)
     cfg = carregar()
     provider = provider or cfg["multimodal"]["stt_provider"]
@@ -46,10 +46,6 @@ def transcrever(caminho, provider=None, *, modelo_local="small", permitir_api=Fa
         )
     if provider == "local":
         return _whisper_local(entrada, modelo_local)
-    if not permitir_api:
-        raise PermissionError(
-            "Envio de áudio a provedor externo exige --autorizar-api e dados fictícios"
-        )
     token = chave(cfg, provider)
     if not token:
         raise ErroAPI("Falta chave de STT; configure .env ou use --mock")
@@ -148,7 +144,7 @@ def duracao_audio(caminho: Path) -> float | None:
         return None
 
 
-def avaliar_audio(caminho, *, provider="local", modelo_local="small", permitir_api=False,
+def avaliar_audio(caminho, *, provider="local", modelo_local="small",
                   gabarito=None, revisado=None, saida=None, transcritor_teste=None) -> Path:
     """STT com transcrição bruta preservada, métricas contra referência e revisão pendente."""
     entrada = validar_arquivo(caminho, FORMATOS_AUDIO, 20)
@@ -159,8 +155,7 @@ def avaliar_audio(caminho, *, provider="local", modelo_local="small", permitir_a
         bruto = transcritor_teste(entrada)
         origem_execucao, modelo = "simulação de teste", "mock"
     else:
-        bruto = transcrever(entrada, provider, modelo_local=modelo_local,
-                            permitir_api=permitir_api)
+        bruto = transcrever(entrada, provider, modelo_local=modelo_local)
         if provider == "groq":
             origem_execucao, modelo = "API real (Groq)", carregar()["multimodal"]["stt_modelo"]
         else:
@@ -185,7 +180,7 @@ def avaliar_audio(caminho, *, provider="local", modelo_local="small", permitir_a
     return pasta
 
 
-def gerar_voz(minuta, revisao, *, saida=None, provider="espeak", permitir_api=False,
+def gerar_voz(minuta, revisao, *, saida=None, provider="espeak",
               sintetizador_teste=None) -> Path:
     """Só sintetiza com aprovação humana DOCUMENTADA, não uma decisão mock/YAML."""
     origem = Path(minuta).resolve()
@@ -196,8 +191,6 @@ def gerar_voz(minuta, revisao, *, saida=None, provider="espeak", permitir_api=Fa
         or not parecer.get("revisor") or not parecer.get("data_revisao")
         or parecer.get("sha256_minuta") != sha256_arquivo(origem)):
         raise PermissionError("TTS bloqueado: aprovação humana válida e hash da minuta são obrigatórios")
-    if provider != "espeak" and not permitir_api and sintetizador_teste is None:
-        raise PermissionError("TTS remoto exige --autorizar-api")
     pasta = nova_saida(saida, "tts")
     aviso = ("Atenção: esta minuta contém informações não localizadas, "
              "que exigem verificação humana. " if "não localizado" in texto.casefold() else "")

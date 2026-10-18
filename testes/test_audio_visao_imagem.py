@@ -4,7 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from src import audio, avaliacao, imagem, visao
 from src.cliente import ErroAPI
@@ -60,14 +60,22 @@ class TestEntradas(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "corrompida"):
                 validar_arquivo(arq, FORMATOS_IMAGEM)
 
-    def test_sem_envio_remoto_por_padrao(self):
+    def test_stt_remoto_envia_audio_quando_provedor_e_selecionado(self):
         with tempfile.TemporaryDirectory() as d:
             arq = Path(d) / "fala.mp3"
             arq.write_bytes(b"ID3fake")
-            with self.assertRaises(PermissionError):
-                audio.avaliar_audio(arq, provider="groq")
-            with self.assertRaises(PermissionError):
-                audio.transcrever(arq, provider="groq")
+            resposta = Mock(ok=True)
+            resposta.json.return_value = {"text": "transcrição fictícia"}
+            config = {
+                "multimodal": {"stt_modelo": "whisper-test"},
+                "provedores": {"groq": {"base_url": "https://api.example.test"}},
+            }
+            with patch("src.audio.carregar", return_value=config), \
+                 patch("src.audio.chave", return_value="token-falso"), \
+                 patch("src.audio.requests.post", return_value=resposta) as post:
+                texto = audio.transcrever(arq, provider="groq")
+            self.assertEqual(texto, "transcrição fictícia")
+            self.assertEqual(post.call_args.kwargs["files"]["file"][0], "fala.mp3")
 
     def test_stt_mock_nao_finge_transcricao(self):
         with tempfile.TemporaryDirectory() as d:
@@ -171,6 +179,33 @@ class TestControleHumano(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 audio.gerar_voz(minuta, parecer, saida=raiz / "saida")
 
+    def test_tts_remoto_usa_provedor_configurado_apos_aprovacao_humana(self):
+        with tempfile.TemporaryDirectory() as d:
+            raiz = Path(d)
+            minuta = raiz / "minuta.md"
+            minuta.write_text("Conteúdo aprovado", encoding="utf-8")
+            parecer = raiz / "revisao.json"
+            parecer.write_text(json.dumps({
+                "decisao": "aprovar",
+                "simulada": False,
+                "origem": "revisao_humana",
+                "revisor": "Pessoa revisora",
+                "data_revisao": "2026-10-17",
+                "sha256_minuta": hashlib.sha256(minuta.read_bytes()).hexdigest(),
+            }), encoding="utf-8")
+
+            def sintetizar_mock(_texto, destino, provider=None):
+                destino = Path(destino)
+                destino.write_bytes(b"audio-ficticio")
+                return str(destino)
+
+            with patch("src.audio.sintetizar", side_effect=sintetizar_mock) as sintetizar:
+                pasta = audio.gerar_voz(
+                    minuta, parecer, saida=raiz / "saida", provider="openai"
+                )
+            sintetizar.assert_called_once()
+            self.assertTrue((pasta / "voz.mp3").exists())
+
     def test_avisar_ausencia_no_audio(self):
         with tempfile.TemporaryDirectory() as d:
             raiz = Path(d)
@@ -218,6 +253,37 @@ class TestControleHumano(unittest.TestCase):
             info = json.loads((pasta / "revisao_visual.json").read_text(encoding="utf-8"))
             self.assertFalse(info["por_ia"])
             self.assertTrue(info["revisao_humana"] == "pendente")
+
+    def test_arte_remota_usa_provedor_configurado_sem_sinalizador(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as d:
+            raiz = Path(d)
+
+            def gerar_mock(destino):
+                Image.new("RGB", (12, 12), "white").save(destino)
+                destino.with_name("orientacao.proveniencia.json").write_text(
+                    json.dumps({
+                        "por_ia": True,
+                        "metodo": "geracao_api",
+                        "provider": "openai",
+                        "modelo": "modelo-ficticio",
+                    }),
+                    encoding="utf-8",
+                )
+                return str(destino)
+
+            with (
+                patch(
+                    "src.imagem.carregar",
+                    return_value={"multimodal": {"imagem_provider": "openai"}},
+                ),
+                patch("src.imagem.gerar", side_effect=gerar_mock) as gerar,
+            ):
+                pasta = imagem.gerar_visual(saida=raiz / "saida")
+            gerar.assert_called_once()
+            info = json.loads((pasta / "revisao_visual.json").read_text(encoding="utf-8"))
+            self.assertTrue(info["por_ia"])
 
     def test_imagem_local_grava_proveniencia_sem_ia(self):
         with tempfile.TemporaryDirectory() as d:

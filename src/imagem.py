@@ -131,12 +131,10 @@ def gerar(destino=None):
     return str(caminho)
 
 
-def gerar_visual(*, saida=None, referencia=None, permitir_api=False, gerador_teste=None) -> Path:
-    """Gera a peça com revisão visual pendente; API só com autorização explícita."""
+def gerar_visual(*, saida=None, referencia=None, gerador_teste=None) -> Path:
+    """Gera a peça com revisão visual pendente usando o provedor configurado."""
     cfg = carregar()
     p = cfg["multimodal"]["imagem_provider"]
-    if p != "local" and not permitir_api and gerador_teste is None:
-        raise PermissionError("Imagem gerada por API exige --autorizar-api")
     pasta = nova_saida(saida, "arte")
     caminho = pasta / "orientacao.png"
     produzido = gerador_teste(caminho) if gerador_teste else gerar(caminho)

@@ -7,10 +7,10 @@ Base: *Desafio Prático 1 — Central Inteligente de Atendimento e Comunicação
 
 | Requisito | Implementação | Evidência / ressalva |
 |---|---|---|
-| RF06/STT | `audio` usa Whisper local opcional (`faster-whisper`) ou Groq (requer autorização explícita) | Preserva texto bruto, SHA-256, idioma, duração, modelo, relatório WER/CER contra **gabarito da mesma modalidade**; não declara STT real nos testes com mock. |
+| RF06/STT | `audio` usa Whisper local opcional (`faster-whisper`) ou Groq conforme seleção/configuração | Preserva texto bruto, SHA-256, idioma, duração, modelo, relatório WER/CER contra **gabarito da mesma modalidade**; não declara STT real nos testes com mock. |
 | RF07/TTS | `voz` usa eSpeak offline ou provedor já implementado pelo projeto | Exige revisão humana documentada, nome/data/referência SHA-256; decisões de mock/YAML são recusadas. Adiciona aviso falado sobre “não localizado”. Não envia mensagem. |
 | RF08/OCR | `ocr` lê PNG/JPG/TIFF e PDF digitalizado usando `pdftoppm` + Tesseract local | Preserva original, OCR bruto, trechos com baixa confiança, data, SHA-256 e revisão pendente. Calcula CER/WER se existir transcrição de referência **prévia**. |
-| RF10/Imagem | `arte` usa `imagem.gerar()` | `imagem_provider=local` produz **Pillow (não IA)**; com `openai` habilitado e permissão explícita usa API. Exige nota de proveniência, registra revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
+| RF10/Imagem | `arte` usa `imagem.gerar()` | `imagem_provider=local` produz **Pillow (não IA)**; com `openai` configurado usa API. Exige nota de proveniência, registra revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
 | Testes | `testes/test_audio_visao_imagem.py` | Testes locais determinísticos, sem APIs e sem credenciais (a contagem atual vem de `python -m unittest discover -s testes -t .`). |
 
 ## Pré-requisitos Ubuntu
@@ -21,9 +21,11 @@ sudo apt install tesseract-ocr tesseract-ocr-por poppler-utils ffmpeg espeak
 python -m src.main verificar
 ```
 
-Para transcrever **localmente**, opcionalmente `pip install faster-whisper` (o primeiro uso pode exigir download de pesos). Alternativamente, para Groq, adicione somente ao `.env` local `GROQ_API_KEY=...` e configure o provedor — **não publique**. A leitura remota de áudio só ocorre com a flag `--autorizar-api`, após confirmar que o arquivo/voz não contém dados pessoais reais.
+Para transcrever **localmente**, opcionalmente `pip install faster-whisper` (o primeiro uso pode exigir download de pesos). Alternativamente, para Groq, adicione somente ao `.env` local `GROQ_API_KEY=...` e configure o provedor — **não publique**. Quando Groq estiver selecionado/configurado, o áudio original é enviado ao serviço; use apenas conteúdo fictício.
 
-## Comandos (não publicam nada)
+## Comandos (não enviam respostas a cidadãos)
+
+O OCR e os provedores locais permanecem na máquina. Com um provedor remoto selecionado/configurado, os arquivos necessários ao processamento são enviados a esse serviço.
 
 ### OCR local — PDF digitalizado do caso de matrícula
 ```bash
@@ -36,9 +38,9 @@ A saída fica em `resultados/multimodal/ocr_<id>/ocr_bruto.txt`, `resultado.json
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider local
 ```
 
-### STT Groq — apenas para áudio fictício autorizado
+### STT Groq — somente com áudio fictício
 ```bash
-python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq --autorizar-api
+python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
 ```
 Para medir WER/CER, acrescentar `--gabarito dados/gabaritos/referencia_audio_exata.txt`; **não usar automaticamente** `entrada_texto.txt` como transcrição: áudio e texto têm divergências de conteúdo/e-mail e métricas ficariam enganosas. O gabarito deve existir **antes da medição**.
 
@@ -64,9 +66,9 @@ A voz local é em português brasileiro via eSpeak (WAV). Se houver “não loca
 ```bash
 python -m src.main arte --referencia dados/originais/brasao.png
 ```
-Com `multimodal.imagem_provider: local`, isso produz ilustração **programática**, não imagem gerada por IA. Para cumprir a demonstração de **geração por IA** da RF10, somente se houver API autorizada, alterar **localmente** a configuração de imagem para `openai`, preencher `OPENAI_API_KEY` no `.env` e executar:
+Com `multimodal.imagem_provider: local`, isso produz ilustração **programática**, não imagem gerada por IA. Para cumprir a demonstração de **geração por IA** da RF10, altere **localmente** a configuração de imagem para `openai`, preencha `OPENAI_API_KEY` no `.env` e execute:
 ```bash
-python -m src.main arte --referencia dados/originais/brasao.png --autorizar-api
+python -m src.main arte --referencia dados/originais/brasao.png
 ```
 Revisar texto, símbolos, pertinência institucional, selo sintético e metadata; o brasão fornecido é **referência**, não incorporado automaticamente. Nunca apresentar a arte como peça oficial GOV.MT.
 
@@ -82,7 +84,7 @@ python -m src.main verificar
 Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). Continuam pendentes: geração de imagem por IA e homologação humana. Para a entrega, repetir todos os testes no seu repositório Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
-- [ ] Entradas têm dados fictícios e autorização para qualquer API externa.
+- [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.
 - [ ] Audio: STT real e transcrição bruta salvos; gabarito de áudio anterior; WER e trechos críticos revisados.
 - [ ] PDF: OCR bruto e correções humanas salvas separadamente; CER calculado contra referência da imagem; nome, protocolo e data confirmados no original.
 - [ ] Voz: aprovação REAL documentada, hash bate; ouvir o WAV e confirmar o conteúdo.

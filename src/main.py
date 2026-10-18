@@ -13,8 +13,8 @@ from pathlib import Path
 
 import jsonschema
 
-from .auditoria import nova_execucao, registrar
 from .audio import avaliar_audio, gerar_voz, sintetizar, transcrever
+from .auditoria import nova_execucao, registrar
 from .avaliacao import avaliar_campos, taxa_aprovacao
 from .cliente import ErroAPI
 from .config import ROOT, carregar, chave
@@ -45,7 +45,7 @@ def _mensagem_erro(exc):
     return "Falha no processamento; conteúdo da solicitação omitido"
 
 
-def preparar_entrada(path, modo, mock=False, referencia=None, permitir_api=False):
+def preparar_entrada(path, modo, mock=False, referencia=None):
     if modo == "texto":
         return path.read_text(encoding="utf-8")
     if modo == "imagem":
@@ -65,7 +65,7 @@ def preparar_entrada(path, modo, mock=False, referencia=None, permitir_api=False
                     "Transcrição fictícia de referência ausente: " + str(trans)
                 )
             return trans.read_text(encoding="utf-8")
-        return transcrever(path, permitir_api=permitir_api)
+        return transcrever(path)
     raise ValueError("Modalidade inválida")
 
 
@@ -152,12 +152,13 @@ def _decisao_humana(caso_id, minuta, versao):
 
 
 def executar_caso(
-    caso, execucao, mock=False, decisao=None, decisao_simulada=False, permitir_api=False
+    caso, execucao, mock=False, decisao=None, decisao_simulada=False
 ):
     entrada = ROOT / caso["arquivo"]
     if not entrada.is_file():
         raise ValueError(
-            "Arquivo de entrada não encontrado: " + caso["arquivo"]
+            "Arquivo de entrada não encontrado: "
+            + caso["arquivo"]
             + " (confira dados/originais/casos.yaml)"
         )
     simulacao = decisao_simulada or mock
@@ -172,7 +173,6 @@ def executar_caso(
         caso["modalidade"],
         mock,
         ROOT / referencia if referencia else None,
-        permitir_api,
     )
     hash_arquivo = hashlib.sha256(entrada.read_bytes()).hexdigest()
     pasta = registrar(
@@ -300,7 +300,9 @@ def executar_caso(
                 "Minuta aprovada para demonstração, não enviada",
             )
             aprovada_intacta = (
-                hashlib.sha256((pasta_caso / "minuta_aprovada.md").read_bytes()).hexdigest()
+                hashlib.sha256(
+                    (pasta_caso / "minuta_aprovada.md").read_bytes()
+                ).hexdigest()
                 == sha_minuta
             )
             if not mock and aprovada_intacta:
@@ -390,7 +392,6 @@ def _comando_midia(a):
                 a.entrada,
                 provider=a.provider or "local",
                 modelo_local=a.modelo_local,
-                permitir_api=a.autorizar_api,
                 gabarito=a.gabarito,
                 revisado=a.revisado,
             )
@@ -400,17 +401,16 @@ def _comando_midia(a):
             )
         elif a.comando == "voz":
             if not a.revisao:
-                raise ValueError("O comando voz exige --revisao (JSON da aprovação humana)")
+                raise ValueError(
+                    "O comando voz exige --revisao (JSON da aprovação humana)"
+                )
             pasta = gerar_voz(
                 a.entrada,
                 a.revisao,
                 provider=a.provider or "espeak",
-                permitir_api=a.autorizar_api,
             )
         else:
-            pasta = gerar_visual(
-                referencia=a.referencia, permitir_api=a.autorizar_api
-            )
+            pasta = gerar_visual(referencia=a.referencia)
     except (ValueError, RuntimeError, OSError, ErroAPI) as exc:
         print(f"Falha: {type(exc).__name__}: {_mensagem_erro(exc)}")
         return 2
@@ -433,24 +433,29 @@ def main():
         help="audio/ocr: arquivo a processar; voz: minuta aprovada (.md)",
     )
     p.add_argument("--mock", action="store_true", help="simulação sem APIs reais")
-    p.add_argument("--metaprompt-v2", action="store_true", help="experimento separado usando metaprompt revisado")
+    p.add_argument(
+        "--metaprompt-v2",
+        action="store_true",
+        help="experimento separado usando metaprompt revisado",
+    )
     p.add_argument("--caso", action="append")
     p.add_argument(
         "--decisoes",
         help="YAML contendo decisões de DEMONSTRAÇÃO; não é revisão de servidor real",
     )
-    p.add_argument(
-        "--autorizar-api",
-        action="store_true",
-        help="autoriza o envio de dados fictícios a provedores externos (áudio, voz, arte)",
-    )
     p.add_argument("--provider", help="audio: local|groq; voz: espeak ou provedor TTS")
     p.add_argument("--modelo-local", default="small", help="audio local (Whisper)")
-    p.add_argument("--gabarito", help="referência prévia da MESMA modalidade (audio/ocr)")
+    p.add_argument(
+        "--gabarito", help="referência prévia da MESMA modalidade (audio/ocr)"
+    )
     p.add_argument("--revisado", help="texto revisado por pessoa (audio/ocr)")
-    p.add_argument("--psm", type=int, default=6, help="ocr: modo de página do Tesseract")
+    p.add_argument(
+        "--psm", type=int, default=6, help="ocr: modo de página do Tesseract"
+    )
     p.add_argument("--revisao", help="voz: JSON da aprovação humana da minuta")
-    p.add_argument("--referencia", help="arte: imagem de referência (não é incorporada)")
+    p.add_argument(
+        "--referencia", help="arte: imagem de referência (não é incorporada)"
+    )
     a = p.parse_args()
     cfg = carregar()
     if a.comando == "verificar":
@@ -491,7 +496,6 @@ def main():
                     a.mock,
                     decisoes.get(caso["id"]),
                     decisao_simulada=simulada,
-                    permitir_api=a.autorizar_api,
                 )
             )
         except (

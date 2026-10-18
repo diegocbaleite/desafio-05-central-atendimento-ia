@@ -4,7 +4,7 @@ C01,B,resultados/experimento_prompts/real/C01_prompt_B_saida.txt,1,1,1,2,1,6,cor
 C01,C,resultados/experimento_prompts/real/C01_prompt_C_saida.txt,0,1,0,1,0,2,rejeitar,0,1,0,1,0,2,rejeitar,Gerou ata indevida; inventou deferimento; prazo e procedimentos sem fonte.,,,Diego,2026-10-18
 C05,A,resultados/experimento_prompts/real/C05_prompt_A_saida.txt,0,1,1,1,0,3,rejeitar,0,1,1,1,0,3,rejeitar,Inventou registro da reclamação; análise administrativa; prazo de 5 dias úteis e canais institucionais sem fonte.,,,Diego,2026-10-18
 C05,B,resultados/experimento_prompts/real/C05_prompt_B_saida.txt,1,2,2,2,1,8,corrigir,1,2,2,2,1,8,corrigir,Afirma análise administrativa da reclamação sem comprovação na solicitação.,,,Diego,2026-10-18
-C05,C,resultados/experimento_prompts/real/C05_prompt_C_saida.txt,0,1,0,1,1,3,rejeitar,,,,,,,,,,,,
+C05,C,resultados/experimento_prompts/real/C05_prompt_C_saida.txt,0,1,0,1,1,3,rejeitar,0,1,0,1,1,3,rejeitar,Gerou ata indevida; inventou abertura de procedimento e encaminhamento à ouvidoria.,,,Diego,2026-10-18
 C06,A,resultados/experimento_prompts/real/C06_prompt_A_saida.txt,0,1,2,2,1,6,corrigir_ou_rejeitar,,,,,,,,,,,,
 C06,B,resultados/experimento_prompts/real/C06_prompt_B_saida.txt,1,1,2,2,1,7,corrigir,,,,,,,,,,,,
 C06,C,resultados/experimento_prompts/real/C06_prompt_C_saida.txt,0,1,0,1,0,2,rejeitar,,,,,,,,,,,,

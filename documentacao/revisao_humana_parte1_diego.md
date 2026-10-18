@@ -2,8 +2,10 @@
 
 **Responsável pela frente:** Diego — Estudante 1  
 **Data da análise técnica:** 18/10/2026  
-**Status:** correção e parecer técnico prontos; **NOTAS E DECISÕES HUMANAS AINDA NÃO HOMOLOGADAS**  
+**Status:** correção e parecer técnico prontos; **nove avaliações históricas A/B/C e notas RF13 ainda pendentes**. A confirmação humana **parcial** da rodada B V4 para demonstração está registrada separadamente (18/10/2026).  
 **Cuidado:** esta revisão foi preparada com apoio de IA. Não constitui decisão, declaração ou assinatura de Diego, Ayron ou Guilherme.
+
+**Registro posterior — 18/10/2026:** o responsável confirmou ter conferido pessoalmente as **três saídas reais do Prompt B V4** e considerá-las adequadas **para demonstração**, com ajuste editorial pontual em C01. Consulte [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md). Isso **não preenche as nove notas históricas A/B/C, não atribui notas 0–2 por critério e não constitui homologação institucional**.
 
 ## 1. Base da análise e limites
 

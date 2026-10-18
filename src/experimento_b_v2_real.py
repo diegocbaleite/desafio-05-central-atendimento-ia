@@ -1,4 +1,4 @@
-"""Executa somente o Prompt B V2 com OpenRouter real; sem homologação automática.
+"""Executa Prompt B V2 ou V3 com OpenRouter real; sem homologação automática.
 
 Uso: python -m src.experimento_b_v2_real
 Pré-requisitos: .env local com OPENROUTER_API_KEY válida; dados fictícios.
@@ -24,7 +24,11 @@ ARQUIVOS = {
     "C05": "dados/originais/C05.txt",
     "C06": "dados/originais/C06.txt",
 }
-PROMPT = "prompts/experimento/prompt_B_v2_seguro.md"
+PROMPT = "prompts/experimento/prompt_B_v2_seguro.md"  # compatibilidade com testes V2
+PROMPTS = {
+    "v2": PROMPT,
+    "v3": "prompts/experimento/prompt_B_v3_seguro.md",
+}
 COLUNAS = [
     "caso", "versao_prompt", "provider", "modelo", "status", "erro",
     "temperatura", "max_tokens", "timeout_s", "latencia_s",
@@ -48,7 +52,7 @@ def preparar_mensagens(prompt: str, entrada: str) -> list[dict[str, str]]:
     ]
 
 
-def executar(casos: list[str] | None = None, modelo: str | None = None, *, somente_checar: bool = False) -> tuple[Path | None, bool]:
+def executar(casos: list[str] | None = None, modelo: str | None = None, *, somente_checar: bool = False, versao: str = "v2") -> tuple[Path | None, bool]:
     """Faz chamadas REAIS e devolve (pasta, sucesso_total), sem alterar arquivos históricos."""
     cfg = carregar()
     provedor = "openrouter"
@@ -60,18 +64,20 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
         raise RuntimeError(
             "OPENROUTER_API_KEY ausente no .env local. Não cole a chave no chat nem faça commit do .env."
         )
-    raiz = ROOT / "resultados/execucoes/prompts_b_v2_real"
-    prompt_path = ROOT / PROMPT
+    if versao not in PROMPTS:
+        raise ValueError("Versão do prompt inválida: " + versao)
+    raiz = ROOT / f"resultados/execucoes/prompts_b_{versao}_real"
+    prompt_path = ROOT / PROMPTS[versao]
     prompt = prompt_path.read_text(encoding="utf-8")
     if "{{solicitacao}}" not in prompt:
-        raise ValueError("Prompt B V2 inválido: marcador {{solicitacao}} ausente")
+        raise ValueError(f"Prompt B {versao} inválido: marcador {{{{solicitacao}}}} ausente")
     ids = casos or list(ARQUIVOS)
     for caso in ids:
         if caso not in ARQUIVOS:
             raise ValueError("Caso não previsto no experimento: " + caso)
         if not (ROOT / ARQUIVOS[caso]).is_file():
             raise FileNotFoundError("Entrada fictícia ausente: " + ARQUIVOS[caso])
-    print("Provedor: openrouter | Modelo solicitado:", modelo)
+    print(f"Versão: B_{versao} | Provedor: openrouter | Modelo solicitado:", modelo)
     print("Casos:", ", ".join(ids), "| Token configurado: sim (valor oculto)")
     print("Envio automático de respostas a cidadãos: NÃO")
     if somente_checar:
@@ -79,15 +85,16 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
         return None, True
 
     pasta = _pasta_unica(raiz)
-    (pasta / "prompt_B_v2_utilizado.md").write_text(prompt, encoding="utf-8")
+    (pasta / f"prompt_B_{versao}_utilizado.md").write_text(prompt, encoding="utf-8")
     sha_prompt = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
     parametros = {
         "modo": "real", "provider": provedor, "modelo_solicitado": modelo,
+        "versao_prompt": f"B_{versao}", "arquivo_prompt": PROMPTS[versao],
         "temperatura": cfg["llm"]["temperatura"],
         "max_tokens": cfg["llm"]["max_tokens"], "timeout_s": cfg["llm"]["timeout_s"],
         "sha256_prompt": sha_prompt,
         "revisao_humana": "pendente",
-        "observacao": "Saídas novas do B V2; não substituir a matriz original A/B/C.",
+        "observacao": f"Saídas do B_{versao}; não substituir a matriz original A/B/C nem outras versões.",
     }
     (pasta / "parametros.json").write_text(
         json.dumps(parametros, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -95,7 +102,7 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
     linhas = []
 
     def salvar_csv() -> None:
-        with (pasta / "matriz_B_v2.csv").open("w", encoding="utf-8", newline="") as arquivo:
+        with (pasta / f"matriz_B_{versao}.csv").open("w", encoding="utf-8", newline="") as arquivo:
             gravador = csv.DictWriter(arquivo, fieldnames=COLUNAS)
             gravador.writeheader()
             gravador.writerows(linhas)
@@ -116,14 +123,14 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
             resposta = conversar(mensagens, modelo=modelo, provider=provedor)
             if not resposta.get("texto", "").strip():
                 raise ErroAPI("Modelo não retornou texto utilizável")
-            arquivo_saida = caso + "_prompt_B_v2_saida.txt"
+            arquivo_saida = caso + f"_prompt_B_{versao}_saida.txt"
             (pasta / arquivo_saida).write_text(resposta["texto"], encoding="utf-8")
             status = "sucesso"
         except ErroAPI as exc:
             # O cliente não deve expor chaves; uma segunda barreira remove o token.
             erro = str(exc).replace(token, "[CREDENCIAL_REMOVIDA]")[:300]
         linha = {
-            "caso": caso, "versao_prompt": "B_v2", "provider": provedor,
+            "caso": caso, "versao_prompt": f"B_{versao}", "provider": provedor,
             "modelo": resposta.get("modelo", modelo), "status": status, "erro": erro,
             "temperatura": cfg["llm"]["temperatura"],
             "max_tokens": cfg["llm"]["max_tokens"],
@@ -137,25 +144,27 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
         }
         linhas.append(linha)
         salvar_csv()  # Mantém falhas e resultados parciais sem apagar outras rodadas.
-        print(f"{caso}/B_v2: {status}" + (f" — {erro}" if erro else ""))
+        print(f"{caso}/B_{versao}: {status}" + (f" — {erro}" if erro else ""))
 
     completo = all(linha["status"] == "sucesso" for linha in linhas)
     print("Evidências locais:", pasta)
-    print("Matriz:", pasta / "matriz_B_v2.csv")
+    print("Matriz:", pasta / f"matriz_B_{versao}.csv")
     print("Revisão humana: PENDENTE; nenhuma resposta foi enviada a cidadãos.")
     return pasta, completo
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Executa Prompt B V2 com modelo real OpenRouter.")
+    p = argparse.ArgumentParser(description="Executa Prompt B V2 ou V3 com modelo real OpenRouter.")
     p.add_argument("--caso", action="append", choices=list(ARQUIVOS),
                    help="Executar só casos específicos (repetível); padrão: C01,C05,C06")
     p.add_argument("--modelo", help="Modelo OpenRouter opcional; padrão do config.yaml")
+    p.add_argument("--versao", choices=tuple(PROMPTS), default="v2",
+                   help="Versão isolada (padrão v2; use v3 para a versão corrigida)")
     p.add_argument("--checar", action="store_true",
                    help="Apenas verifica chave/entradas/prompt, sem chamada de API")
     a = p.parse_args()
     try:
-        _, sucesso = executar(a.caso, a.modelo, somente_checar=a.checar)
+        _, sucesso = executar(a.caso, a.modelo, somente_checar=a.checar, versao=a.versao)
     except (ValueError, RuntimeError, FileNotFoundError) as exc:
         print("Não foi possível executar:", str(exc))
         return 2

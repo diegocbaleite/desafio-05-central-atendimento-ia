@@ -372,14 +372,16 @@ def executar_caso(
         (pasta_caso / "conferencia_campos_criticos.json").write_text(
             json.dumps(conferencia, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+    pasta_minuta = ROOT / "resultados" / "minutas" / execucao / caso["id"]
+    pasta_minuta.mkdir(parents=True, exist_ok=True)
     provider = "mock" if mock else carregar()["llm"]["provider"]
     versao = 1
     revisor = justificativa = None
     while True:
         minuta, meta = redigir(ext_minuta, caso["arquivo"], provider=provider)
         sha_minuta = _sha256_texto(minuta)
-        _gravar_bytes(pasta_caso / "minuta_pendente.md", minuta)
-        _gravar_bytes(pasta_caso / f"minuta_v{versao}.md", minuta)
+        _gravar_bytes(pasta_minuta / "minuta_pendente.md", minuta)
+        _gravar_bytes(pasta_minuta / f"minuta_v{versao}.md", minuta)
         registrar(
             execucao,
             caso["id"],
@@ -438,13 +440,13 @@ def executar_caso(
 
     if not simulacao and decisao in ("aprovar", "corrigir"):
         if decisao == "corrigir":
-            (pasta_caso / "PENDENTE_CORRECAO.txt").write_text(
+            (pasta_minuta / "PENDENTE_CORRECAO.txt").write_text(
                 "Revisor deve corrigir a minuta e executar novamente.", encoding="utf-8"
             )
         else:
-            _gravar_bytes(pasta_caso / "minuta_aprovada.md", minuta)
+            _gravar_bytes(pasta_minuta / "minuta_aprovada.md", minuta)
             # Mesmo formato exigido por audio.gerar_voz.
-            (pasta_caso / "revisao.json").write_text(
+            (pasta_minuta / "revisao.json").write_text(
                 json.dumps(
                     {
                         "decisao": "aprovar",
@@ -468,14 +470,14 @@ def executar_caso(
             )
             aprovada_intacta = (
                 hashlib.sha256(
-                    (pasta_caso / "minuta_aprovada.md").read_bytes()
+                    (pasta_minuta / "minuta_aprovada.md").read_bytes()
                 ).hexdigest()
                 == sha_minuta
             )
             if not mock and aprovada_intacta:
                 try:
                     arquivo_audio = sintetizar(
-                        texto_aprovado, pasta_caso / "minuta_acessivel.mp3"
+                        texto_aprovado, pasta_minuta / "minuta_acessivel.mp3"
                     )
                     if arquivo_audio:
                         registrar(
@@ -504,7 +506,7 @@ def executar_caso(
                             else "Falha na síntese de áudio"
                         ),
                     )
-            (pasta_caso / "roteiro_acessivel.txt").write_text(
+            (pasta_minuta / "roteiro_acessivel.txt").write_text(
                 texto_aprovado, encoding="utf-8"
             )
     resumo = {
@@ -519,6 +521,7 @@ def executar_caso(
         "ausentes": ext_minuta["campos_ausentes"],
         "versao_minuta": versao,
         "sha256_minuta": sha_minuta,
+        "pasta_minutas": str(pasta_minuta),
         "conferencia_campos_criticos": conferencia,
         "avaliacao_gabarito": avaliacao,
     }

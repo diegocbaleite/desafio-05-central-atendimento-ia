@@ -6,6 +6,9 @@ __pycache__/
 *.pyc
 .pytest_cache/
 resultados/execucoes/
+resultados/minutas/
+resultados/logs/
+resultados/imagens/
 resultados/arquivos_fornecidos/
 Python
 Desafio_01-Pratico_IA_Generativa_Aulas_01_a_07.docx.pdf

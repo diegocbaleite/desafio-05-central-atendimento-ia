@@ -82,7 +82,7 @@ Cada execução cria uma pasta única em `resultados/multimodal/` com metadados 
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
-Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 87 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
+Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 88 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
 - [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.

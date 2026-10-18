@@ -21,7 +21,7 @@ A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
 ## Estado verificável
 | Componente | Status |
 |---|---|
-| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **87 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
+| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **88 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
 | T01/A01/I01: material fornecido (texto, áudio, PDF digitalizado) com gabaritos prévios | Incluídos em `dados/originais/` e `dados/gabaritos/`; conferência humana dos gabaritos pendente |
 | X01/X02: entradas sintéticas de injeção e de campos ausentes | Em `testes/fixtures/` (listadas em `casos.yaml`) |
 | A01: áudio e STT | STT local (faster-whisper) e Groq implementados em `src/audio.py`; o pipeline guarda a transcrição bruta e metadados no mesmo caso da execução; **WER/CER de referência derivada do próprio modelo não é avaliação independente** |
@@ -78,11 +78,11 @@ python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local
 python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider gemini
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider local
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
-python -m src.main voz resultados/execucoes/<id>/<caso>/minuta_aprovada.md --revisao resultados/execucoes/<id>/<caso>/revisao.json
+python -m src.main voz resultados/minutas/<id>/<caso>/minuta_aprovada.md --revisao resultados/minutas/<id>/<caso>/revisao.json
 python -m src.main arte --referencia dados/originais/brasao.png
 python -m src.main arte --provider cloudflare # FLUX.1 schnell; consome a cota diária gratuita do Workers AI
 ```
-O comando sem argumentos (`python -m src.main`) processa os casos de `dados/originais/casos.yaml` e, ao fim do ciclo, cria uma peça institucional em `resultados/imagens/arte_<data>_<id>/`, incorporando o `projeto.timbre` configurado (`dados/originais/brasao.png`) sem alterar o original. A pasta inclui proveniência com o hash do brasão e revisão visual pendente. O `--mock` força composição local identificada como programática; fora do mock é usado `multimodal.imagem_provider` de `config/config.yaml`. Os comandos `audio`, `ocr`, `voz` e `arte` gravam evidências em `resultados/multimodal/<tipo>_<data>_<id>/` (texto bruto, metadados, hash e revisão pendente). No pipeline principal, STT/OCR brutos e seus metadados também ficam em `resultados/execucoes/<id>/<caso>/`, vinculados à mesma execução. O código de saída é **diferente de zero quando algum caso ou a geração da peça falha** (útil em automação). Ao final, o resumo JSON informa o caminho da imagem e traz a **taxa de aprovação direta** com denominador explícito: só entram casos com decisão humana real; decisões simuladas (`--mock` ou `--decisoes`) ficam fora do cálculo.
+O comando sem argumentos (`python -m src.main`) usa o mesmo ID para separar as saídas: extrações e evidências de entrada em `resultados/execucoes/<id>/<caso>/`, minutas versionadas e revisões em `resultados/minutas/<id>/<caso>/`, auditoria JSONL em `resultados/logs/<id>/auditoria.jsonl` e a peça institucional em `resultados/imagens/arte_<data>_<id>/`. A imagem incorpora o `projeto.timbre` configurado (`dados/originais/brasao.png`) sem alterar o original e inclui proveniência com o hash do brasão e revisão visual pendente. O `--mock` força composição local identificada como programática; fora do mock é usado `multimodal.imagem_provider` de `config/config.yaml`. Os comandos isolados `audio`, `ocr`, `voz` e `arte` continuam gravando evidências em `resultados/multimodal/<tipo>_<data>_<id>/`. O código de saída é **diferente de zero quando algum caso ou a geração da peça falha**. Ao final, o resumo JSON informa os caminhos das minutas e da imagem e traz a taxa de aprovação direta; decisões simuladas ficam fora do cálculo.
 
 ### Extração antes da minuta
 Os campos são extraídos localmente por regras explícitas em `src/extracao.py`; o LLM **não** extrai nem corrige esses campos. Ele recebe apenas `assunto` e `pedido` para redigir o corpo, depois que a extração é validada e salva em `extracao.json`. No formulário I01, `CÓDIGO` é usado como protocolo, `NOME` como solicitante e `DATA MATRÍCULA` como data da solicitação; o extrator só preenche esses campos se o OCR conseguir ler os rótulos e valores, e a conferência humana no original continua obrigatória. Para texto sem rótulos, o extrator tenta identificar o assunto nos pedidos reconhecidos e reúne pedidos introduzidos por “solicito”, “peço” ou “quero pedir”. O protocolo falado aceita separadores adicionais entre dígitos e números decimais como `1.200` não encerram o pedido. Datas ditas por extenso em português são normalizadas, mas continuam sujeitas à conferência: uma data sem rótulo tem confiança média e datas de nascimento não são tratadas como data da solicitação. Antes de avaliar a minuta, confira o `extracao.json`; para exercitar o fluxo sem chamar APIs, use `python -m src.main --mock --caso T01`.
@@ -92,7 +92,7 @@ Sem `--decisoes`, A CLI pede, para cada minuta, a decisão (`aprovar`, `rejeitar
 
 ### Envio a provedores externos
 O modo `--mock` não chama APIs: para I01 ele lê `ocr_referencia`, registra `ocr_real: false` e não apresenta a referência como saída de um modelo. Fora dele, o envio de dados depende dos provedores selecionados no comando ou configurados em `config/config.yaml`; no padrão atual, o áudio segue ao Groq e as páginas renderizadas do PDF seguem ao Gemini para OCR do preenchimento manuscrito. Use `--provider local` no comando `ocr` ou configure `multimodal.ocr_provider: local` para manter a imagem no equipamento; nesse modo, a limitação do Tesseract para manuscritos permanece explícita. Na geração da minuta com LLM real, apenas `assunto` e `pedido` seguem ao provedor, com CPF, e-mail e telefone substituídos por marcadores. Use somente dados fictícios; não envie arquivos a serviços externos sem confirmar que não contêm dados pessoais reais.
-Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração inicial usa OpenRouter. Valide disponibilidade/compatibilidade e o nível de gratuidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
+Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração inicial usa OpenRouter. Valide disponibilidade/compatibilidade e o nível de gratuidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Saídas de execução em `resultados/{execucoes,minutas,logs,imagens}/` são ignoradas pelo git por privacidade.
 
 O cliente LLM registra temperatura, limite de tokens e timeout efetivos junto aos metadados da minuta. STT, TTS e geração de imagem não fazem retentativas automáticas; em caso de falha, confira o erro/quota antes de repetir manualmente a operação, pois uma nova chamada pode consumir limite do provedor.
 
@@ -125,7 +125,7 @@ testes/           testes automatizados; fixtures/ guarda entradas sintéticas de
 resultados/       saídas de execução (não versionar dados/segredos reais)
 documentacao/     arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA, matriz de requisitos
 ```
-Equivalência com a estrutura sugerida no enunciado: `config.json` → `config/config.yaml`; `llm_client.py` → `src/cliente.py`; `prompts.py` → `prompts/*.md` (carregados e com hash registrado); `audio.py`/`vision.py` → `src/audio.py` (STT e TTS) e `src/visao.py` (OCR); `image_generation.py` → `src/imagem.py`; `audit.py` → `src/auditoria.py`; `dados/processados/` e `resultados/{minutas,audios,imagens,logs}` → `resultados/execucoes/<id>/<caso>/` (extração, minutas versionadas, `revisao.json`, `auditoria.jsonl`) e `resultados/multimodal/` (STT, OCR, TTS, arte).
+Equivalência com a estrutura sugerida no enunciado: `config.json` → `config/config.yaml`; `llm_client.py` → `src/cliente.py`; `prompts.py` → `prompts/*.md`; `audio.py`/`vision.py` → `src/audio.py` e `src/visao.py`; `image_generation.py` → `src/imagem.py`; `audit.py` → `src/auditoria.py`. No fluxo padrão, extrações ficam em `resultados/execucoes/`, minutas em `resultados/minutas/`, logs em `resultados/logs/` e imagens em `resultados/imagens/`; comandos multimodais isolados usam `resultados/multimodal/`.
 
 # Segurança, custos e limitações
 - A entrada externa é dado **não confiável**. A detecção de injeção por expressões regulares não é completa.
@@ -152,7 +152,7 @@ Ao usar `--mock`, não há medição de desempenho de modelos generativos: a min
 python -m unittest discover -s testes -t .
 ```
 
-Em 18/10/2026, **87 testes unitários passaram** no Windows com Python 3.14.6. Eles cobrem regras, integrações simuladas e falhas controladas; não comprovam disponibilidade, custo ou qualidade de provedores externos.
+Em 18/10/2026, **88 testes unitários passaram** no Windows com Python 3.14.6. Eles cobrem regras, integrações simuladas e falhas controladas; não comprovam disponibilidade, custo ou qualidade de provedores externos.
 
 ## Validação manual opcional com serviços reais
 

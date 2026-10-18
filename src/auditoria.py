@@ -37,8 +37,8 @@ def gravar_json(caminho, valor):
 
 
 def registrar(execucao, caso, etapa, **campos):
-    pasta = ROOT / "resultados" / "execucoes" / execucao
-    pasta.mkdir(parents=True, exist_ok=True)
+    pasta_logs = ROOT / "resultados" / "logs" / execucao
+    pasta_logs.mkdir(parents=True, exist_ok=True)
     registro = {
         "id_execucao": execucao,
         "caso": caso,
@@ -46,6 +46,8 @@ def registrar(execucao, caso, etapa, **campos):
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         **campos,
     }
-    with (pasta / "auditoria.jsonl").open("a", encoding="utf-8") as f:
+    with (pasta_logs / "auditoria.jsonl").open("a", encoding="utf-8") as f:
         f.write(json.dumps(registro, ensure_ascii=False, default=str) + "\n")
-    return pasta
+    pasta_execucao = ROOT / "resultados" / "execucoes" / execucao
+    pasta_execucao.mkdir(parents=True, exist_ok=True)
+    return pasta_execucao

@@ -43,6 +43,7 @@ class _Ambiente:
         origem = main.ROOT / "src" / "schemas" / "extracao.schema.json"
         (schema / "extracao.schema.json").write_bytes(origem.read_bytes())
         self.pasta_execucao = self.raiz / "resultados" / "execucao"
+        self.pasta_minutas = self.raiz / "resultados" / "minutas" / "execucao"
         self.caso = {
             "id": "T99",
             "arquivo": "dados/originais/T99.txt",
@@ -95,7 +96,7 @@ class TestAprovacaoHumana(unittest.TestCase):
             ["aprovar", "Revisor Teste", "Conferido na fonte"],
             sintetizar,
         )
-        pasta_caso = self.amb.pasta_execucao / "T99"
+        pasta_caso = self.amb.pasta_minutas / "T99"
         aprovada = (pasta_caso / "minuta_aprovada.md").read_bytes()
         revisao = json.loads((pasta_caso / "revisao.json").read_text(encoding="utf-8"))
         self.assertEqual(resumo["estado_revisao"], "aprovada")
@@ -113,7 +114,7 @@ class TestAprovacaoHumana(unittest.TestCase):
                 lambda *a, **k: ("# MINUTA", {}), ["aprovar", "", "justificativa"]
             )
         self.assertFalse(
-            (self.amb.pasta_execucao / "T99" / "minuta_aprovada.md").exists()
+            (self.amb.pasta_minutas / "T99" / "minuta_aprovada.md").exists()
         )
 
     def test_rejeicao_nao_cria_minuta_aprovada_nem_audio(self):
@@ -125,7 +126,7 @@ class TestAprovacaoHumana(unittest.TestCase):
         )
         self.assertEqual(resumo["estado_revisao"], "rejeitada")
         self.assertFalse(
-            (self.amb.pasta_execucao / "T99" / "minuta_aprovada.md").exists()
+            (self.amb.pasta_minutas / "T99" / "minuta_aprovada.md").exists()
         )
         sintetizar.assert_not_called()
 
@@ -135,7 +136,7 @@ class TestAprovacaoHumana(unittest.TestCase):
             lambda *a, **k: next(versoes),
             ["nova", "R1", "Faltou lacuna", "aprovar", "R2", "Agora correta"],
         )
-        pasta_caso = self.amb.pasta_execucao / "T99"
+        pasta_caso = self.amb.pasta_minutas / "T99"
         revisao = json.loads((pasta_caso / "revisao.json").read_text(encoding="utf-8"))
         self.assertEqual(resumo["versao_minuta"], 2)
         self.assertTrue((pasta_caso / "minuta_v1.md").exists())

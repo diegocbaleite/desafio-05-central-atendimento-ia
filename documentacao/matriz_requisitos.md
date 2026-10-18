@@ -1,7 +1,7 @@
 # Matriz de requisitos RF01–RF13
 
 Estados usados (um não implica os demais): **P** planejado · **I** implementado · **S** testado com simulação (testes unitários/`--mock`) · **R** validado com serviço real · **H** validado por pessoa.
-As colunas R e H só citam evidência existente no repositório; o que consta apenas como relato da equipe está identificado. Última verificação automática: 87 testes unitários aprovados em 18/10/2026 (Windows, Python 3.14.6); decisões humanas sobre as minutas e validação em máquina limpa não foram realizadas.
+As colunas R e H só citam evidência existente no repositório; o que consta apenas como relato da equipe está identificado. Última verificação automática: 88 testes unitários aprovados em 18/10/2026 (Windows, Python 3.14.6); decisões humanas sobre as minutas e validação em máquina limpa não foram realizadas.
 
 | RF | Arquivos responsáveis | Testes | I | S | R | H | Pendência / ação concreta |
 |---|---|---|:-:|:-:|:-:|:-:|---|
@@ -15,7 +15,7 @@ As colunas R e H só citam evidência existente no repositório; o que consta ap
 | RF08 OCR/visão | `src/visao.py`, `src/main.py`, `src/avaliacao.py` | `test_audio_visao_imagem`, `test_fluxo_revisao` | sim | sim | parcial (Tesseract executado; Gemini retornou HTTP 503) | parcial (14 valores conferidos) | Pipeline preserva OCR bruto, modelo/configuração e duração por caso; a referência/revisão existente deriva da mesma transcrição e não sustenta CER independente; validação Gemini real pendente |
 | RF09 Minuta | `src/minuta.py` | `test_basico`, `test_fluxo_revisao.TestMinutaEPrompt` | sim | sim | relatado | não | Timbre citado, compatibilidade GOV.MT **não validada** oficialmente |
 | RF10 Imagem | `src/imagem.py`, `src/main.py` | `test_decisoes_simuladas`, `test_audio_visao_imagem`, `test_fluxo_revisao.TestCli` | sim | sim | **não** | não | O fluxo padrão cria ao final uma peça em `resultados/imagens/`, com proveniência e revisão pendente. A integração Cloudflare Workers AI (`@cf/black-forest-labs/flux-1-schnell`) segue testada apenas com simulação; nenhuma imagem real por IA foi gerada ainda |
-| RF11 Auditoria | `src/auditoria.py`, `src/main.py`, `src/cliente.py` | `test_fluxo_revisao`, `test_cliente_retry` | sim | sim | n/a | não | Agora registra parâmetros LLM efetivos e preserva STT/OCR brutos com metadados por execução; revisão humana e suas métricas independentes continuam pendentes |
+| RF11 Auditoria | `src/auditoria.py`, `src/main.py`, `src/cliente.py` | `test_basico`, `test_fluxo_revisao`, `test_cliente_retry` | sim | sim | n/a | não | `auditoria.jsonl` fica em `resultados/logs/<id>/`, ligado pelo mesmo ID às extrações, minutas e imagens; revisão humana e métricas independentes continuam pendentes |
 | RF12 LGPD | `src/seguranca.py` (`minimizar`, `validar_arquivo`), `documentacao/lgpd.md`, provedores remotos definidos por configuração | `test_basico`, `test_audio_visao_imagem`, `test_fluxo_revisao` | sim | sim | n/a | não | STT padrão Groq envia o áudio original e OCR padrão Gemini envia páginas inteiras; confirmar que os originais são fictícios e concluir retenção, autorização de voz e revisão dos logs |
 | RF13 Avaliação | `src/avaliacao.py`, `src/main.py`, `dados/gabaritos/`, `documentacao/protocolo_avaliacao.md` | `test_fluxo_revisao.TestAvaliacao`, `test_multimodal`, `test_fluxo_revisao.TestConferenciaDeCamposCriticos` | sim | sim | n/a | **não** | A conferência de STT/OCR agora permite correção individual antes da minuta, mas decisões humanas reais ainda não foram registradas; taxa de aprovação segue **não calculada** |
 

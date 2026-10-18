@@ -23,6 +23,7 @@ class TestDecisoesSimuladas(unittest.TestCase):
             origem_schema = main.ROOT / "src" / "schemas" / "extracao.schema.json"
             (schema / "extracao.schema.json").write_bytes(origem_schema.read_bytes())
             pasta_execucao = raiz / "resultados" / "execucao"
+            pasta_minutas = raiz / "resultados" / "minutas" / "execucao"
             eventos = []
 
             def registrar(*args, **kwargs):
@@ -55,7 +56,7 @@ class TestDecisoesSimuladas(unittest.TestCase):
                     decisao_simulada=True,
                 )
 
-            pasta_caso = pasta_execucao / "C01"
+            pasta_caso = pasta_minutas / "C01"
             self.assertFalse((pasta_caso / "minuta_aprovada.md").exists())
             self.assertTrue((pasta_caso / "minuta_pendente.md").exists())
             sintetizar.assert_not_called()
@@ -79,6 +80,7 @@ class TestDecisoesSimuladas(unittest.TestCase):
             origem_schema = main.ROOT / "src" / "schemas" / "extracao.schema.json"
             (schema / "extracao.schema.json").write_bytes(origem_schema.read_bytes())
             pasta_execucao = raiz / "resultados" / "execucao"
+            pasta_minutas = raiz / "resultados" / "minutas" / "execucao"
 
             def registrar(*args, **kwargs):
                 return pasta_execucao
@@ -109,7 +111,7 @@ class TestDecisoesSimuladas(unittest.TestCase):
                     decisao="aprovar",
                 )
 
-            pasta_caso = pasta_execucao / "C01"
+            pasta_caso = pasta_minutas / "C01"
             self.assertFalse((pasta_caso / "minuta_aprovada.md").exists())
             self.assertTrue(resultado["execucao_mock"])
             self.assertTrue(resultado["simulada"])

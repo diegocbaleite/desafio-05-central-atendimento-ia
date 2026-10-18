@@ -1,5 +1,10 @@
+import json
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
+from src import auditoria
 from src.config import carregar
 from src.extracao import extrair
 from src.minuta import redigir
@@ -45,6 +50,19 @@ class TestSeguranca(unittest.TestCase):
         self.assertIn("NÃO ENVIADA", minuta)
         self.assertIn("Registramos a solicitação sobre certidão.", minuta)
         self.assertEqual(meta["provider"], "mock")
+
+    def test_auditoria_separa_logs_dos_artefatos_da_execucao(self):
+        with tempfile.TemporaryDirectory() as temp:
+            raiz = Path(temp)
+            with patch("src.auditoria.ROOT", raiz):
+                pasta_execucao = auditoria.registrar("exec123", "T01", "entrada")
+            log = raiz / "resultados" / "logs" / "exec123" / "auditoria.jsonl"
+            self.assertEqual(
+                pasta_execucao, raiz / "resultados" / "execucoes" / "exec123"
+            )
+            registro = json.loads(log.read_text(encoding="utf-8"))
+            self.assertEqual(registro["id_execucao"], "exec123")
+            self.assertEqual(registro["caso"], "T01")
 
 
 if __name__ == "__main__":

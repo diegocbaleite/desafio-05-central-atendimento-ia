@@ -313,6 +313,57 @@ class TestControleHumano(unittest.TestCase):
             self.assertEqual(payload["voice"], "voz-remota")
             self.assertEqual(payload["instructions"], config["multimodal"]["tts_instrucoes"])
 
+    def test_tts_gemini_38_usa_esquema_nativo_e_salva_wav(self):
+        config = {
+            "multimodal": {
+                "tts_provider": "gemini",
+                "tts_modelo": "gemini-3.8-flash-lite-tts",
+                "tts_voz": "Kore",
+                "tts_instrucoes": "Tom institucional, claro e ritmo moderado.",
+            },
+            "provedores": {
+                "gemini": {
+                    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                    "base_url_nativa": "https://generativelanguage.googleapis.com/v1beta",
+                }
+            },
+        }
+        wav = b"RIFF" + (4).to_bytes(4, "little") + b"WAVE"
+        resposta = Mock(ok=True)
+        resposta.json.return_value = {
+            "steps": [{
+                "type": "model_output",
+                "content": [{"type": "audio", "data": base64.b64encode(wav).decode()}],
+            }]
+        }
+
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            patch("src.audio.carregar", return_value=config),
+            patch("src.audio.chave", return_value="token-ficticio"),
+            patch("src.audio.requests.post", return_value=resposta) as post,
+        ):
+            resultado = Path(audio.sintetizar(
+                "Texto aprovado", Path(temp) / "voz.wav", provider="gemini"
+            ))
+            self.assertEqual(resultado.suffix, ".wav")
+            self.assertEqual(resultado.read_bytes(), wav)
+
+        self.assertEqual(
+            post.call_args.args[0],
+            "https://generativelanguage.googleapis.com/v1beta/interactions",
+        )
+        self.assertEqual(post.call_args.kwargs["headers"]["x-goog-api-key"], "token-ficticio")
+        payload = post.call_args.kwargs["json"]
+        self.assertEqual(payload["model"], "gemini-3.8-flash-lite-tts")
+        self.assertEqual(payload["input"][0]["content"][0]["text"], "Texto aprovado")
+        self.assertEqual(
+            payload["input"][0]["content"][0]["annotations"][0]["style"],
+            config["multimodal"]["tts_instrucoes"],
+        )
+        self.assertEqual(payload["generation_config"]["speech_config"][0]["voice"], "Kore")
+        self.assertEqual(payload["response_format"]["mime_type"], "audio/wav")
+
     def test_tts_recusa_texto_longo_sem_gerar_audio(self):
         with tempfile.TemporaryDirectory() as temp, \
                 patch("src.audio.carregar", return_value={}):

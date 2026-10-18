@@ -580,11 +580,12 @@ def _comando_midia(a):
                 raise ValueError(
                     "O comando voz exige --revisao (JSON da aprovação humana)"
                 )
+            cfg = carregar()
             pasta = gerar_voz(
                 a.entrada,
                 a.revisao,
                 saida=ROOT / "resultados" / "audios",
-                provider=a.provider or "espeak",
+                provider=a.provider or cfg["multimodal"].get("tts_provider", "espeak"),
             )
         else:
             cfg = carregar()

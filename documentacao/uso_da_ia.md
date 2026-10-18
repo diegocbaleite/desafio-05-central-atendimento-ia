@@ -6,7 +6,7 @@
 - ChatGPT (OpenAI), assistente de programação/documentação — modelo disponibilizado na conversa: **GPT-6**.
 - Assistente de codificação integrado ao VS Code (Copilot SDK), usado em 17/10/2026 para auditoria, ajustes de código, testes e documentação — **versão/modelo não exposta ao assistente; preencher se a equipe souber**.
 - Modelo com evidência de chamadas reais no experimento A/B/C: OpenRouter / `nvidia/nemotron-3-super-120b-a12b:free`.
-- Multimodal: STT local com faster-whisper registrado; Groq / `whisper-large-v3-turbo` está configurado, sem nova execução real comprovada nesta revisão. Gemini / `gemini-3.8-flash` está configurado para OCR, mas a tentativa de 18/10/2026 falhou com HTTP 503. Cloudflare / `@cf/black-forest-labs/flux-1-schnell` foi testado apenas com simulação.
+- Multimodal: STT local com faster-whisper registrado; Groq / `whisper-large-v3-turbo` está configurado, sem nova execução real comprovada nesta revisão. Gemini / `gemini-3.8-flash` está configurado para OCR, mas a tentativa de 18/10/2026 falhou com HTTP 503. Gemini / `gemini-3.8-flash-lite-tts` está configurado para TTS nativo em WAV, com integração coberta por simulação e execução real ainda pendente. Cloudflare / `@cf/black-forest-labs/flux-1-schnell` foi testado apenas com simulação.
 - Resultados `mock` não são resultados de modelo generativo real.
 
 ## Solicitações relevantes feitas à IA
@@ -23,6 +23,7 @@
 11. Separar também os comandos isolados: STT/TTS em `resultados/audios/` e OCR em `resultados/ocr/`, preservando as evidências históricas existentes.
 12. Completar o RF07 com voz, ritmo e instruções de entonação configuráveis, hash do roteiro falado e documentação de benefícios e limitações de acessibilidade.
 13. Integrar `gerar_voz()` ao `python -m src.main`, acionando TTS somente depois de aprovação humana real e salvando evidências em `resultados/audios/`.
+14. Configurar o TTS para `gemini-3.8-flash-lite-tts` e preservar como WAV o áudio nativo retornado pela API Gemini.
 
 ## Sugestões e decisões
 | Sugestão | Registro | Justificativa |
@@ -45,7 +46,7 @@
 - [ ] Registrar outros defeitos encontrados e correções realizadas em execução real.
 - [ ] Conferir que nenhum arquivo de origem/gabarito foi alterado para coincidir artificialmente com saída.
 - [ ] Preencher ambiente de validação, métricas e responsáveis.
-- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 90 testes.
+- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 91 testes.
 - [x] 18/10/2026: fluxo padrão passou a criar a peça institucional ao final em `resultados/imagens/`; sucesso e falha cobertos por testes.
 
 ## Validação do código e do conteúdo gerado

@@ -22,6 +22,7 @@ provedores:
 
   gemini:
     base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    base_url_nativa: "https://generativelanguage.googleapis.com/v1beta"
     env_chave: "GEMINI_API_KEY"
 
   cloudflare:
@@ -38,9 +39,9 @@ multimodal:
   ocr_provider: "gemini"
   ocr_modelo: "gemini-3.8-flash"
 
-  tts_provider: "espeak"
-  tts_modelo: "gpt-4o-mini-tts"
-  tts_voz: "coral"
+  tts_provider: "gemini"
+  tts_modelo: "gemini-3.8-flash-lite-tts"
+  tts_voz: "Kore"
   tts_voz_local: "pt-br"
   tts_velocidade: 145
   tts_tom: 45

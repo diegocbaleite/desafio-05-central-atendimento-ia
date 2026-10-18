@@ -61,11 +61,11 @@ O registro só pode ser preenchido após uma revisão humana efetiva. Para calcu
 ```bash
 python -m src.main voz caminho/minuta_aprovada.md --revisao caminho/revisao_real.json
 ```
-A voz local é em português brasileiro via eSpeak (WAV), com velocidade, tom, volume e pausas configuráveis; provedores remotos recebem a voz e a instrução de entonação institucional definidas em `config/config.yaml`. Se houver “não localizado”, o sistema adiciona um aviso antes da leitura. `roteiro_falado.txt` e seu SHA-256 ficam preservados para a conferência, mas o critério de correspondência só é concluído depois de uma pessoa ouvir o áudio e compará-lo com a minuta aprovada.
+O padrão usa a API nativa Gemini com `gemini-3.8-flash-lite-tts`, voz `Kore` e instrução de entonação institucional definidas em `config/config.yaml`. O WAV retornado pela API é salvo diretamente como `voz.wav`, sem conversão ou troca artificial de extensão. eSpeak continua disponível como alternativa local configurável. Se houver “não localizado”, o sistema adiciona um aviso antes da leitura. `roteiro_falado.txt` e seu SHA-256 ficam preservados para a conferência, mas o critério de correspondência só é concluído depois de uma pessoa ouvir o áudio e compará-lo com a minuta aprovada.
 
 No fluxo principal (`python -m src.main`), uma decisão humana real `aprovar` cria os arquivos de aprovação e chama automaticamente o mesmo `gerar_voz()`, salvando o pacote em `resultados/audios/tts_<data>_<id>/`. O resumo do caso informa `pasta_audio`. O TTS não é chamado para mock, YAML de demonstração, rejeição ou correção ainda pendente.
 
-O áudio amplia o acesso para pessoas com baixa visão, dificuldade de leitura ou preferência por conteúdo falado. Limitações restantes: eSpeak possui voz robótica; nomes próprios, siglas e números podem ter pronúncia imperfeita; o recurso não substitui leitor de tela, Libras ou adaptação individual; indisponibilidade do motor/API e ausência de `ffprobe` podem impedir geração ou medição da duração.
+O áudio amplia o acesso para pessoas com baixa visão, dificuldade de leitura ou preferência por conteúdo falado. Limitações restantes: nomes próprios, siglas e números podem ter pronúncia imperfeita; o recurso não substitui leitor de tela, Libras ou adaptação individual; a API exige conexão, chave e cota disponíveis; e a ausência de `ffprobe` impede apenas a medição automática da duração.
 
 ### Peça visual
 ```bash
@@ -86,7 +86,7 @@ STT e TTS criam pastas únicas em `resultados/audios/`, OCR em `resultados/ocr/`
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
-Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais históricos estão em `resultados/multimodal/`, enquanto novas execuções usam `resultados/audios/`. A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 90 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
+Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais históricos estão em `resultados/multimodal/`, enquanto novas execuções usam `resultados/audios/`. As integrações Gemini TTS e Cloudflare imagem têm testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 91 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
 - [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.

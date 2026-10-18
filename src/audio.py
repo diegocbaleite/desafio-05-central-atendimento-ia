@@ -6,6 +6,8 @@ e a locução só é gerada para minuta aprovada por pessoa.
 
 from __future__ import annotations
 
+import base64
+import binascii
 import hashlib
 import json
 import re
@@ -50,6 +52,61 @@ def _whisper_local(caminho: Path, modelo: str) -> str:
     engine = WhisperModel(modelo, device="cpu", compute_type="int8")
     partes, _ = engine.transcribe(str(caminho), language="pt", vad_filter=True)
     return " ".join(p.text.strip() for p in partes).strip()
+
+
+def _sintetizar_gemini(texto: str, destino: Path, cfg, token: str, perfil, parametros) -> str:
+    """Usa o esquema nativo Gemini 3.8 TTS e preserva o WAV retornado."""
+    base_url = perfil.get("base_url_nativa") or perfil["base_url"]
+    base_url = base_url.rstrip("/")
+    if base_url.endswith("/openai"):
+        base_url = base_url[:-len("/openai")]
+    payload = {
+        "model": cfg["multimodal"]["tts_modelo"],
+        "input": [{
+            "type": "user_input",
+            "content": [{
+                "type": "text",
+                "text": texto,
+                "annotations": [{
+                    "type": "speech_metadata",
+                    "style": parametros["instrucoes"],
+                }],
+            }],
+        }],
+        "response_format": {"type": "audio", "mime_type": "audio/wav"},
+        "generation_config": {
+            "speech_config": [{"voice": parametros["voz_remota"]}],
+        },
+    }
+    try:
+        resposta = requests.post(
+            base_url + "/interactions",
+            headers={"x-goog-api-key": token, "Content-Type": "application/json"},
+            json=payload,
+            timeout=120,
+        )
+    except requests.RequestException as exc:
+        raise ErroAPI("Falha TTS Gemini: " + type(exc).__name__) from exc
+    if not resposta.ok:
+        raise ErroAPI("TTS Gemini indisponível HTTP " + str(resposta.status_code))
+    try:
+        dados = resposta.json()
+        audios = [
+            item["data"]
+            for etapa in dados["steps"]
+            if etapa.get("type") == "model_output"
+            for item in etapa.get("content", [])
+            if item.get("type") == "audio" and item.get("data")
+        ]
+        wav_bytes = base64.b64decode(audios[-1], validate=True)
+    except (ValueError, KeyError, IndexError, TypeError, binascii.Error) as exc:
+        raise ErroAPI("TTS Gemini retornou áudio inválido") from exc
+    if not (wav_bytes.startswith(b"RIFF") and wav_bytes[8:12] == b"WAVE"):
+        raise ErroAPI("TTS Gemini não retornou o WAV solicitado")
+
+    wav = destino.with_suffix(".wav")
+    wav.write_bytes(wav_bytes)
+    return str(wav)
 
 
 def transcrever(caminho, provider=None, *, modelo_local="small"):
@@ -134,6 +191,8 @@ def sintetizar(texto, destino, provider=None):
     perfil = cfg["provedores"].get(provider)
     if not perfil:
         raise ErroAPI("Provedor TTS não cadastrado")
+    if provider == "gemini":
+        return _sintetizar_gemini(texto, destino, cfg, token, perfil, parametros)
     try:
         r = requests.post(
             perfil["base_url"].rstrip("/") + "/audio/speech",
@@ -221,7 +280,7 @@ def gerar_voz(minuta, revisao, *, saida=None, provider="espeak",
              "que exigem verificação humana. " if "não localizado" in texto.casefold() else "")
     locucao = aviso + re.sub(r"[#*_`]+", " ", texto)
     (pasta / "roteiro_falado.txt").write_text(locucao, encoding="utf-8")
-    destino = pasta / ("voz.mp3" if provider != "espeak" else "voz.wav")
+    destino = pasta / ("voz.wav" if provider in {"espeak", "gemini"} else "voz.mp3")
     if sintetizador_teste:
         arquivo_audio = sintetizador_teste(locucao, destino)
         origem_audio = "mock"
@@ -230,9 +289,13 @@ def gerar_voz(minuta, revisao, *, saida=None, provider="espeak",
         origem_audio = "local" if provider == "espeak" else "API"
     if not arquivo_audio or not Path(arquivo_audio).exists():
         raise RuntimeError("Síntese de voz não gerou arquivo verificável")
-    parametros = _parametros_tts(carregar())
+    cfg = carregar()
+    parametros = _parametros_tts(cfg)
     gravar_json(pasta / "resultado.json", {
-        "tipo": "TTS", "modelo_ou_motor": provider, "execucao": origem_audio,
+        "tipo": "TTS", "provedor": provider,
+        "modelo_ou_motor": (provider if provider == "espeak"
+                            else cfg["multimodal"].get("tts_modelo", "não localizado")),
+        "execucao": origem_audio,
         "minuta_sha256": sha256_arquivo(origem), "aviso_ausencias_incluido": bool(aviso),
         "aviso_ausencias_texto": aviso.strip() or None,
         "roteiro_falado_sha256": hashlib.sha256(locucao.encode("utf-8")).hexdigest(),

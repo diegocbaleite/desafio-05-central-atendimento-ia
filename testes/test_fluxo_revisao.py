@@ -62,7 +62,10 @@ class _Ambiente:
             patch("src.main.preparar_entrada", return_value="texto fictício"),
             patch("src.main.extrair", return_value=EXT),
             patch("src.main.redigir", redigir_mock),
-            patch("src.main.sintetizar", sintetizar_mock or (lambda *a, **k: None)),
+            patch(
+                "src.main.gerar_voz",
+                sintetizar_mock or (lambda *a, **k: Path("resultados/audios/tts_teste")),
+            ),
             patch("jsonschema.validate"),
         )
 
@@ -90,7 +93,7 @@ class TestAprovacaoHumana(unittest.TestCase):
         self.addCleanup(self.amb.limpar)
 
     def test_aprovacao_registra_responsavel_justificativa_e_hash(self):
-        sintetizar = Mock(return_value="audio.mp3")
+        sintetizar = Mock(return_value=Path("resultados/audios/tts_teste"))
         resumo = self.amb.executar(
             lambda *a, **k: ("# MINUTA — NÃO ENVIADA\ncorpo", {}),
             ["aprovar", "Revisor Teste", "Conferido na fonte"],
@@ -105,6 +108,13 @@ class TestAprovacaoHumana(unittest.TestCase):
         self.assertFalse(revisao["simulada"])
         self.assertEqual(revisao["sha256_minuta"], hashlib.sha256(aprovada).hexdigest())
         sintetizar.assert_called_once()
+        self.assertEqual(
+            sintetizar.call_args.kwargs["saida"],
+            self.amb.raiz / "resultados" / "audios",
+        )
+        self.assertEqual(
+            resumo["pasta_audio"], str(Path("resultados/audios/tts_teste"))
+        )
         evento = next(k for a, k in self.amb.eventos if a[2] == "revisao_humana")
         self.assertEqual(evento["revisor"], "Revisor Teste")
 
@@ -118,7 +128,7 @@ class TestAprovacaoHumana(unittest.TestCase):
         )
 
     def test_rejeicao_nao_cria_minuta_aprovada_nem_audio(self):
-        sintetizar = Mock(return_value="audio.mp3")
+        sintetizar = Mock(return_value=Path("resultados/audios/tts_teste"))
         resumo = self.amb.executar(
             lambda *a, **k: ("# MINUTA", {}),
             ["rejeitar", "Revisor Teste", "Contém dado inventado"],

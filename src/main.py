@@ -16,7 +16,7 @@ from typing import Literal, TypedDict
 
 import jsonschema
 
-from .audio import avaliar_audio, gerar_voz, sintetizar, transcrever
+from .audio import avaliar_audio, gerar_voz, transcrever
 from .auditoria import nova_execucao, registrar
 from .avaliacao import avaliar_campos, taxa_aprovacao
 from .cliente import ErroAPI
@@ -438,6 +438,7 @@ def executar_caso(
     else:
         estado = "rejeitada"
 
+    pasta_audio = None
     if not simulacao and decisao in ("aprovar", "corrigir"):
         if decisao == "corrigir":
             (pasta_minuta / "PENDENTE_CORRECAO.txt").write_text(
@@ -463,52 +464,40 @@ def executar_caso(
                 ),
                 encoding="utf-8",
             )
-            # Áudio somente após revisão/aprovação; nunca enviar a terceiros.
-            texto_aprovado = minuta.replace(
-                "# MINUTA — NÃO ENVIADA",
-                "Minuta aprovada para demonstração, não enviada",
-            )
-            aprovada_intacta = (
-                hashlib.sha256(
-                    (pasta_minuta / "minuta_aprovada.md").read_bytes()
-                ).hexdigest()
-                == sha_minuta
-            )
-            if not mock and aprovada_intacta:
-                try:
-                    arquivo_audio = sintetizar(
-                        texto_aprovado, pasta_minuta / "minuta_acessivel.mp3"
-                    )
-                    if arquivo_audio:
-                        registrar(
-                            execucao,
-                            caso["id"],
-                            "tts",
-                            arquivo=arquivo_audio,
-                            status="sucesso",
-                        )
-                    else:
-                        registrar(
-                            execucao,
-                            caso["id"],
-                            "tts_nao_gerado",
-                            status="mock",
-                        )
-                except (ErroAPI, OSError, subprocess.CalledProcessError) as exc:
-                    registrar(
-                        execucao,
-                        caso["id"],
-                        "tts_falha",
-                        erro=type(exc).__name__,
-                        detalhe=(
-                            _mensagem_erro(exc)
-                            if isinstance(exc, ErroAPI)
-                            else "Falha na síntese de áudio"
-                        ),
-                    )
-            (pasta_minuta / "roteiro_acessivel.txt").write_text(
-                texto_aprovado, encoding="utf-8"
-            )
+            # Áudio somente após revisão/aprovação; nunca envia a minuta ao cidadão.
+            try:
+                cfg_tts = carregar()["multimodal"]
+                pasta_audio = gerar_voz(
+                    pasta_minuta / "minuta_aprovada.md",
+                    pasta_minuta / "revisao.json",
+                    saida=ROOT / "resultados" / "audios",
+                    provider=cfg_tts.get("tts_provider", "espeak"),
+                )
+                registrar(
+                    execucao,
+                    caso["id"],
+                    "tts",
+                    pasta=str(pasta_audio),
+                    status="sucesso",
+                )
+            except (
+                ErroAPI,
+                PermissionError,
+                RuntimeError,
+                OSError,
+                subprocess.CalledProcessError,
+            ) as exc:
+                registrar(
+                    execucao,
+                    caso["id"],
+                    "tts_falha",
+                    erro=type(exc).__name__,
+                    detalhe=(
+                        _mensagem_erro(exc)
+                        if isinstance(exc, ErroAPI)
+                        else "Falha na síntese de áudio"
+                    ),
+                )
     resumo = {
         "caso": caso["id"],
         "decisao": decisao,
@@ -522,6 +511,7 @@ def executar_caso(
         "versao_minuta": versao,
         "sha256_minuta": sha_minuta,
         "pasta_minutas": str(pasta_minuta),
+        "pasta_audio": str(pasta_audio) if pasta_audio else "não localizado",
         "conferencia_campos_criticos": conferencia,
         "avaliacao_gabarito": avaliacao,
     }

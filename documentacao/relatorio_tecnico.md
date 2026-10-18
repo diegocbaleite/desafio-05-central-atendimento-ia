@@ -1,7 +1,7 @@
 # Relatório técnico — resultados parciais, histórico e evidências (atualizado em 18/10/2026)
 
 **Equipe:** Diego, Ayron e Guilherme. **Desafio:** FIC_DEV IA Generativa, Prático 1/2026.  
-**Situação:** execução real histórica do LLM concluída para C01, C05 e C06; 89 testes unitários passaram. STT, TTS e Tesseract possuem evidências locais, mas referências independentes e decisões humanas sobre minutas continuam pendentes. Gemini OCR falhou com HTTP 503 e Cloudflare imagem permanece somente simulado.
+**Situação:** execução real histórica do LLM concluída para C01, C05 e C06; 90 testes unitários passaram. STT, TTS e Tesseract possuem evidências locais, mas referências independentes e decisões humanas sobre minutas continuam pendentes. Gemini OCR falhou com HTTP 503 e Cloudflare imagem permanece somente simulado.
 
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**

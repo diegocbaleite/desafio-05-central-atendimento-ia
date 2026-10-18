@@ -42,7 +42,7 @@ class TestDecisoesSimuladas(unittest.TestCase):
                 patch("src.main.preparar_entrada", return_value="texto fictício"),
                 patch("src.main.extrair", return_value=ext),
                 patch("src.main.redigir", return_value=("# MINUTA", {})),
-                patch("src.main.sintetizar") as sintetizar,
+                patch("src.main.gerar_voz") as sintetizar,
                 patch("jsonschema.validate"),
             ):
                 resultado = main.executar_caso(
@@ -97,7 +97,7 @@ class TestDecisoesSimuladas(unittest.TestCase):
                 patch("src.main.preparar_entrada", return_value="texto fictício"),
                 patch("src.main.extrair", return_value=ext),
                 patch("src.main.redigir", return_value=("# MINUTA SIMULADA", {})),
-                patch("src.main.sintetizar") as sintetizar,
+                patch("src.main.gerar_voz") as sintetizar,
                 patch("jsonschema.validate"),
             ):
                 resultado = main.executar_caso(

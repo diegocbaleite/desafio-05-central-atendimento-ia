@@ -22,6 +22,7 @@
 10. Fazer o comando isolado `arte` salvar imagens locais ou Cloudflare em `resultados/imagens/`, em vez de `resultados/multimodal/`.
 11. Separar também os comandos isolados: STT/TTS em `resultados/audios/` e OCR em `resultados/ocr/`, preservando as evidências históricas existentes.
 12. Completar o RF07 com voz, ritmo e instruções de entonação configuráveis, hash do roteiro falado e documentação de benefícios e limitações de acessibilidade.
+13. Integrar `gerar_voz()` ao `python -m src.main`, acionando TTS somente depois de aprovação humana real e salvando evidências em `resultados/audios/`.
 
 ## Sugestões e decisões
 | Sugestão | Registro | Justificativa |
@@ -44,7 +45,7 @@
 - [ ] Registrar outros defeitos encontrados e correções realizadas em execução real.
 - [ ] Conferir que nenhum arquivo de origem/gabarito foi alterado para coincidir artificialmente com saída.
 - [ ] Preencher ambiente de validação, métricas e responsáveis.
-- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 89 testes.
+- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 90 testes.
 - [x] 18/10/2026: fluxo padrão passou a criar a peça institucional ao final em `resultados/imagens/`; sucesso e falha cobertos por testes.
 
 ## Validação do código e do conteúdo gerado

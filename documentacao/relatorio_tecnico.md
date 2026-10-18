@@ -28,20 +28,34 @@ A frente de Engenharia de Prompts executou uma rodada **real** posterior, distin
 
 **Fontes da avaliação:** [registro completo B V4](registro_revisao_b_v4_diego.md), [revisão Parte 1 e matriz histórica ainda pendente](revisao_humana_parte1_diego.md), [modelo CSV de homologação histórica pendente](avaliacao_rf13_nove_casos_pendente.csv), [minutas para demonstração](minutas_demonstracao_b_v4.md) e [comparativo B V2/V3/V4](analise_real_b_v3_e_teste_b_v4.md).
 
-### Andamento da revisão humana da matriz A/B/C original — 18/10/2026
+### Consolidação da revisão humana da matriz A/B/C original — 18/10/2026
 
-**Confirmadas 8 de 9 respostas históricas** pelo responsável:
+**Todas as nove respostas históricas receberam cinco notas e decisão humana, confirmadas individualmente pelo responsável.** A matriz original de saídas reais foi preservada, sem alterações. O registro separado de avaliação está em [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv), com as notas da IA separadas das notas humanas.
 
-- **C01/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar**, por prazo, gratuidade e procedimentos inventados.
-- **C01/B:** F1 C1 Fo1 L2 S1 = **6/10**, **corrigir**, por alegação de registro não comprovado, destinatário incorreto e lacunas omitidas.
-- **C01/C:** F0 C1 Fo0 L1 S0 = **2/10**, **rejeitar**, por ata indevida, deferimento e prazo inventados.
-- **C05/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar**, por registro e análise fictícios da reclamação, prazo e canais institucionais inventados.
-- **C05/B:** F1 C2 Fo2 L2 S1 = **8/10**, **corrigir**, por afirmar análise administrativa da reclamação não comprovada.
-- **C05/C:** F0 C1 Fo0 L1 S1 = **3/10**, **rejeitar**, por gerar ata indevida e inventar abertura de procedimento e encaminhamento à ouvidoria.
-- **C06/A:** F0 C1 Fo2 L2 S1 = **6/10**, **corrigir profundamente**, por presumir obrigatoriedade do protocolo e inventar procedimentos de recuperação e canais institucionais sem fonte.
-- **C06/B:** F1 C1 Fo2 L2 S1 = **7/10**, **corrigir**, por presumir obrigatoriedade do protocolo e omitir outras lacunas relevantes.
+| Caso | Fidelidade | Completude | Formato | Linguagem | Segurança | Total | Decisão humana |
+|---|---:|---:|---:|---:|---:|---:|---|
+| C01/A | 0 | 1 | 1 | 1 | 0 | **3/10** | Rejeitar |
+| C01/B | 1 | 1 | 1 | 2 | 1 | **6/10** | Corrigir |
+| C01/C | 0 | 1 | 0 | 1 | 0 | **2/10** | Rejeitar |
+| C05/A | 0 | 1 | 1 | 1 | 0 | **3/10** | Rejeitar |
+| C05/B | 1 | 2 | 2 | 2 | 1 | **8/10** | Corrigir |
+| C05/C | 0 | 1 | 0 | 1 | 1 | **3/10** | Rejeitar |
+| C06/A | 0 | 1 | 2 | 2 | 1 | **6/10** | Corrigir profundamente |
+| C06/B | 1 | 1 | 2 | 2 | 1 | **7/10** | Corrigir |
+| C06/C | 0 | 1 | 0 | 1 | 0 | **2/10** | Rejeitar |
 
-**Apenas C06/C permanece pendente de avaliação humana.** As saídas originais do OpenRouter não foram alteradas. A [planilha RF13 histórica](avaliacao_rf13_nove_casos_pendente.csv) preserva separadas as notas sugeridas da IA e as notas humanas confirmadas. A homologação final RF13 segue pendente.
+**Resumo estatístico estritamente das nove saídas históricas:**
+- **Total de pontos humanos:** 40/90. **Média:** 4,44/10.
+- **Média por prompt (três casos em cada):** A = 4,00/10; B = 7,00/10; C = 2,33/10. **B teve maior média histórica neste pequeno conjunto**, mas não foi diretamente aprovado em nenhuma de suas três saídas.
+- **Decisões:** 5 × rejeitar; 3 × corrigir; 1 × corrigir profundamente; **0 × aprovar sem correção**.
+- **Aprovação direta histórica:** 0/9 = **0%**. **Aprovação após correção:** **não determinada**, pois não há confirmação de correções dessas saídas históricas seguidas de nova avaliação e aprovação.
+- **Tempo humano de edição e tom 1–5:** não medidos; não inventar métricas.
+
+**C06/C:** última decisão humana registrada, **2/10; rejeitar**, porque a resposta real produziu ata indevida e inventou decisões, procedimentos, canais e prazo de dois dias úteis.
+
+**Escopo:** trata-se de avaliação humana documental das saídas históricas A/B/C, **não homologação institucional**, aprovação de minutas para envio ou avaliação de segurança fora desses casos. A rodada independente **Prompt B V4** obteve **29/30 (9,67/10)** e adequação **para demonstração**, com edição editorial C01 ainda sujeita a conferência. As duas rodadas não devem ser confundidas.
+
+**Pendente:** conferência final da cópia editorial C01, privacidade e eventual publicação autorizada de evidências, homologação institucional, revisão do PR e integração cuidadosa com a main. **Nenhuma resposta foi enviada automaticamente e nenhuma evidência original foi sobrescrita.**
 
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**

@@ -1,5 +1,7 @@
 # Encerramento da Parte 1 — revisão humana pendente
 
+> **DOCUMENTO HISTÓRICO.** Refere-se ao catálogo substituído (`C01`–`C06`) e não comprova resultados dos casos vigentes.
+
 **Responsável:** Diego (Estudante 1). **Avaliadores:** equipe Diego, Ayron e Guilherme.  
 **PR:** https://github.com/diegocbaleite/desafio-05-central-atendimento-ia/pull/1
 

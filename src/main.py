@@ -102,13 +102,84 @@ def preparar_entrada(path, modo, mock=False, referencia=None):
     raise ValueError("Modalidade inválida")
 
 
-def carregar_casos():
+def _caminho_relativo_seguro(valor, campo, caso_id):
+    if not isinstance(valor, str) or not valor.strip():
+        raise ValueError(f"Caso {caso_id}: campo {campo} ausente ou inválido")
+    relativo = Path(valor)
+    if relativo.is_absolute() or ".." in relativo.parts:
+        raise ValueError(f"Caso {caso_id}: caminho inseguro em {campo}")
+    resolvido = (ROOT / relativo).resolve()
+    try:
+        resolvido.relative_to(ROOT.resolve())
+    except ValueError as exc:
+        raise ValueError(f"Caso {caso_id}: caminho fora do projeto em {campo}") from exc
+    return resolvido
+
+
+def carregar_casos(ids=None, exigir_referencias=False):
+    """Carrega e valida o catálogo; referências de mock podem ser exigidas pela CLI."""
     import yaml
 
     caminho = ROOT / carregar().get("projeto", {}).get(
         "casos", "dados/originais/casos.yaml"
     )
-    return yaml.safe_load(caminho.read_text(encoding="utf-8"))["casos"]
+    try:
+        conteudo = yaml.safe_load(caminho.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ValueError("Catálogo YAML inválido") from exc
+    if not isinstance(conteudo, dict) or not isinstance(conteudo.get("casos"), list):
+        raise ValueError("Catálogo inválido: 'casos' deve ser uma lista")
+    casos = conteudo["casos"]
+    solicitados = set(ids or [])
+    vistos = set()
+    for caso in casos:
+        if not isinstance(caso, dict):
+            raise ValueError("Catálogo inválido: cada caso deve ser um objeto")
+        caso_id = caso.get("id")
+        if not isinstance(caso_id, str) or not caso_id.strip():
+            raise ValueError("Catálogo inválido: caso sem ID")
+        if caso_id in vistos:
+            raise ValueError("Catálogo inválido: ID duplicado " + caso_id)
+        vistos.add(caso_id)
+        if caso.get("modalidade") not in {"texto", "audio", "imagem"}:
+            raise ValueError(f"Caso {caso_id}: modalidade inválida")
+        entrada = _caminho_relativo_seguro(caso.get("arquivo"), "arquivo", caso_id)
+        if not entrada.is_file():
+            raise ValueError(
+                f"Caso {caso_id}: arquivo de entrada ausente: {caso.get('arquivo')}"
+            )
+        if caso.get("modalidade") in {"audio", "imagem"}:
+            campo = (
+                "transcricao_referencia"
+                if caso["modalidade"] == "audio"
+                else "ocr_referencia"
+            )
+            valor_referencia = caso.get(campo)
+            selecionado = not solicitados or caso_id in solicitados
+            if valor_referencia:
+                referencia = _caminho_relativo_seguro(
+                    valor_referencia, campo, caso_id
+                )
+            elif exigir_referencias and selecionado:
+                raise ValueError(f"Caso {caso_id}: campo {campo} ausente ou inválido")
+            else:
+                referencia = None
+            if (
+                exigir_referencias
+                and selecionado
+                and referencia is not None
+                and not referencia.is_file()
+            ):
+                raise ValueError(
+                    f"Caso {caso_id}: referência de mock ausente: {caso.get(campo)}"
+                )
+    desconhecidos = solicitados - vistos
+    if desconhecidos:
+        raise ValueError(
+            "Caso(s) não encontrado(s) no catálogo: "
+            + ", ".join(sorted(desconhecidos))
+        )
+    return [caso for caso in casos if not solicitados or caso["id"] in solicitados]
 
 
 def _gravar_bytes(caminho, texto):
@@ -439,12 +510,16 @@ def executar_caso(
         estado = "rejeitada"
 
     pasta_audio = None
+    status_tts = "nao_aplicavel"
+    erro_tts = None
     if not simulacao and decisao in ("aprovar", "corrigir"):
         if decisao == "corrigir":
+            status_tts = "aguarda_correcao"
             (pasta_minuta / "PENDENTE_CORRECAO.txt").write_text(
                 "Revisor deve corrigir a minuta e executar novamente.", encoding="utf-8"
             )
         else:
+            status_tts = "pendente"
             _gravar_bytes(pasta_minuta / "minuta_aprovada.md", minuta)
             # Mesmo formato exigido por audio.gerar_voz.
             (pasta_minuta / "revisao.json").write_text(
@@ -480,6 +555,7 @@ def executar_caso(
                     pasta=str(pasta_audio),
                     status="sucesso",
                 )
+                status_tts = "sucesso"
             except (
                 ErroAPI,
                 PermissionError,
@@ -487,6 +563,8 @@ def executar_caso(
                 OSError,
                 subprocess.CalledProcessError,
             ) as exc:
+                status_tts = "falha"
+                erro_tts = _mensagem_erro(exc)
                 registrar(
                     execucao,
                     caso["id"],
@@ -512,6 +590,8 @@ def executar_caso(
         "sha256_minuta": sha_minuta,
         "pasta_minutas": str(pasta_minuta),
         "pasta_audio": str(pasta_audio) if pasta_audio else "não localizado",
+        "status_tts": status_tts,
+        "erro_tts": erro_tts,
         "conferencia_campos_criticos": conferencia,
         "avaliacao_gabarito": avaliacao,
     }
@@ -666,31 +746,71 @@ def main():
     if a.comando == "experimento":
         from .experimento import executar
 
-        executar(mock=a.mock, metaprompt_v2=a.metaprompt_v2)
-        return 0
+        resultado = executar(mock=a.mock, metaprompt_v2=a.metaprompt_v2)
+        return 0 if resultado["sucesso_total"] else 1
     import yaml
 
     decisoes = {}
     if a.decisoes:
-        decisoes = yaml.safe_load(Path(a.decisoes).read_text(encoding="utf-8")) or {}
+        try:
+            decisoes = (
+                yaml.safe_load(Path(a.decisoes).read_text(encoding="utf-8")) or {}
+            )
+        except (OSError, yaml.YAMLError) as exc:
+            print(f"Falha nas decisões: {_mensagem_erro(exc)}")
+            return 2
+        if not isinstance(decisoes, dict):
+            print("Falha nas decisões: o YAML deve ser um objeto caso: decisão")
+            return 2
+        invalidas = {
+            caso_id: decisao
+            for caso_id, decisao in decisoes.items()
+            if not isinstance(caso_id, str) or decisao not in DECISOES
+        }
+        if invalidas:
+            print(
+                "Falha nas decisões: IDs devem ser texto e decisões devem ser "
+                + ", ".join(DECISOES)
+            )
+            return 2
         print("ATENÇÃO: decisões carregadas de arquivo, apenas para demonstração.")
     execucao = nova_execucao()
     resumo = []
     falhas = []
-    for caso in carregar_casos():
-        if a.caso and caso["id"] not in a.caso:
-            continue
+    try:
+        casos = carregar_casos(a.caso, exigir_referencias=a.mock)
+    except (ValueError, OSError) as exc:
+        print(f"Falha no catálogo: {_mensagem_erro(exc)}")
+        return 2
+    ids_catalogo = {
+        caso["id"] for caso in (carregar_casos() if decisoes else casos)
+    }
+    desconhecidos_decisoes = set(decisoes) - ids_catalogo
+    if desconhecidos_decisoes:
+        print(
+            "Falha nas decisões: caso(s) fora do catálogo: "
+            + ", ".join(sorted(desconhecidos_decisoes))
+        )
+        return 2
+    for caso in casos:
         simulada = caso["id"] in decisoes and decisoes[caso["id"]] is not None
         try:
-            resumo.append(
-                executar_caso(
+            resultado_caso = executar_caso(
                     caso,
                     execucao,
                     a.mock,
                     decisoes.get(caso["id"]),
                     decisao_simulada=simulada,
                 )
-            )
+            resumo.append(resultado_caso)
+            if resultado_caso.get("status_tts") == "falha":
+                falhas.append(
+                    {
+                        "caso": caso["id"],
+                        "erro": "FalhaTTS",
+                        "detalhe": resultado_caso.get("erro_tts") or "Falha na síntese",
+                    }
+                )
         except (
             ErroAPI,
             ValueError,

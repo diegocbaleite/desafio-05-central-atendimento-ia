@@ -1,5 +1,7 @@
 # Parte 1 — três minutas corrigidas para a rodada histórica A/B/C
 
+> **DOCUMENTO HISTÓRICO.** Refere-se ao catálogo substituído (`C01`–`C06`) e não comprova resultados dos casos vigentes.
+
 **Data do preparo técnico:** 18/10/2026  
 **Responsabilidade:** material de apoio ao Estudante 1 (Diego); produzido com auxílio de IA.  
 **Status:** RASCUNHO TÉCNICO; **não é saída real de modelo, nem validação humana, nem resposta enviada**.

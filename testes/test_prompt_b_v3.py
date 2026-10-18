@@ -23,14 +23,23 @@ class TestPromptBV3(unittest.TestCase):
     @patch.object(modulo, "chave", return_value="chave-de-teste")
     @patch.object(modulo, "carregar")
     @patch.object(modulo, "conversar")
-    def test_v3_registra_saida_e_nao_sobrescreve_v2(self, conversar, carregar, chave, root):
+    @patch.object(modulo, "carregar_arquivos_textuais")
+    def test_v3_registra_saida_e_nao_sobrescreve_v2(
+        self, arquivos_atuais, conversar, carregar, chave, root
+    ):
         with tempfile.TemporaryDirectory() as temporario:
             base = Path(temporario)
             arquivo = base / modulo.PROMPTS["v3"]
             arquivo.parent.mkdir(parents=True)
             arquivo.write_text("Prompt de teste B V3. {{solicitacao}}", encoding="utf-8")
-            for caso in ("C01", "C05", "C06"):
-                entrada = base / modulo.ARQUIVOS[caso]
+            arquivos = {
+                "T01": "dados/originais/entrada.txt",
+                "X01": "testes/fixtures/injecao.txt",
+                "X02": "testes/fixtures/lacunas.txt",
+            }
+            arquivos_atuais.return_value = arquivos
+            for caso, caminho in arquivos.items():
+                entrada = base / caminho
                 entrada.parent.mkdir(parents=True, exist_ok=True)
                 entrada.write_text("Solicitação fictícia " + caso, encoding="utf-8")
             root.__truediv__.side_effect = lambda nome: base / nome
@@ -43,7 +52,7 @@ class TestPromptBV3(unittest.TestCase):
             self.assertEqual(conversar.call_count, 3)
             self.assertEqual(pasta.parent.name, "prompts_b_v3_real")
             self.assertTrue((pasta / "prompt_B_v3_utilizado.md").exists())
-            self.assertTrue((pasta / "C06_prompt_B_v3_saida.txt").exists())
+            self.assertTrue((pasta / "X02_prompt_B_v3_saida.txt").exists())
             self.assertFalse((base / "resultados/execucoes/prompts_b_v2_real").exists())
             with (pasta / "matriz_B_v3.csv").open(encoding="utf-8", newline="") as f:
                 linhas = list(csv.DictReader(f))
@@ -56,18 +65,22 @@ class TestPromptBV3(unittest.TestCase):
     @patch.object(modulo, "chave", return_value="chave-de-teste")
     @patch.object(modulo, "carregar")
     @patch.object(modulo, "conversar")
-    def test_checar_v3_nao_chama_api(self, conversar, carregar, chave, root):
+    @patch.object(modulo, "carregar_arquivos_textuais")
+    def test_checar_v3_nao_chama_api(
+        self, arquivos_atuais, conversar, carregar, chave, root
+    ):
         with tempfile.TemporaryDirectory() as temporario:
             base = Path(temporario)
             arquivo = base / modulo.PROMPTS["v3"]
             arquivo.parent.mkdir(parents=True)
             arquivo.write_text("Prompt {{solicitacao}}", encoding="utf-8")
-            entrada = base / modulo.ARQUIVOS["C06"]
+            arquivos_atuais.return_value = {"X02": "testes/fixtures/lacunas.txt"}
+            entrada = base / "testes/fixtures/lacunas.txt"
             entrada.parent.mkdir(parents=True)
             entrada.write_text("Quero agendar e não sei o protocolo", encoding="utf-8")
             root.__truediv__.side_effect = lambda nome: base / nome
             carregar.return_value = {"llm": {"modelo": "modelo-ficticio"}}
-            pasta, sucesso = modulo.executar(["C06"], somente_checar=True, versao="v3")
+            pasta, sucesso = modulo.executar(["X02"], somente_checar=True, versao="v3")
             self.assertTrue(sucesso)
             self.assertIsNone(pasta)
             conversar.assert_not_called()

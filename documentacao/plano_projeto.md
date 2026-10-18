@@ -1,4 +1,6 @@
 # Plano técnico do protótipo — FIC_DEV 2026
+
+> **PLANO HISTÓRICO.** A distribuição abaixo foi elaborada para o catálogo substituído (`C01`–`C06`). O catálogo vigente é `T01`, `A01`, `I01`, `X01` e `X02`; consulte `matriz_requisitos.md` e `relatorio_tecnico.md`.
 Equipe: **Diego, Ayron e Guilherme**. Ref.: Desafio Prático 1, Aulas 01–07, v1.0.
 
 ## 1 — Arquitetura proposta

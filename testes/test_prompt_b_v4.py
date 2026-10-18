@@ -26,15 +26,17 @@ class TestPromptBV4(unittest.TestCase):
     @patch.object(modulo, "chave", return_value="token-falso")
     @patch.object(modulo, "carregar")
     @patch.object(modulo, "conversar")
+    @patch.object(modulo, "carregar_arquivos_textuais")
     def test_v4_separada_preserva_evidencia_de_outras_versoes(
-        self, conversar, carregar, chave, root
+        self, arquivos_atuais, conversar, carregar, chave, root
     ):
         with tempfile.TemporaryDirectory() as temporario:
             base = Path(temporario)
             arquivo_prompt = base / modulo.PROMPTS["v4"]
             arquivo_prompt.parent.mkdir(parents=True, exist_ok=True)
             arquivo_prompt.write_text("Regras: {{solicitacao}}", encoding="utf-8")
-            origem = base / modulo.ARQUIVOS["C06"]
+            arquivos_atuais.return_value = {"X02": "testes/fixtures/lacunas.txt"}
+            origem = base / "testes/fixtures/lacunas.txt"
             origem.parent.mkdir(parents=True, exist_ok=True)
             origem.write_text("Quero agendar, mas não sei o protocolo.", encoding="utf-8")
             root.__truediv__.side_effect = lambda nome: base / nome
@@ -46,12 +48,12 @@ class TestPromptBV4(unittest.TestCase):
                 "texto": "MINUTA — NÃO ENVIADA", "modelo": "modelo-falso",
                 "tokens_entrada": 10, "tokens_saida": 8
             }
-            pasta, sucesso = modulo.executar(["C06"], versao="v4")
+            pasta, sucesso = modulo.executar(["X02"], versao="v4")
             self.assertTrue(sucesso)
             self.assertEqual(conversar.call_count, 1)
             self.assertEqual(pasta.parent.name, "prompts_b_v4_real")
             self.assertTrue((pasta / "prompt_B_v4_utilizado.md").is_file())
-            self.assertTrue((pasta / "C06_prompt_B_v4_saida.txt").is_file())
+            self.assertTrue((pasta / "X02_prompt_B_v4_saida.txt").is_file())
             self.assertFalse((base / "resultados/execucoes/prompts_b_v3_real").exists())
             with (pasta / "matriz_B_v4.csv").open(encoding="utf-8", newline="") as f:
                 linhas = list(csv.DictReader(f))
@@ -64,18 +66,22 @@ class TestPromptBV4(unittest.TestCase):
     @patch.object(modulo, "chave", return_value="token-falso")
     @patch.object(modulo, "carregar")
     @patch.object(modulo, "conversar")
-    def test_checar_v4_nao_chama_api(self, conversar, carregar, chave, root):
+    @patch.object(modulo, "carregar_arquivos_textuais")
+    def test_checar_v4_nao_chama_api(
+        self, arquivos_atuais, conversar, carregar, chave, root
+    ):
         with tempfile.TemporaryDirectory() as temporario:
             base = Path(temporario)
             arquivo_prompt = base / modulo.PROMPTS["v4"]
             arquivo_prompt.parent.mkdir(parents=True, exist_ok=True)
             arquivo_prompt.write_text("Texto {{solicitacao}}", encoding="utf-8")
-            origem = base / modulo.ARQUIVOS["C01"]
+            arquivos_atuais.return_value = {"T01": "dados/originais/entrada.txt"}
+            origem = base / "dados/originais/entrada.txt"
             origem.parent.mkdir(parents=True, exist_ok=True)
             origem.write_text("Pedido fictício", encoding="utf-8")
             root.__truediv__.side_effect = lambda nome: base / nome
             carregar.return_value = {"llm": {"modelo": "modelo-falso"}}
-            pasta, sucesso = modulo.executar(["C01"], versao="v4", somente_checar=True)
+            pasta, sucesso = modulo.executar(["T01"], versao="v4", somente_checar=True)
             self.assertIsNone(pasta)
             self.assertTrue(sucesso)
             conversar.assert_not_called()

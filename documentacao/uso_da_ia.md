@@ -47,11 +47,12 @@
 - [ ] Registrar outros defeitos encontrados e correções realizadas em execução real.
 - [ ] Conferir que nenhum arquivo de origem/gabarito foi alterado para coincidir artificialmente com saída.
 - [ ] Preencher ambiente de validação, métricas e responsáveis.
-- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 91 testes.
+- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; a contagem daquela etapa foi superada por testes posteriores.
 - [x] 18/10/2026: fluxo padrão passou a criar a peça institucional ao final em `resultados/imagens/`; sucesso e falha cobertos por testes.
+- [x] 18/10/2026: auditoria técnica corrigida com catálogo validado, executor B ligado aos casos atuais, propagação de falhas de experimento/TTS, matriz RF13 ampliada, retentativas multimodais, validação de MP3, conversão TIFF/PNG, timestamps UTC e campos estruturais protegidos.
 
 ## Validação do código e do conteúdo gerado
-`python -m unittest discover -s testes -t .` e execução de `python -m src.main --mock` com decisões simuladas (sem APIs). Validação por serviço real e por pessoa: ver `documentacao/matriz_requisitos.md`.
+`python -m unittest discover -s testes -t .` (**112 testes aprovados**) e execução parcial de `python -m src.main --mock --caso T01` com decisões simuladas (sem APIs). O lote multimodal completo permanece bloqueado pelas referências independentes ausentes de `A01` e `I01`. Validação por serviço real e por pessoa: ver `documentacao/matriz_requisitos.md`.
 
 ## Responsabilidade
 Os alunos devem ler, testar, adaptar, validar e assumir responsabilidade pelo resultado final. A colaboração de IA está declarada, sem atribuir a modelos ações que não realizaram.

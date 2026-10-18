@@ -309,6 +309,8 @@ python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local
 python -m src.main arte --provider local --referencia dados/originais/brasao.png
 ```
 
+O lote `--mock` sem `--caso` valida também `A01` e `I01` e, por projeto, termina com erro enquanto as referências independentes declaradas no catálogo estiverem ausentes. Não crie essas referências copiando uma saída de STT/OCR ou o gabarito. O exemplo com `--caso T01` é a demonstração reproduzível disponível no estado atual.
+
 **Serviços remotos — somente com conteúdo fictício e credenciais autorizadas:**
 
 ```
@@ -323,7 +325,7 @@ python -m src.main arte --provider cloudflare --referencia dados/originais/brasa
 python -m src.main voz <caminho_da_minuta_aprovada.md> --revisao <caminho_da_revisao.json>
 ```
 
-O sistema armazena as evidências em `resultados/`. Chamadas remotas podem consumir cotas ou falhar. **Nenhum comando envia a minuta ao cidadão.**
+O sistema armazena as evidências em `resultados/`. Antes da entrega, a equipe deve copiar somente os artefatos necessários para um pacote higienizado, revisar dados e logs e registrar o pacote junto ao relatório técnico. As pastas locais não constituem, por si só, evidência versionada. Chamadas remotas podem consumir cotas ou falhar. **Nenhum comando envia a minuta ao cidadão.**
 
 ---
 
@@ -339,7 +341,7 @@ python -m src.main verificar
 **Último resultado verificado localmente em 18/10/2026 (Windows, Python 3.14.6):**
 
 ```
-Ran 102 tests
+Ran 112 tests
 OK
 ```
 
@@ -385,7 +387,7 @@ O enunciado do Desafio Prático 1 exige um **arquivo compactado** com código, c
 **Antes da entrega final:**
 
 - Código das três frentes integrado à `main`.
-- Testes automatizados da última execução local aprovados (102/102).
+- Testes automatizados da última execução local aprovados (112/112).
 - Cinco casos atuais integrados ao catálogo, aos gabaritos e ao YAML de demonstração.
 - Executar e revisar a comparação A/B/C com `T01`, `X01` e `X02`, sem reutilizar notas de outros conjuntos de dados.
 - Registrar decisões humanas reais para os casos atuais antes de calcular taxa de aprovação ou produzir TTS.

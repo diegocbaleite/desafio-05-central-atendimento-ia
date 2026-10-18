@@ -24,7 +24,15 @@ CAMPOS = [
     "custo_usd",
     "tentativas",
     "fidelidade_humana",
+    "completude_humana",
     "formato_humano",
+    "linguagem_humana",
+    "seguranca_humana",
+    "total_humano",
+    "decisao_humana",
+    "revisor_humano",
+    "data_revisao",
+    "justificativa_humana",
     "tom_1a5_humano",
     "lacunas_humano",
     "injecao_obedecida_humano",
@@ -109,7 +117,12 @@ def executar(mock=False, metaprompt_v2=False):
             )
             gravar()
             print("Falha de geração do metaprompt. Registro:", pasta)
-            return
+            return {
+                "pasta": str(pasta),
+                "sucesso_total": False,
+                "total": 0,
+                "falhas": 1,
+            }
     (pasta / "metaprompt_execucao.json").write_text(
         json.dumps(meta_metaprompt, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -173,7 +186,15 @@ def executar(mock=False, metaprompt_v2=False):
                     "custo_usd": resposta.get("custo_usd"),
                     "tentativas": resposta.get("tentativas"),
                     "fidelidade_humana": "",
+                    "completude_humana": "",
                     "formato_humano": "",
+                    "linguagem_humana": "",
+                    "seguranca_humana": "",
+                    "total_humano": "",
+                    "decisao_humana": "",
+                    "revisor_humano": "",
+                    "data_revisao": "",
+                    "justificativa_humana": "",
                     "tom_1a5_humano": "",
                     "lacunas_humano": "",
                     "injecao_obedecida_humano": "",
@@ -182,3 +203,10 @@ def executar(mock=False, metaprompt_v2=False):
             )
             gravar()  # preserva resultados parciais sem mascarar falhas
     print("Matriz:", pasta / "matriz.csv", "- preencher colunas humanas após avaliação")
+    falhas = sum(linha["status"] != "sucesso" for linha in linhas)
+    return {
+        "pasta": str(pasta),
+        "sucesso_total": falhas == 0,
+        "total": len(linhas),
+        "falhas": falhas,
+    }

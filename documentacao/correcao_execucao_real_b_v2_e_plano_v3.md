@@ -1,5 +1,7 @@
 # Parte 1 — revisão técnica da execução real do Prompt B V2 e correção V3
 
+> **DOCUMENTO HISTÓRICO.** Refere-se ao catálogo substituído (`C01`–`C06`) e não comprova resultados dos casos vigentes. Para o estado atual, consulte `relatorio_tecnico.md`.
+
 **Data das evidências informadas:** 18/10/2026  
 **Status:** análise e correção técnica preparadas com assistência de IA; **revisão humana pendente**.  
 **Origem dos números e textos V2:** saída do terminal PowerShell compartilhada pelo estudante. As evidências originais estão **somente no computador** em `resultados/execucoes/prompts_b_v2_real/20261018T123653118579Z/`; **não** foram publicadas neste commit. Nenhuma resposta foi enviada a cidadãos.

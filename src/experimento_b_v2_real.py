@@ -19,11 +19,6 @@ from .experimento import _pasta_unica
 from .seguranca import delimitar, minimizar
 
 
-ARQUIVOS = {
-    "C01": "dados/originais/C01.txt",
-    "C05": "dados/originais/C05.txt",
-    "C06": "dados/originais/C06.txt",
-}
 PROMPT = "prompts/experimento/prompt_B_v2_seguro.md"  # compatibilidade com testes V2
 PROMPTS = {
     "v2": PROMPT,
@@ -36,6 +31,17 @@ COLUNAS = [
     "tokens_entrada", "tokens_saida", "custo_usd", "sha256_original",
     "sha256_prompt", "arquivo_saida", "decisao_humana",
 ]
+
+
+def carregar_arquivos_textuais() -> dict[str, str]:
+    """Usa o catálogo vigente; não mantém uma segunda lista de casos no código."""
+    from .main import carregar_casos
+
+    return {
+        caso["id"]: caso["arquivo"]
+        for caso in carregar_casos()
+        if caso["modalidade"] == "texto"
+    }
 
 
 def preparar_mensagens(prompt: str, entrada: str) -> list[dict[str, str]]:
@@ -67,17 +73,20 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
         )
     if versao not in PROMPTS:
         raise ValueError("Versão do prompt inválida: " + versao)
+    arquivos = carregar_arquivos_textuais()
+    if not arquivos:
+        raise ValueError("Nenhum caso textual disponível no catálogo atual")
     raiz = ROOT / f"resultados/execucoes/prompts_b_{versao}_real"
     prompt_path = ROOT / PROMPTS[versao]
     prompt = prompt_path.read_text(encoding="utf-8")
     if "{{solicitacao}}" not in prompt:
         raise ValueError(f"Prompt B {versao} inválido: marcador {{{{solicitacao}}}} ausente")
-    ids = casos or list(ARQUIVOS)
+    ids = casos or list(arquivos)
     for caso in ids:
-        if caso not in ARQUIVOS:
+        if caso not in arquivos:
             raise ValueError("Caso não previsto no experimento: " + caso)
-        if not (ROOT / ARQUIVOS[caso]).is_file():
-            raise FileNotFoundError("Entrada fictícia ausente: " + ARQUIVOS[caso])
+        if not (ROOT / arquivos[caso]).is_file():
+            raise FileNotFoundError("Entrada fictícia ausente: " + arquivos[caso])
     print(f"Versão: B_{versao} | Provedor: openrouter | Modelo solicitado:", modelo)
     print("Casos:", ", ".join(ids), "| Token configurado: sim (valor oculto)")
     print("Envio automático de respostas a cidadãos: NÃO")
@@ -110,7 +119,7 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
 
     salvar_csv()
     for caso in ids:
-        origem = ROOT / ARQUIVOS[caso]
+        origem = ROOT / arquivos[caso]
         texto = origem.read_text(encoding="utf-8")
         hash_original = hashlib.sha256(origem.read_bytes()).hexdigest()
         mensagens = preparar_mensagens(prompt, texto)
@@ -155,9 +164,10 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
 
 
 def main() -> int:
+    casos_disponiveis = carregar_arquivos_textuais()
     p = argparse.ArgumentParser(description="Executa Prompt B V2, V3 ou V4 com modelo real OpenRouter.")
-    p.add_argument("--caso", action="append", choices=list(ARQUIVOS),
-                   help="Executar só casos específicos (repetível); padrão: C01,C05,C06")
+    p.add_argument("--caso", action="append", choices=list(casos_disponiveis),
+                   help="Executar só casos textuais específicos (repetível); padrão: catálogo atual")
     p.add_argument("--modelo", help="Modelo OpenRouter opcional; padrão do config.yaml")
     p.add_argument("--versao", choices=tuple(PROMPTS), default="v2",
                    help="Versão isolada (padrão v2; use v4 para a versão atual em avaliação)")

@@ -1,5 +1,7 @@
 # Registro de revisão humana para demonstração — Prompt B V4 (RF02/RF13)
 
+> **DOCUMENTO HISTÓRICO.** As decisões abaixo pertencem ao catálogo substituído (`C01`–`C06`) e não são validação humana dos casos vigentes.
+
 **Projeto:** Central Inteligente de Atendimento e Comunicação Institucional  
 **Frente:** Engenharia de prompts A/B/C — Estudante 1  
 **Pessoa que confirmou:** Diego (identificado no contexto da revisão).  

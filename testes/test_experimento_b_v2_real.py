@@ -31,8 +31,9 @@ class TestPromptBV2Real(unittest.TestCase):
     @patch.object(modulo, "chave", return_value="chave-de-teste")
     @patch.object(modulo, "carregar")
     @patch.object(modulo, "conversar")
+    @patch.object(modulo, "carregar_arquivos_textuais")
     def test_execucao_grava_casos_e_matriz_nova_sem_api(
-        self, conversar, carregar, chave, root
+        self, arquivos_atuais, conversar, carregar, chave, root
     ):
         with tempfile.TemporaryDirectory() as temporario:
             base = Path(temporario)
@@ -41,8 +42,15 @@ class TestPromptBV2Real(unittest.TestCase):
             (base / modulo.PROMPT).write_text(
                 "Minuta segura de teste. {{solicitacao}}", encoding="utf-8"
             )
-            for caso in modulo.ARQUIVOS:
-                (base / modulo.ARQUIVOS[caso]).write_text(
+            arquivos = {
+                "T01": "dados/originais/entrada.txt",
+                "X01": "testes/fixtures/injecao.txt",
+                "X02": "testes/fixtures/lacunas.txt",
+            }
+            arquivos_atuais.return_value = arquivos
+            for caso, caminho in arquivos.items():
+                (base / caminho).parent.mkdir(parents=True, exist_ok=True)
+                (base / caminho).write_text(
                     "Pedido fictício " + caso, encoding="utf-8"
                 )
             root.__truediv__.side_effect = lambda valor: base / valor
@@ -68,18 +76,19 @@ class TestPromptBV2Real(unittest.TestCase):
                 encoding="utf-8", newline=""
             ) as arquivo:
                 linhas = list(csv.DictReader(arquivo))
-            self.assertEqual([x["caso"] for x in linhas], list(modulo.ARQUIVOS))
+            self.assertEqual([x["caso"] for x in linhas], list(arquivos))
             self.assertTrue(all(x["status"] == "sucesso" for x in linhas))
             self.assertTrue(all(not x["decisao_humana"] for x in linhas))
-            self.assertTrue((pasta / "C05_prompt_B_v2_saida.txt").exists())
+            self.assertTrue((pasta / "X01_prompt_B_v2_saida.txt").exists())
             self.assertTrue((pasta / "parametros.json").exists())
 
     @patch.object(modulo, "ROOT")
     @patch.object(modulo, "chave", return_value="chave-de-teste")
     @patch.object(modulo, "carregar")
     @patch.object(modulo, "conversar")
+    @patch.object(modulo, "carregar_arquivos_textuais")
     def test_checar_nao_efetua_chamadas_reais(
-        self, conversar, carregar, chave, root
+        self, arquivos_atuais, conversar, carregar, chave, root
     ):
         with tempfile.TemporaryDirectory() as temporario:
             base = Path(temporario)
@@ -88,7 +97,8 @@ class TestPromptBV2Real(unittest.TestCase):
             (base / modulo.PROMPT).write_text(
                 "{{solicitacao}}", encoding="utf-8"
             )
-            (base / modulo.ARQUIVOS["C01"]).write_text(
+            arquivos_atuais.return_value = {"T01": "dados/originais/entrada.txt"}
+            (base / "dados/originais/entrada.txt").write_text(
                 "Pedido fictício", encoding="utf-8"
             )
             root.__truediv__.side_effect = lambda valor: base / valor
@@ -96,7 +106,7 @@ class TestPromptBV2Real(unittest.TestCase):
                 "llm": {"modelo": "modelo-teste", "temperatura": 0.2,
                         "max_tokens": 2400, "timeout_s": 45},
             }
-            pasta, sucesso = modulo.executar(["C01"], somente_checar=True)
+            pasta, sucesso = modulo.executar(["T01"], somente_checar=True)
             self.assertIsNone(pasta)
             self.assertTrue(sucesso)
             conversar.assert_not_called()

@@ -25,6 +25,41 @@ from .cliente import ErroAPI
 from .config import carregar, chave
 from .seguranca import FORMATOS_AUDIO, validar_arquivo
 
+MAX_TENTATIVAS_API = 3
+
+
+def _post_com_retentativas(rotulo: str, url: str, **kwargs):
+    """Repete apenas falhas transitórias, sem registrar payloads ou credenciais."""
+    ultimo_erro = "não localizado"
+    for tentativa in range(MAX_TENTATIVAS_API):
+        arquivo = kwargs.get("files", {}).get("file")
+        if arquivo and hasattr(arquivo[-1], "seek"):
+            arquivo[-1].seek(0)
+        try:
+            resposta = requests.post(url, **kwargs)
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            ultimo_erro = type(exc).__name__
+            espera = min(20, 2**tentativa)
+        else:
+            if resposta.ok:
+                return resposta
+            if resposta.status_code != 429 and resposta.status_code < 500:
+                return resposta
+            ultimo_erro = f"HTTP {resposta.status_code}"
+            try:
+                espera = min(
+                    20,
+                    max(0, float(resposta.headers.get("Retry-After", 2**tentativa))),
+                )
+            except (AttributeError, TypeError, ValueError):
+                espera = min(20, 2**tentativa)
+        if tentativa < MAX_TENTATIVAS_API - 1:
+            time.sleep(espera)
+    raise ErroAPI(
+        f"{rotulo} temporariamente indisponível após "
+        f"{MAX_TENTATIVAS_API} tentativas: {ultimo_erro}"
+    )
+
 
 def _parametros_tts(cfg):
     multimodal = cfg.get("multimodal", {})
@@ -79,7 +114,8 @@ def _sintetizar_gemini(texto: str, destino: Path, cfg, token: str, perfil, param
         },
     }
     try:
-        resposta = requests.post(
+        resposta = _post_com_retentativas(
+            "TTS Gemini",
             base_url + "/interactions",
             headers={"x-goog-api-key": token, "Content-Type": "application/json"},
             json=payload,
@@ -128,7 +164,8 @@ def transcrever(caminho, provider=None, *, modelo_local="small"):
         raise ErroAPI("Provedor STT não cadastrado")
     with entrada.open("rb") as f:
         try:
-            r = requests.post(
+            r = _post_com_retentativas(
+                "STT",
                 perfil["base_url"].rstrip("/") + "/audio/transcriptions",
                 headers={"Authorization": "Bearer " + token},
                 data={"model": cfg["multimodal"]["stt_modelo"], "language": "pt"},
@@ -194,7 +231,8 @@ def sintetizar(texto, destino, provider=None):
     if provider == "gemini":
         return _sintetizar_gemini(texto, destino, cfg, token, perfil, parametros)
     try:
-        r = requests.post(
+        r = _post_com_retentativas(
+            "TTS",
             perfil["base_url"].rstrip("/") + "/audio/speech",
             headers={"Authorization": "Bearer " + token},
             json={
@@ -210,8 +248,19 @@ def sintetizar(texto, destino, provider=None):
         raise ErroAPI("Falha TTS: " + type(e).__name__) from e
     if not r.ok:
         raise ErroAPI("TTS indisponível HTTP " + str(r.status_code))
+    tipo = str(r.headers.get("Content-Type", "")).split(";", 1)[0].lower()
+    conteudo = r.content
+    assinatura_mp3 = conteudo.startswith(b"ID3") or (
+        len(conteudo) >= 2
+        and conteudo[0] == 0xFF
+        and conteudo[1] & 0xE0 == 0xE0
+    )
+    if not conteudo or (tipo and tipo not in {"audio/mpeg", "audio/mp3"}):
+        raise ErroAPI("TTS retornou conteúdo que não é áudio MP3")
+    if not assinatura_mp3:
+        raise ErroAPI("TTS retornou arquivo MP3 inválido")
     destino = destino.with_suffix(".mp3")
-    destino.write_bytes(r.content)
+    destino.write_bytes(conteudo)
     return str(destino)
 
 

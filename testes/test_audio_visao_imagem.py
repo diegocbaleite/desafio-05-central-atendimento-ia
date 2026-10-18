@@ -86,6 +86,29 @@ class TestEntradas(unittest.TestCase):
             with self.assertRaisesRegex(ErroAPI, "não transcreve"):
                 audio.transcrever(arq, provider="mock")
 
+    def test_stt_repete_falha_transitoria(self):
+        with tempfile.TemporaryDirectory() as d:
+            arq = Path(d) / "fala.mp3"
+            arq.write_bytes(b"ID3fake")
+            falha = Mock(ok=False, status_code=503, headers={})
+            sucesso = Mock(ok=True, status_code=200)
+            sucesso.json.return_value = {"text": "transcrição fictícia"}
+            config = {
+                "multimodal": {"stt_modelo": "whisper-test"},
+                "provedores": {"groq": {"base_url": "https://api.example.test"}},
+            }
+            with (
+                patch("src.audio.carregar", return_value=config),
+                patch("src.audio.chave", return_value="token-falso"),
+                patch("src.audio.requests.post", side_effect=[falha, sucesso]) as post,
+                patch("src.audio.time.sleep"),
+            ):
+                self.assertEqual(
+                    audio.transcrever(arq, provider="groq"),
+                    "transcrição fictícia",
+                )
+            self.assertEqual(post.call_count, 2)
+
 
 class TestAvaliacoes(unittest.TestCase):
     def test_audio_mock_e_separacao_bruto_revisado(self):
@@ -163,6 +186,19 @@ class TestAvaliacoes(unittest.TestCase):
         self.assertTrue(
             chamada[1]["image_url"]["url"].startswith("data:image/png;base64,")
         )
+
+    def test_ocr_gemini_converte_tiff_para_png(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as d:
+            arq = Path(d) / "ficha.tiff"
+            Image.new("RGB", (40, 40), "white").save(arq)
+            with patch(
+                "src.visao.conversar", return_value={"texto": "texto fictício"}
+            ) as conversar:
+                visao.ler_imagem(arq, provider="gemini", modelo="gemini-teste")
+        url = conversar.call_args.args[0][0]["content"][1]["image_url"]["url"]
+        self.assertTrue(url.startswith("data:image/png;base64,"))
 
     def test_ocr_remoto_vazio_e_rejeitado(self):
         from PIL import Image
@@ -300,7 +336,12 @@ class TestControleHumano(unittest.TestCase):
             self.assertEqual(comando[comando.index("-s") + 1], "145")
             self.assertEqual(comando[comando.index("-p") + 1], "45")
 
-            resposta = Mock(ok=True, content=b"audio-remoto")
+            resposta = Mock(
+                ok=True,
+                status_code=200,
+                content=b"ID3audio-remoto",
+                headers={"Content-Type": "audio/mpeg"},
+            )
             with (
                 patch("src.audio.carregar", return_value=config),
                 patch("src.audio.chave", return_value="token-ficticio"),
@@ -370,6 +411,28 @@ class TestControleHumano(unittest.TestCase):
             destino = Path(temp) / "audio.mp3"
             with self.assertRaisesRegex(ErroAPI, "3500 caracteres"):
                 audio.sintetizar("x" * 3501, destino, provider="espeak")
+            self.assertFalse(destino.exists())
+
+    def test_tts_recusa_corpo_http_que_nao_e_mp3(self):
+        config = {
+            "multimodal": {"tts_modelo": "modelo", "tts_voz": "voz"},
+            "provedores": {"openrouter": {"base_url": "https://api.example.test"}},
+        }
+        resposta = Mock(
+            ok=True,
+            status_code=200,
+            content=b'{"error":"falha"}',
+            headers={"Content-Type": "application/json"},
+        )
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            patch("src.audio.carregar", return_value=config),
+            patch("src.audio.chave", return_value="token-ficticio"),
+            patch("src.audio.requests.post", return_value=resposta),
+        ):
+            destino = Path(temp) / "voz.mp3"
+            with self.assertRaisesRegex(ErroAPI, "não é áudio MP3"):
+                audio.sintetizar("Texto aprovado", destino, provider="openrouter")
             self.assertFalse(destino.exists())
 
     def test_arte_programatica_nao_e_chamada_ia(self):

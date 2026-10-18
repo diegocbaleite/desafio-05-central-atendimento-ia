@@ -1,5 +1,7 @@
 # Revisão da Parte 1 — Engenharia de prompts A/B/C (RF02 / RF13)
 
+> **DOCUMENTO HISTÓRICO.** As notas abaixo pertencem ao catálogo substituído (`C01`–`C06`) e não devem ser usadas na avaliação dos casos vigentes.
+
 **Responsável pela frente:** Diego — Estudante 1  
 **Data da análise técnica:** 18/10/2026  
 **Status:** correção e parecer técnico prontos; **as três avaliações humanas da rodada B V4 para demonstração estão registradas (29/30 pontos; média 9,67/10)**. A rodada histórica A/B/C tem **9 de 9 avaliações humanas históricas confirmadas (C01/A–C, C05/A–C e C06/A–C)**; resta a conferência editorial C01/B V4 e a revisão/homologação institucional para uso oficial.  

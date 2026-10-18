@@ -7,6 +7,7 @@ humana dos campos críticos é obrigatória.
 from __future__ import annotations
 
 import base64
+import io
 import shutil
 import subprocess
 import tempfile
@@ -73,8 +74,16 @@ def _ocr_modelo_visao(
 ) -> tuple[str, list[dict]]:
     """OCR por visão multimodal; a saída continua bruta e exige revisão humana."""
     del idioma, psm
-    mime = "image/png" if caminho.suffix.lower() == ".png" else "image/jpeg"
-    imagem = base64.b64encode(caminho.read_bytes()).decode("ascii")
+    from PIL import Image
+
+    try:
+        with Image.open(caminho) as original:
+            buffer = io.BytesIO()
+            original.convert("RGB").save(buffer, format="PNG")
+    except (OSError, ValueError) as exc:
+        raise ErroAPI("Imagem inválida para envio ao modelo de visão") from exc
+    mime = "image/png"
+    imagem = base64.b64encode(buffer.getvalue()).decode("ascii")
     resposta = conversar(
         [
             {

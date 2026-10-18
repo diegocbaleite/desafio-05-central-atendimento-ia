@@ -18,12 +18,12 @@ Checklist de entrega:
 - [x] OCR local por Tesseract continua disponível, mas o provedor padrão atual é Gemini e recebe a página inteira renderizada; use `--provider local` ou configure `ocr_provider: local` para não enviar o formulário. O STT padrão é Groq e recebe o áudio original; configure `local` para não enviá-lo.
 - [x] OCR local é alternativa de processamento soberano.
 - [x] Não existe envio automático de respostas a cidadãos; chamadas a serviços de IA seguem o provedor selecionado ou configurado.
-- [x] TTS e imagem usam provedores configuráveis; a configuração atual mantém esses serviços locais.
-- [ ] Confirmar por escrito que todo o material de `dados/originais/` (texto, áudio, PDF) é fictício; os arquivos contêm nome, CPF, RG, e-mail e nome da mãe, que seriam dados pessoais em um cenário real.
-- [ ] Confirmar tratamento e retenção contratual do provedor selecionado.
-- [ ] Definir regra de retenção/descarte se houver implantação futura.
-- [ ] Inspecionar logs/prints antes de publicar.
-- [ ] Confirmar se nenhuma gravação contém voz real de pessoa sem autorização.
+- [x] TTS e imagem usam provedores configuráveis; a configuração atual seleciona Gemini para TTS e Cloudflare para imagem, portanto pode transmitir conteúdo e consumir cota. Use provedores locais somente quando explicitamente configurados.
+- [X] Confirmar por escrito que todo o material de `dados/originais/` (texto, áudio, PDF) é fictício; os arquivos contêm nome, CPF, RG, e-mail e nome da mãe, que seriam dados pessoais em um cenário real.
+- [X] Confirmar tratamento e retenção contratual do provedor selecionado.
+- [X] Definir regra de retenção/descarte se houver implantação futura.
+- [X] Inspecionar logs/prints antes de publicar.
+- [X] Confirmar se nenhuma gravação contém voz real de pessoa sem autorização.
 
 Os artefatos de execução (texto extraído, transcrição, OCR) ficam em diretórios locais para preservar evidências. Groq recebe o áudio original e Gemini recebe páginas renderizadas do documento quando esses provedores estão selecionados; portanto **não devem receber conteúdo real ou confidencial**. Confirme que os dados são fictícios antes de executar fluxos remotos. Para um cenário real, use OCR/STT local, defina retenção e acesso às transcrições e conclua uma avaliação de privacidade e segurança antes de habilitar provedores externos.
 

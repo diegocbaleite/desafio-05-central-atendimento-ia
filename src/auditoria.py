@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,13 +36,20 @@ def gravar_json(caminho, valor):
 
 
 def registrar(execucao, caso, etapa, **campos):
+    reservados = {"id_execucao", "caso", "etapa", "timestamp"}
+    conflito = reservados.intersection(campos)
+    if conflito:
+        raise ValueError(
+            "Campos reservados de auditoria não podem ser sobrescritos: "
+            + ", ".join(sorted(conflito))
+        )
     pasta_logs = ROOT / "resultados" / "logs" / execucao
     pasta_logs.mkdir(parents=True, exist_ok=True)
     registro = {
         "id_execucao": execucao,
         "caso": caso,
         "etapa": etapa,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         **campos,
     }
     with (pasta_logs / "auditoria.jsonl").open("a", encoding="utf-8") as f:

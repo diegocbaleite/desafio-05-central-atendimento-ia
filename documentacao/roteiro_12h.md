@@ -1,5 +1,7 @@
 # Roteiro de execução — 12 horas
 
+> **ROTEIRO HISTÓRICO.** As referências a `C01`–`C06` pertencem ao catálogo substituído. Para a execução vigente, use `T01`, `A01`, `I01`, `X01` e `X02` conforme `dados/originais/casos.yaml`.
+
 | Horas | Diego (API/segurança) | Ayron (prompts/avaliação) | Guilherme (multimodal) | Marco |
 |---|---|---|---|---|
 | 0–1 | Clonar, configurar `.env` e verificar Python | Conferir regras e congelar gabaritos | Instalar Tesseract e espeak | Setup |

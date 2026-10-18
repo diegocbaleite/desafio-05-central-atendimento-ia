@@ -1,5 +1,7 @@
 # Minutas revisadas para demonstração — Prompt B V4
 
+> **DOCUMENTO HISTÓRICO.** Refere-se ao catálogo substituído (`C01`–`C06`) e não comprova resultados dos casos vigentes.
+
 **Etapa:** apresentação controlada, não publicação institucional.  
 **Data da revisão:** 18/10/2026.  
 **Rastreabilidade:** resultados de modelo reais informados pelo responsável; as versões brutas permanecem em `resultados/execucoes/prompts_b_v4_real/20261018T125427812854Z/` no computador local (ignoradas pelo Git).

@@ -30,6 +30,18 @@ Os gabaritos foram preparados antes das execuções e não podem ser ajustados p
 | Imagem | Composição local e integração Cloudflare coberta por simulação | A composição local não é imagem gerada por IA; geração real e revisão pendentes |
 | Auditoria | Logs JSONL, hashes e diretórios por execução | Métricas ausentes devem permanecer `não localizado` |
 
+## Provedores, modelos e custos
+
+| Etapa | Provedor/modelo configurado | Parâmetros principais | Evidência atual | Custo medido | Justificativa/limite |
+|---|---|---|---|---|---|
+| Minuta e experimento A/B/C | Gemini / `gemini-3.1-flash-lite` | temperatura 0,2; máximo 2.400 tokens; timeout 45 s | Implementação e simulação; rodada real atual pendente | `não localizado` | Mesmo modelo e parâmetros devem ser mantidos entre A, B e C |
+| STT | Groq / `whisper-large-v3-turbo`; alternativa local `faster-whisper` | idioma português; timeout 120 s | Execução e validação independente de `A01` pendentes | `não localizado` | O padrão remoto envia o áudio integral; a alternativa local reduz exposição |
+| OCR/visão | Gemini / `gemini-3.8-flash`; alternativa Tesseract | até 3 páginas; Tesseract 300 dpi/PSM 6 | Tesseract parcial; tentativa Gemini HTTP 503 | `não localizado` | Campos críticos continuam sujeitos a conferência no original |
+| TTS | Gemini / `gemini-3.8-flash-lite-tts`; alternativa eSpeak | voz `Kore`; tom institucional; limite 3.500 caracteres | Integração simulada; execução e audição humanas pendentes | `não localizado` | Só é acionado depois de aprovação humana válida e hash correspondente |
+| Imagem | Cloudflare / `@cf/black-forest-labs/flux-1-schnell`; alternativa Pillow | 4 etapas; prompt versionado | Integração simulada; geração real pendente | `não localizado` | Pillow é composição programática e não satisfaz sozinho a exigência de IA |
+
+Nenhum valor de custo foi inferido. O pacote final de evidências deve conter apenas cópias higienizadas de prompts, saídas, matrizes, metadados e decisões humanas vinculadas aos casos vigentes; até sua criação, os diretórios locais em `resultados/` não são tratados como evidência entregue.
+
 ## Engenharia de prompts (RF02)
 
 O experimento compara A (zero-shot), B (estruturado) e C (produzido por metaprompt). O código atual seleciona apenas entradas de modalidade texto, portanto a matriz vigente deve conter `T01`, `X01` e `X02`, cada um executado com os três prompts sob o mesmo modelo e parâmetros.

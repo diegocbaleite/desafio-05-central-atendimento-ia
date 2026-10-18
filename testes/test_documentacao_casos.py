@@ -1,14 +1,62 @@
 """Consistência entre o catálogo atual, a demonstração e a documentação ativa."""
 
 import re
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 import yaml
 
 from src.config import ROOT
+from src import main
 
 
 class TestDocumentacaoCasos(unittest.TestCase):
+    def test_catalogo_rejeita_id_desconhecido(self):
+        with self.assertRaisesRegex(ValueError, "não encontrado"):
+            main.carregar_casos(["CASO_INEXISTENTE"])
+
+    def test_catalogo_valida_referencia_multimodal_declarada(self):
+        with tempfile.TemporaryDirectory() as d:
+            raiz = Path(d)
+            (raiz / "dados/originais").mkdir(parents=True)
+            (raiz / "dados/originais/audio.mp3").write_bytes(b"ID3fake")
+            (raiz / "dados/originais/casos.yaml").write_text(
+                "casos:\n"
+                "  - id: A99\n"
+                "    modalidade: audio\n"
+                "    arquivo: dados/originais/audio.mp3\n"
+                "    transcricao_referencia: referencias/ausente.txt\n",
+                encoding="utf-8",
+            )
+            with (
+                patch("src.main.ROOT", raiz),
+                patch(
+                    "src.main.carregar",
+                    return_value={"projeto": {"casos": "dados/originais/casos.yaml"}},
+                ),
+            ):
+                with self.assertRaisesRegex(ValueError, "referência de mock ausente"):
+                    main.carregar_casos(exigir_referencias=True)
+
+    def test_catalogo_rejeita_yaml_malformado(self):
+        with tempfile.TemporaryDirectory() as d:
+            raiz = Path(d)
+            (raiz / "dados/originais").mkdir(parents=True)
+            (raiz / "dados/originais/casos.yaml").write_text(
+                "casos: [id: T01", encoding="utf-8"
+            )
+            with (
+                patch("src.main.ROOT", raiz),
+                patch(
+                    "src.main.carregar",
+                    return_value={"projeto": {"casos": "dados/originais/casos.yaml"}},
+                ),
+            ):
+                with self.assertRaisesRegex(ValueError, "YAML inválido"):
+                    main.carregar_casos()
+
     def test_decisoes_demo_usam_exatamente_os_casos_atuais(self):
         casos = yaml.safe_load(
             (ROOT / "dados/originais/casos.yaml").read_text(encoding="utf-8")

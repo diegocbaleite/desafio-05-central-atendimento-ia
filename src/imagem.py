@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import os
+import time
 from pathlib import Path
 
 import requests
@@ -29,6 +30,35 @@ FONTES_LOCAIS = (
     "C:/Windows/Fonts/segoeui.ttf",
     "C:/Windows/Fonts/arial.ttf",
 )
+
+
+def _post_com_retentativas(url: str, **kwargs):
+    ultimo_erro = "não localizado"
+    for tentativa in range(3):
+        try:
+            resposta = requests.post(url, **kwargs)
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            ultimo_erro = type(exc).__name__
+            espera = min(20, 2**tentativa)
+        else:
+            if resposta.ok:
+                return resposta
+            if resposta.status_code != 429 and resposta.status_code < 500:
+                return resposta
+            ultimo_erro = f"HTTP {resposta.status_code}"
+            try:
+                espera = min(
+                    20,
+                    max(0, float(resposta.headers.get("Retry-After", 2**tentativa))),
+                )
+            except (AttributeError, TypeError, ValueError):
+                espera = min(20, 2**tentativa)
+        if tentativa < 2:
+            time.sleep(espera)
+    raise ErroAPI(
+        "Gerador de imagens temporariamente indisponível após 3 tentativas: "
+        + ultimo_erro
+    )
 
 
 def _fonte(tamanho):
@@ -128,7 +158,7 @@ def gerar(destino=None, *, provider=None, referencia=None):
     modelo = cfg["multimodal"]["imagem_modelo"]
     parametros = {"prompt": prompt, "steps": 4}
     try:
-        r = requests.post(
+        r = _post_com_retentativas(
             f"{item['base_url'].rstrip('/')}/accounts/{conta}/ai/run/{modelo}",
             headers={"Authorization": "Bearer " + token},
             json=parametros,

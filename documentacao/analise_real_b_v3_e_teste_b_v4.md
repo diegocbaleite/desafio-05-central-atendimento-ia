@@ -1,5 +1,7 @@
 # Engenharia de prompts — análise real B V3 e proposta B V4
 
+> **DOCUMENTO HISTÓRICO.** Refere-se ao catálogo substituído (`C01`–`C06`) e não comprova resultados dos casos vigentes. Para o estado atual, consulte `relatorio_tecnico.md`.
+
 **Data das execuções informadas:** 18/10/2026  
 **Responsável pela frente:** Estudante 1  
 **Origem dos dados:** resultados de terminal PowerShell fornecidos pelo estudante; não são estimativas.  

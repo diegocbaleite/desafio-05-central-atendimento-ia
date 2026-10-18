@@ -1,5 +1,7 @@
 # Execução real do Prompt B V2 — Estudante 1
 
+> **DOCUMENTO HISTÓRICO.** Refere-se ao catálogo substituído (`C01`–`C06`) e não comprova resultados dos casos vigentes. O executor agora lê os casos textuais do catálogo atual; estas métricas não foram transportadas.
+
 **Situação:** executor preparado na branch do Estudante 1. **Não afirmar que houve execução real antes de ver a saída do OpenRouter.**
 
 O script `src/experimento_b_v2_real.py` executa **somente o Prompt B V2**, em uma rodada separada da comparação histórica A/B/C e da rodada do metaprompt V2.

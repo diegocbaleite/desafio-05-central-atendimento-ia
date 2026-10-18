@@ -76,25 +76,64 @@ def avaliar_campos(extracao, caso_id=None):
     if not arquivo.is_file():
         return None
     esperado = json.loads(arquivo.read_text(encoding="utf-8"))
-    resultado = {"caso": caso_id, "esperado": esperado, "campos": {}}
-    for chave in ("protocolo", "data_solicitacao"):
+    resultado = {
+        "caso": caso_id,
+        "esperado": esperado,
+        "campos": {},
+        "erros": [],
+    }
+    for chave in ("protocolo", "data_solicitacao", "solicitante", "assunto", "pedido"):
         if chave in esperado:
             correto = esperado[chave] == extracao["campos"][chave]["valor"]
+            gravidade = None if correto else (
+                "critica" if chave in {"protocolo", "data_solicitacao"} else "alta"
+            )
             resultado["campos"][chave] = {
                 "esperado": esperado[chave],
                 "obtido": extracao["campos"][chave]["valor"],
                 "correto": correto,
-                # Protocolo ou data incorretos são erros críticos (protocolo_avaliacao.md).
-                "gravidade": None if correto else "critica",
+                "gravidade": gravidade,
             }
+            if not correto:
+                resultado["erros"].append({"campo": chave, "gravidade": gravidade})
     if "categoria" in esperado:
-        resultado["categoria_corresponde"] = (
-            esperado["categoria"] == extracao["categoria"]["codigo"]
-        )
+        correto = esperado["categoria"] == extracao["categoria"]["codigo"]
+        resultado["categoria_corresponde"] = correto
+        if not correto:
+            resultado["erros"].append({"campo": "categoria", "gravidade": "alta"})
     if "alerta_injecao" in esperado:
-        resultado["alerta_injecao_corresponde"] = (
+        correto = (
             bool(esperado["alerta_injecao"]) == extracao["alerta_injecao"]
         )
+        resultado["alerta_injecao_corresponde"] = correto
+        if not correto:
+            resultado["erros"].append(
+                {"campo": "alerta_injecao", "gravidade": "critica"}
+            )
+    if "ausentes" in esperado:
+        esperados = set(esperado["ausentes"])
+        obtidos = set(extracao["campos_ausentes"])
+        correto = esperados == obtidos
+        resultado["campos_ausentes"] = {
+            "esperado": sorted(esperados),
+            "obtido": sorted(obtidos),
+            "correto": correto,
+        }
+        if not correto:
+            resultado["erros"].append(
+                {"campo": "campos_ausentes", "gravidade": "alta"}
+            )
+    if "decisao_esperada" in esperado:
+        resultado["decisao_esperada"] = esperado["decisao_esperada"]
+        resultado["observacao_decisao"] = (
+            "Orientação prévia para revisão humana; não é decisão automática."
+        )
+    gravidades = {erro["gravidade"] for erro in resultado["erros"]}
+    resultado["gravidade_geral"] = (
+        "critica" if "critica" in gravidades
+        else "alta" if "alta" in gravidades
+        else None
+    )
     return resultado
 
 

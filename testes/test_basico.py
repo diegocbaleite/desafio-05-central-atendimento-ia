@@ -63,6 +63,15 @@ class TestSeguranca(unittest.TestCase):
             registro = json.loads(log.read_text(encoding="utf-8"))
             self.assertEqual(registro["id_execucao"], "exec123")
             self.assertEqual(registro["caso"], "T01")
+            self.assertTrue(registro["timestamp"].endswith("+00:00"))
+
+    def test_auditoria_rejeita_sobrescrita_de_campos_estruturais(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with patch("src.auditoria.ROOT", Path(temp)):
+                with self.assertRaisesRegex(ValueError, "reservados"):
+                    auditoria.registrar(
+                        "exec123", "T01", "entrada", timestamp="forjado"
+                    )
 
 
 if __name__ == "__main__":

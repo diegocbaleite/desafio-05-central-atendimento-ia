@@ -355,6 +355,31 @@ class TestCli(unittest.TestCase):
         self.assertEqual(codigo, 1)
         self.assertIn("falha controlada", saida)
 
+    def test_experimento_propaga_falha_para_codigo_de_saida(self):
+        with (
+            patch.object(sys, "argv", ["main", "experimento"]),
+            patch("src.experimento.executar", return_value={"sucesso_total": False}),
+            redirect_stdout(StringIO()),
+        ):
+            self.assertEqual(main.main(), 1)
+
+    def test_falha_de_tts_torna_execucao_incompleta(self):
+        caso = {"id": "T99", "arquivo": "x", "modalidade": "texto"}
+        resumo = {
+            "caso": "T99",
+            "decisao": "aprovar",
+            "simulada": False,
+            "status_tts": "falha",
+            "erro_tts": "serviço indisponível",
+        }
+        with (
+            patch("src.main.carregar_casos", return_value=[caso]),
+            patch("src.main.executar_caso", return_value=resumo),
+        ):
+            codigo, saida = self._executar([])
+        self.assertEqual(codigo, 1)
+        self.assertIn("FalhaTTS", saida)
+
     def test_codigo_de_saida_0_e_taxa_sem_decisao_humana_real(self):
         caso = {"id": "T99", "arquivo": "x", "modalidade": "texto"}
         resumo = {"caso": "T99", "decisao": "aprovar", "simulada": True}
@@ -518,6 +543,47 @@ class TestAvaliacao(unittest.TestCase):
 
     def test_sem_gabarito_devolve_none(self):
         self.assertIsNone(avaliacao.avaliar_campos({}, "NAO_EXISTE"))
+
+    def test_compara_todos_os_elementos_presentes_no_gabarito(self):
+        with tempfile.TemporaryDirectory() as d:
+            raiz = Path(d)
+            pasta = raiz / "dados/gabaritos"
+            pasta.mkdir(parents=True)
+            (pasta / "T99.json").write_text(
+                json.dumps(
+                    {
+                        "protocolo": "não localizado",
+                        "data_solicitacao": "não localizado",
+                        "solicitante": "Pessoa Fictícia",
+                        "assunto": "agendamento",
+                        "pedido": "marcar atendimento",
+                        "categoria": "agendamento",
+                        "alerta_injecao": False,
+                        "ausentes": ["protocolo", "data_solicitacao"],
+                        "decisao_esperada": "aprovar com lacunas sinalizadas",
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            extracao = {
+                "campos": {
+                    "protocolo": {"valor": "não localizado"},
+                    "data_solicitacao": {"valor": "não localizado"},
+                    "solicitante": {"valor": "Pessoa Fictícia"},
+                    "assunto": {"valor": "agendamento"},
+                    "pedido": {"valor": "marcar atendimento"},
+                },
+                "categoria": {"codigo": "agendamento"},
+                "alerta_injecao": False,
+                "campos_ausentes": ["data_solicitacao", "protocolo"],
+            }
+            with patch("src.avaliacao.ROOT", raiz):
+                resultado = avaliacao.avaliar_campos(extracao, "T99")
+        self.assertTrue(all(campo["correto"] for campo in resultado["campos"].values()))
+        self.assertTrue(resultado["campos_ausentes"]["correto"])
+        self.assertEqual(resultado["gravidade_geral"], None)
+        self.assertIn("revisão humana", resultado["observacao_decisao"])
 
 
 class TestMinutaEPrompt(unittest.TestCase):

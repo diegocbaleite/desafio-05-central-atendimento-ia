@@ -51,7 +51,7 @@ class TestExperimento(unittest.TestCase):
             }
             casos.return_value = [
                 {"id": n, "arquivo": "dados/caso.txt", "modalidade": "texto"}
-                for n in ("C01", "C05", "C06")
+                for n in ("T01", "X01", "X02")
             ]
             contador = [0]
 
@@ -71,7 +71,7 @@ class TestExperimento(unittest.TestCase):
                 }
 
             conversar.side_effect = resposta
-            experimento.executar()
+            resultado = experimento.executar()
             saidas = list(
                 (base / "resultados/experimento_prompts/real").glob("*/matriz.csv")
             )
@@ -93,8 +93,10 @@ class TestExperimento(unittest.TestCase):
                 )
             )
             self.assertEqual(meta["custo_usd"], 0.001)
-            self.assertTrue((saidas[0].parent / "C01_prompt_B_saida.txt").exists())
-            self.assertFalse((saidas[0].parent / "C01_prompt_A_saida.txt").exists())
+            self.assertFalse(resultado["sucesso_total"])
+            self.assertEqual(resultado["falhas"], 1)
+            self.assertTrue((saidas[0].parent / "T01_prompt_B_saida.txt").exists())
+            self.assertFalse((saidas[0].parent / "T01_prompt_A_saida.txt").exists())
 
 
 if __name__ == "__main__":

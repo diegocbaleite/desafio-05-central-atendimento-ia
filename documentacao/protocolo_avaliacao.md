@@ -16,6 +16,8 @@ Avaliar extrações contra os gabaritos previamente fixados para T01, A01, I01, 
 
 Matriz A/B/C: usar os casos textuais atuais `T01`, `X01` e `X02`, mantendo entrada, modelo e parâmetros iguais entre os prompts. Registrar tempo em segundos, tokens e custo quando fornecidos. Medir tom (1–5) e minutos até texto utilizável por pessoa. Não declarar vencedor com base em simulação nem transportar notas de outro conjunto de dados.
 
+O CSV gerado reserva as colunas humanas `fidelidade_humana`, `completude_humana`, `formato_humano`, `linguagem_humana`, `seguranca_humana`, `total_humano`, `tom_1a5_humano`, `minutos_ate_utilizavel_humano`, `decisao_humana`, `revisor_humano`, `data_revisao` e `justificativa_humana`. Elas permanecem vazias até uma pessoa avaliar a saída; o programa não preenche nem infere essas notas.
+
 Taxa de aprovação direta = minutas aprovadas sem correção / total com minuta.
 Taxa incluindo correção = (aprovadas + corrigidas e então aprovadas) / total com minuta.
 

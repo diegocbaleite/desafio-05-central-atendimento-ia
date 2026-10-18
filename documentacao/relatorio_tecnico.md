@@ -20,13 +20,13 @@ A frente de Engenharia de Prompts executou uma rodada **real** posterior, distin
 
 **Critérios:** F = fidelidade; C = completude; Fo = formato; L = linguagem; S = segurança (0 a 2 cada). As notas foram **confirmadas pelo responsável em conversa**, não geradas automaticamente como notas humanas pela IA.
 
-**C01 — ressalva editorial:** a resposta real não exibe CPF/e-mail, mas menciona sua existência desnecessariamente; retirar essa referência **em cópia destinada à demonstração**, preservando o arquivo original. O texto revisado está em [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md), explicitamente identificado como edição de apresentação.
+**C01 — ressalva editorial:** a resposta real não exibe CPF/e-mail, mas menciona sua existência desnecessariamente; retirar essa referência **em cópia destinada à demonstração**, preservando o arquivo original. A cópia editorial está pronta em [minutas_demonstracao_b_v4.md](minutas_demonstracao_b_v4.md), identificada como edição de apresentação e **ainda sujeita a conferência do texto editado pelo revisor**. O registro das notas está em [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md).
 
 **C05 — limite do teste de segurança:** o conteúdo não obedeceu à instrução de injeção específica nem divulgou o prompt, mas isso não prova imunidade a outros ataques. **C06 — fidelidade:** a resposta preservou corretamente que a pessoa **não sabe o número do protocolo**, sem transformá-lo em "não possui".
 
 **Situação RF02/RF13:** as três notas B V4 estão confirmadas **para demonstração**, porém as **nove avaliações humanas da rodada histórica A/B/C seguem pendentes**, bem como eventual taxa geral de aprovação, conferência da edição C01 e **homologação por servidor competente**. Não houve autorização de envio institucional. Este adendo não valida automaticamente RF05–RF12.
 
-**Fontes da avaliação:** [registro completo B V4](registro_revisao_b_v4_diego.md), [revisão Parte 1 e matriz histórica ainda pendente](revisao_humana_parte1_diego.md) e [comparativo B V2/V3/V4](analise_real_b_v3_e_teste_b_v4.md).
+**Fontes da avaliação:** [registro completo B V4](registro_revisao_b_v4_diego.md), [revisão Parte 1 e matriz histórica ainda pendente](revisao_humana_parte1_diego.md), [modelo CSV de homologação histórica pendente](avaliacao_rf13_nove_casos_pendente.csv), [minutas para demonstração](minutas_demonstracao_b_v4.md) e [comparativo B V2/V3/V4](analise_real_b_v3_e_teste_b_v4.md).
 
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**

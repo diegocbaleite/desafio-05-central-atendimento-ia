@@ -28,6 +28,10 @@ A frente de Engenharia de Prompts executou uma rodada **real** posterior, distin
 
 **Fontes da avaliação:** [registro completo B V4](registro_revisao_b_v4_diego.md), [revisão Parte 1 e matriz histórica ainda pendente](revisao_humana_parte1_diego.md), [modelo CSV de homologação histórica pendente](avaliacao_rf13_nove_casos_pendente.csv), [minutas para demonstração](minutas_demonstracao_b_v4.md) e [comparativo B V2/V3/V4](analise_real_b_v3_e_teste_b_v4.md).
 
+### Andamento da revisão humana da matriz A/B/C original — 18/10/2026
+
+**Confirmada 1 de 9 respostas históricas:** C01/A recebeu notas humanas **F0, C1, Fo1, L1, S0 = 3/10**, com **decisão de rejeitar** por invenção de prazo, gratuidade e procedimentos administrativos. A confirmação foi feita pelo responsável; o texto original C01/A foi preservado. **C01/B, C01/C, C05/A–C e C06/A–C continuam sem nota humana**. O arquivo [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv) é a matriz separada para preenchimento humano, sem sobrescrever a matriz original. A homologação final RF13 segue pendente.
+
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**
 

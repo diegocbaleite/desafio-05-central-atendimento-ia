@@ -10,7 +10,7 @@ Base: *Desafio Prático 1 — Central Inteligente de Atendimento e Comunicação
 | RF06/STT | `audio` usa Whisper local opcional (`faster-whisper`) ou Groq conforme seleção/configuração | Preserva texto bruto, SHA-256, idioma, duração, modelo, relatório WER/CER contra **gabarito da mesma modalidade**; não declara STT real nos testes com mock. |
 | RF07/TTS | `voz` usa eSpeak offline ou provedor já implementado pelo projeto | Exige revisão humana documentada, nome/data/referência SHA-256; decisões de mock/YAML são recusadas. Adiciona aviso falado sobre “não localizado”. Não envia mensagem. |
 | RF08/OCR | `ocr` lê PNG/JPG/TIFF e PDF digitalizado usando `pdftoppm` + Tesseract local | Preserva original, OCR bruto, trechos com baixa confiança, data, SHA-256 e revisão pendente. Calcula CER/WER se existir transcrição de referência **prévia**. |
-| RF10/Imagem | `arte` usa `imagem.gerar()` | `imagem_provider=local` produz **Pillow (não IA)**; com `openai` configurado usa API. Exige nota de proveniência, registra revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
+| RF10/Imagem | `arte` usa `imagem.gerar()` | Pillow local continua disponível; `--provider openrouter` seleciona `google/gemini-3.1-flash-image` via API de imagem OpenRouter (paga). Exige nota de proveniência, registra custo/tokens quando reportados, mantém revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
 | Testes | `testes/test_audio_visao_imagem.py` | Testes locais determinísticos, sem APIs e sem credenciais (a contagem atual vem de `python -m unittest discover -s testes -t .`). |
 
 ## Pré-requisitos Ubuntu
@@ -66,11 +66,11 @@ A voz local é em português brasileiro via eSpeak (WAV). Se houver “não loca
 ```bash
 python -m src.main arte --referencia dados/originais/brasao.png
 ```
-Com `multimodal.imagem_provider: local`, isso produz ilustração **programática**, não imagem gerada por IA. Para cumprir a demonstração de **geração por IA** da RF10, altere **localmente** a configuração de imagem para `openai`, preencha `OPENAI_API_KEY` no `.env` e execute:
+Com o padrão local, isso produz ilustração **programática**, não imagem gerada por IA. Para usar a integração de IA paga com OpenRouter, execute explicitamente:
 ```bash
-python -m src.main arte --referencia dados/originais/brasao.png
+python -m src.main arte --provider openrouter --referencia dados/originais/brasao.png
 ```
-Revisar texto, símbolos, pertinência institucional, selo sintético e metadata; o brasão fornecido é **referência**, não incorporado automaticamente. Nunca apresentar a arte como peça oficial GOV.MT.
+O modelo é pago e cada chamada pode gerar custos; confira saldo/limites do provedor antes de executar. `--mock` força composição local e não faz chamada remota. Nesta revisão, a única chamada autorizada retornou HTTP 402 por créditos insuficientes; nenhum arquivo foi gerado. Não repita a chamada sem nova autorização. Revisar texto, símbolos, pertinência institucional, selo sintético e metadados; o brasão fornecido é **referência**, não incorporado automaticamente. Nunca apresentar a arte como peça oficial GOV.MT.
 
 ## Onde ficam resultados e auditoria
 
@@ -81,7 +81,7 @@ Cada execução cria uma pasta única em `resultados/multimodal/` com metadados 
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
-Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). Continuam pendentes: geração de imagem por IA e homologação humana. Para a entrega, repetir todos os testes no seu repositório Ubuntu e anexar evidências após conferir privacidade.
+Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração OpenRouter tem testes simulados; a geração real ficou pendente após HTTP 402, assim como a homologação humana. A suíte completa tem 74 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
 - [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.

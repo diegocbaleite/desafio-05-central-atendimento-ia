@@ -71,3 +71,13 @@ A equipe executou localmente `python -m src.main experimento --metaprompt-v2` co
 Foram apresentados os textos dos prompts C V2 para C01, C05 e C06. A avaliação técnica assistida por IA encontrou melhoria estrutural: as saídas passaram a ter cabeçalho `MINUTA — NÃO ENVIADA`, referência à demanda, fontes e advertência de revisão, sem decisões de deferimento ou prazos inventados nas três saídas examinadas. Limitações: C01 sugeriu documentos e finalidade sem comprovação de obrigatoriedade; C05 presumiu que contatos e documentos comprobatórios estavam ausentes; C06 deixou de sinalizar `não localizado` para nome/data/protocolo. **Todas permanecem sujeitas a correção e homologação humana.**
 
 **Conclusão da responsabilidade do Estudante 1:** implementação e avaliação técnica concluídas, evidências originais preservadas; a avaliação humana e a decisão administrativa de incorporar o PR são tarefas posteriores, não substituíveis pela IA. O estudo compara **três técnicas de prompt com o mesmo modelo**, não três modelos distintos. Para eventual critério de *comparação de modelos*, será necessária uma segunda execução controlada com outro identificador de modelo e análise equivalente, caso o enunciado exija comparação entre modelos.
+
+## Atualização técnica posterior à auditoria (18/10/2026)
+
+Esta atualização descreve alterações de implementação; não representa novas chamadas reais a provedores nem avaliação humana:
+
+- A conferência de protocolo, data e solicitante em casos de áudio/imagem agora coleta confirmação ou correção de cada valor. A extração bruta é preservada; a versão revisada e a conferência ficam em arquivos separados.
+- No pipeline, texto bruto de STT/OCR, provedor/modelo, parâmetros e duração de processamento ficam vinculados ao mesmo caso e ID de execução. A referência histórica de áudio/OCR continua sem validação independente e não sustenta WER/CER conclusivos.
+- Os metadados da chamada LLM passam a incluir temperatura, limite de tokens e timeout efetivos.
+- Os casos atuais são T01, A01, I01, X01 e X02. C01/C05/C06 e seus resultados permanecem registros de rodadas históricas, não evidência de avaliação dos casos atuais.
+- A integração de imagem por IA usa OpenRouter / `google/gemini-3.1-flash-image`, modelo pago. A única tentativa autorizada retornou HTTP 402 por créditos insuficientes; nenhum arquivo de imagem foi retornado ou registrado. Uma nova chamada depende de autorização; decisão humana documentada, métricas independentes e avaliações da equipe continuam pendentes. Nenhuma aprovação ou nota foi criada por esta atualização.

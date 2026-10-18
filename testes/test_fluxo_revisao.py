@@ -6,9 +6,11 @@ import sys
 import tempfile
 import unittest
 import warnings
+import copy
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from src import avaliacao, main
@@ -159,8 +161,8 @@ class TestConferenciaDeCamposCriticos(unittest.TestCase):
 
     def test_minuta_bloqueada_sem_confirmacao(self):
         redigir_mock = Mock(return_value=("# MINUTA", {}))
-        with self.assertRaisesRegex(ValueError, "não confirmada"):
-            self.amb.executar(redigir_mock, ["nao", "Revisor Teste"])
+        with self.assertRaisesRegex(ValueError, "Responsável"):
+            self.amb.executar(redigir_mock, ["", "", "", ""])
         redigir_mock.assert_not_called()
         status = [
             k["status"]
@@ -172,18 +174,116 @@ class TestConferenciaDeCamposCriticos(unittest.TestCase):
     def test_confirmacao_registra_responsavel(self):
         resumo = self.amb.executar(
             lambda *a, **k: ("# MINUTA", {}),
-            ["sim", "Revisor Teste", "rejeitar", "Revisor Teste", "Fora do escopo"],
+            ["", "", "", "Revisor Teste", "rejeitar", "Revisor Teste", "Fora do escopo"],
         )
-        self.assertEqual(resumo["conferencia_campos_criticos"]["status"], "confirmada")
+        conferencia = resumo["conferencia_campos_criticos"]
+        if conferencia is None:
+            self.fail("Conferência deveria estar registrada")
+        self.assertEqual(conferencia["status"], "confirmada")
         self.assertEqual(
-            resumo["conferencia_campos_criticos"]["responsavel"], "Revisor Teste"
+            conferencia["responsavel"], "Revisor Teste"
         )
+
+    def test_correcao_de_campo_critico_e_usada_na_minuta_sem_alterar_extracao_bruta(self):
+        entrada_redigir = []
+
+        def redigir_mock(ext, *args, **kwargs):
+            entrada_redigir.append(ext)
+            return "# MINUTA", {}
+
+        self.amb.executar(
+            redigir_mock,
+            [
+                "2026-000999",
+                "",
+                "",
+                "Revisor Teste",
+                "rejeitar",
+                "Revisor Teste",
+                "Valor conferido no original",
+            ],
+        )
+        self.assertEqual(entrada_redigir[0]["campos"]["protocolo"]["valor"], "2026-000999")
+        self.assertEqual(EXT["campos"]["protocolo"]["valor"], "2026-000142")
+        pasta_caso = self.amb.pasta_execucao / "T99"
+        original = json.loads((pasta_caso / "extracao.json").read_text(encoding="utf-8"))
+        revisada = json.loads(
+            (pasta_caso / "extracao_revisada.json").read_text(encoding="utf-8")
+        )
+        conferencia = json.loads(
+            (pasta_caso / "conferencia_campos_criticos.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(original["campos"]["protocolo"]["valor"], "2026-000142")
+        self.assertEqual(revisada["campos"]["protocolo"]["valor"], "2026-000999")
+        self.assertIsNone(revisada["campos"]["protocolo"]["evidencia"])
+        self.assertTrue(conferencia["campos"]["protocolo"]["corrigido"])
+
+    def test_campo_ausente_exige_confirmacao_explicita(self):
+        ext = copy.deepcopy(EXT)
+        ext["campos"]["protocolo"]["valor"] = "não localizado"
+        with patch("builtins.input", side_effect=[""]):
+            with self.assertRaisesRegex(ValueError, "confirme esse estado"):
+                main._conferir_campos_criticos(
+                    self.amb.caso, ext, "execucao", simulacao=False
+                )
 
     def test_simulacao_fica_rotulada_e_nao_pede_confirmacao(self):
         resumo = self.amb.executar(
             lambda *a, **k: ("# MINUTA", {}), [], mock=True, decisao="aprovar"
         )
         self.assertEqual(resumo["conferencia_campos_criticos"], {"status": "simulada"})
+
+    def test_pipeline_preserva_transcricao_bruta_e_parametros_stt(self):
+        self.amb.executar(
+            lambda *a, **k: ("# MINUTA", {}),
+            [
+                "",
+                "",
+                "",
+                "Revisor Teste",
+                "rejeitar",
+                "Revisor Teste",
+                "Fora do escopo",
+            ],
+        )
+        pasta_caso = self.amb.pasta_execucao / "T99"
+        self.assertEqual(
+            (pasta_caso / "transcricao_bruta.txt").read_text(encoding="utf-8"),
+            "texto fictício",
+        )
+        metadados = json.loads(
+            (pasta_caso / "entrada_multimodal.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(metadados["provedor"], "groq")
+        self.assertEqual(metadados["modelo"], "whisper-large-v3-turbo")
+        self.assertTrue(metadados["requer_revisao_humana"])
+
+    def test_pipeline_preserva_ocr_bruto_e_parametros(self):
+        ambiente = _Ambiente(modalidade="imagem")
+        self.addCleanup(ambiente.limpar)
+        ambiente.executar(
+            lambda *a, **k: ("# MINUTA", {}),
+            [
+                "",
+                "",
+                "",
+                "Revisor Teste",
+                "rejeitar",
+                "Revisor Teste",
+                "Fora do escopo",
+            ],
+        )
+        pasta_caso = ambiente.pasta_execucao / "T99"
+        self.assertEqual(
+            (pasta_caso / "ocr_bruto.txt").read_text(encoding="utf-8"),
+            "texto fictício",
+        )
+        metadados = json.loads(
+            (pasta_caso / "entrada_multimodal.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(metadados["provedor"], "local")
+        self.assertEqual(metadados["modelo"], "Tesseract")
+        self.assertEqual(metadados["parametros"]["psm"], 6)
 
 
 class TestCli(unittest.TestCase):
@@ -196,6 +296,18 @@ class TestCli(unittest.TestCase):
             redirect_stdout(saida),
         ):
             return main.main(), saida.getvalue()
+
+    def test_mock_arte_ignora_provedor_pago(self):
+        args = SimpleNamespace(
+            comando="arte", provider="openrouter", mock=True, referencia=None
+        )
+        with (
+            patch("src.main.gerar_visual", return_value=Path("arte")) as gerar,
+            patch("builtins.print"),
+        ):
+            codigo = main._comando_midia(args)
+        self.assertEqual(codigo, 0)
+        self.assertEqual(gerar.call_args.kwargs["provider"], "local")
 
     def test_codigo_de_saida_1_quando_algum_caso_falha(self):
         caso = {"id": "T99", "arquivo": "x", "modalidade": "texto"}

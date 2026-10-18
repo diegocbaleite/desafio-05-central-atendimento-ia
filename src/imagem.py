@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import datetime as dt
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -61,29 +62,32 @@ def imagem_local(destino):
     return str(destino)
 
 
-def gerar(destino=None):
-    """Imagem conforme multimodal.imagem_provider: local (Pillow) ou geração real via OpenAI."""
+def gerar(destino=None, *, provider=None):
+    """Gera arte local ou usa explicitamente um provedor de imagem configurado."""
     cfg = carregar()
+    provider = provider or cfg["multimodal"]["imagem_provider"]
     caminho = Path(destino or ROOT / "resultados" / "peca_visual.png")
-    if cfg["multimodal"]["imagem_provider"] == "local":
+    if provider == "local":
         return imagem_local(caminho)
-    if cfg["multimodal"]["imagem_provider"] != "openai":
+    if provider != "openrouter":
         raise ErroAPI("Provedor de imagem inválido")
-    token = chave(cfg, "openai")
+    token = chave(cfg, "openrouter")
     if not token:
-        raise ErroAPI("OPENAI_API_KEY ausente para geração real da imagem")
+        raise ErroAPI("OPENROUTER_API_KEY ausente para geração real da imagem")
     prompt = (ROOT / "prompts" / "imagem_orientacao.md").read_text(encoding="utf-8")
     modelo = cfg["multimodal"]["imagem_modelo"]
+    parametros = {
+        "model": modelo,
+        "prompt": prompt,
+        "resolution": "1K",
+        "aspect_ratio": "2:3",
+        "n": 1,
+    }
     try:
         r = requests.post(
-            "https://api.openai.com/v1/images/generations",
+            cfg["provedores"]["openrouter"]["base_url"].rstrip("/") + "/images",
             headers={"Authorization": "Bearer " + token},
-            json={
-                "model": modelo,
-                "prompt": prompt,
-                "size": "1024x1536",
-                "quality": "medium",
-            },
+            json=parametros,
             timeout=180,
         )
     except requests.RequestException as e:
@@ -93,15 +97,29 @@ def gerar(destino=None):
     if not r.ok:
         raise ErroAPI("Geração de imagens indisponível: HTTP " + str(r.status_code))
     try:
-        img = base64.b64decode(r.json()["data"][0]["b64_json"], validate=True)
-    except (ValueError, KeyError, IndexError, TypeError) as e:
+        dados_api = r.json()
+    except ValueError as e:
+        raise ErroAPI("Gerador retornou JSON inválido") from e
+    if not isinstance(dados_api, dict):
+        raise ErroAPI("Gerador retornou formato inesperado")
+    imagens = dados_api.get("data")
+    if not isinstance(imagens, list) or not imagens or not isinstance(imagens[0], dict):
+        raise ErroAPI("Gerador não retornou imagem")
+    imagem_api = imagens[0]
+    codificado = imagem_api.get("b64_json")
+    if not isinstance(codificado, str) or not codificado:
+        raise ErroAPI("Gerador retornou imagem sem dados")
+    try:
+        img = base64.b64decode(codificado, validate=True)
+    except (ValueError, TypeError) as e:
         raise ErroAPI("Imagem retornada em formato inesperado") from e
-    if not img.startswith(b"\x89PNG"):
-        raise ErroAPI("Gerador não retornou arquivo PNG esperado")
-    # Inserir selo mesmo que o modelo o tenha omitido; nunca dizer que a imagem é oficial.
     from PIL import Image, ImageDraw, ImageFont
 
-    im = Image.open(io.BytesIO(img)).convert("RGB")
+    try:
+        with Image.open(io.BytesIO(img)) as original:
+            im = original.convert("RGB")
+    except (OSError, ValueError) as e:
+        raise ErroAPI("Gerador retornou dados que não são uma imagem válida") from e
     d = ImageDraw.Draw(im)
     w, h = im.size
     d.rectangle((0, h - 115, w, h), fill="#122d47")
@@ -115,29 +133,50 @@ def gerar(destino=None):
     )
     caminho.parent.mkdir(parents=True, exist_ok=True)
     im.save(caminho)
+    uso = dados_api.get("usage")
+    if not isinstance(uso, dict):
+        uso = {}
     gravar_json(
         caminho.parent / (caminho.stem + ".proveniencia.json"),
         {
             "metodo": "geracao_api",
             "por_ia": True,
-            "provider": "openai",
+            "provider": "openrouter",
             "modelo": modelo,
             "data": dt.datetime.now(dt.UTC).isoformat(),
             "prompt": "prompts/imagem_orientacao.md",
+            "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
+            "parametros": {
+                "resolution": parametros["resolution"],
+                "aspect_ratio": parametros["aspect_ratio"],
+                "n": parametros["n"],
+            },
+            "tokens_entrada": uso.get("prompt_tokens", "não localizado"),
+            "tokens_saida": uso.get("completion_tokens", "não localizado"),
+            "custo_usd": uso.get("cost", "não localizado"),
+            "media_type_retorno": imagem_api.get("media_type", "não localizado"),
             "arquivo": str(caminho),
+            "operador": "não localizado",
             "status_revisao": "pendente de validação humana",
         },
     )
     return str(caminho)
 
 
-def gerar_visual(*, saida=None, referencia=None, gerador_teste=None) -> Path:
+def gerar_visual(*, saida=None, referencia=None, gerador_teste=None, provider=None) -> Path:
     """Gera a peça com revisão visual pendente usando o provedor configurado."""
-    cfg = carregar()
-    p = cfg["multimodal"]["imagem_provider"]
     pasta = nova_saida(saida, "arte")
     caminho = pasta / "orientacao.png"
-    produzido = gerador_teste(caminho) if gerador_teste else gerar(caminho)
+    try:
+        produzido = (
+            gerador_teste(caminho)
+            if gerador_teste
+            else gerar(caminho, provider=provider)
+        )
+    except ErroAPI:
+        if not any(pasta.iterdir()):
+            pasta.rmdir()
+        raise
     img = Path(produzido)
     nota = img.with_name(img.stem + ".proveniencia.json")
     if not img.exists() or not nota.exists():
@@ -148,7 +187,11 @@ def gerar_visual(*, saida=None, referencia=None, gerador_teste=None) -> Path:
     info = {
         "tipo": "PECA_VISUAL", "arquivo": img.name, "sha256": sha256_arquivo(img),
         "por_ia": dados["por_ia"], "metodo": dados.get("metodo"),
+        "provider": dados.get("provider", "não localizado"),
         "modelo": dados.get("modelo", "não localizado"),
+        "custo_usd": dados.get("custo_usd", "não localizado"),
+        "tokens_entrada": dados.get("tokens_entrada", "não localizado"),
+        "tokens_saida": dados.get("tokens_saida", "não localizado"),
         "revisao_humana": "pendente", "uso_oficial": False,
         "aviso": "Material de demonstração; não constitui comunicação oficial.",
         "data_utc": dt.datetime.now(dt.UTC).isoformat(),

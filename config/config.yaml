@@ -21,10 +21,6 @@ provedores:
     base_url: "https://api.groq.com/openai/v1"
     env_chave: "GROQ_API_KEY"
 
-  openai:
-    base_url: "https://api.openai.com/v1"
-    env_chave: "OPENAI_API_KEY"
-
   gemini:
     base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
     env_chave: "GEMINI_API_KEY"
@@ -38,7 +34,7 @@ multimodal:
   tts_voz: "coral"
 
   imagem_provider: "local"
-  imagem_modelo: "gpt-image-1-mini"
+  imagem_modelo: "google/gemini-3.1-flash-image"
 
 seguranca:
   marcador_ausente: "não localizado"

@@ -1,5 +1,7 @@
 """Testes locais de áudio, OCR e imagem: sem chamadas pagas, sem credenciais."""
 import hashlib
+import base64
+import io
 import json
 import tempfile
 import unittest
@@ -201,7 +203,7 @@ class TestControleHumano(unittest.TestCase):
 
             with patch("src.audio.sintetizar", side_effect=sintetizar_mock) as sintetizar:
                 pasta = audio.gerar_voz(
-                    minuta, parecer, saida=raiz / "saida", provider="openai"
+                    minuta, parecer, saida=raiz / "saida", provider="openrouter"
                 )
             sintetizar.assert_called_once()
             self.assertTrue((pasta / "voz.mp3").exists())
@@ -260,13 +262,13 @@ class TestControleHumano(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             raiz = Path(d)
 
-            def gerar_mock(destino):
+            def gerar_mock(destino, provider=None):
                 Image.new("RGB", (12, 12), "white").save(destino)
                 destino.with_name("orientacao.proveniencia.json").write_text(
                     json.dumps({
                         "por_ia": True,
                         "metodo": "geracao_api",
-                        "provider": "openai",
+                        "provider": "openrouter",
                         "modelo": "modelo-ficticio",
                     }),
                     encoding="utf-8",
@@ -274,16 +276,90 @@ class TestControleHumano(unittest.TestCase):
                 return str(destino)
 
             with (
-                patch(
-                    "src.imagem.carregar",
-                    return_value={"multimodal": {"imagem_provider": "openai"}},
-                ),
                 patch("src.imagem.gerar", side_effect=gerar_mock) as gerar,
             ):
-                pasta = imagem.gerar_visual(saida=raiz / "saida")
+                pasta = imagem.gerar_visual(
+                    saida=raiz / "saida", provider="openrouter"
+                )
             gerar.assert_called_once()
+            self.assertEqual(gerar.call_args.kwargs["provider"], "openrouter")
             info = json.loads((pasta / "revisao_visual.json").read_text(encoding="utf-8"))
             self.assertTrue(info["por_ia"])
+            self.assertEqual(info["provider"], "openrouter")
+
+    def test_openrouter_gera_png_e_registra_custo_sem_chamada_real(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as d:
+            destino = Path(d) / "peca.png"
+            buffer = io.BytesIO()
+            Image.new("RGB", (40, 60), "white").save(buffer, format="PNG")
+            config = {
+                "multimodal": {
+                    "imagem_provider": "local",
+                    "imagem_modelo": "google/gemini-3.1-flash-image",
+                },
+                "provedores": {
+                    "openrouter": {
+                        "base_url": "https://api.example.test/v1",
+                    }
+                },
+            }
+            resposta = Mock(ok=True)
+            resposta.json.return_value = {
+                "data": [
+                    {
+                        "b64_json": base64.b64encode(buffer.getvalue()).decode("ascii"),
+                        "media_type": "image/png",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 50,
+                    "completion_tokens": 1300,
+                    "cost": 0.04,
+                },
+            }
+            with (
+                patch("src.imagem.carregar", return_value=config),
+                patch("src.imagem.chave", return_value="token-falso"),
+                patch("src.imagem.requests.post", return_value=resposta) as post,
+            ):
+                imagem.gerar(destino, provider="openrouter")
+
+            post.assert_called_once()
+            self.assertEqual(
+                post.call_args.args[0], "https://api.example.test/v1/images"
+            )
+            self.assertEqual(
+                post.call_args.kwargs["json"]["model"],
+                "google/gemini-3.1-flash-image",
+            )
+            self.assertEqual(post.call_args.kwargs["json"]["aspect_ratio"], "2:3")
+            self.assertEqual(post.call_args.kwargs["json"]["n"], 1)
+            with Image.open(destino) as gerada:
+                self.assertEqual(gerada.size, (40, 60))
+            proveniencia = json.loads(
+                destino.with_name("peca.proveniencia.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(proveniencia["provider"], "openrouter")
+            self.assertEqual(proveniencia["custo_usd"], 0.04)
+            self.assertEqual(proveniencia["tokens_saida"], 1300)
+            self.assertEqual(proveniencia["operador"], "não localizado")
+            self.assertEqual(
+                proveniencia["status_revisao"], "pendente de validação humana"
+            )
+
+    def test_falha_de_api_nao_deixa_pasta_de_evidencia_vazia(self):
+        with tempfile.TemporaryDirectory() as d:
+            destino = Path(d) / "saida"
+            with (
+                patch("src.imagem.gerar", side_effect=ErroAPI("HTTP 402")),
+                self.assertRaisesRegex(ErroAPI, "HTTP 402"),
+            ):
+                imagem.gerar_visual(saida=destino, provider="openrouter")
+            self.assertEqual(list(destino.iterdir()), [])
 
     def test_imagem_local_grava_proveniencia_sem_ia(self):
         with tempfile.TemporaryDirectory() as d:

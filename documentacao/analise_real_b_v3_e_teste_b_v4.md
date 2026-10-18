@@ -44,7 +44,7 @@ A V3 foi mais rápida **nesta amostra**, mas gerou mais tokens de saída. O temp
 
 ## Correção versionada preparada
 
-Criado `prompts/experimento/prompt_B_v4_seguro.md`. Ele orienta conferência silenciosa das lacunas por tipo de pedido, evita "nenhuma lacuna" quando faltam elementos relevantes, distingue "não sei" de "não possuo" e mantém as proibições de inventar atos administrativos. **A V4 ainda não foi executada com modelo real.**
+Criado `prompts/experimento/prompt_B_v4_seguro.md`. Ele orienta conferência silenciosa das lacunas por tipo de pedido, evita "nenhuma lacuna" quando faltam elementos relevantes, distingue "não sei" de "não possuo" e mantém as proibições de inventar atos administrativos. **Atualização em 18/10/2026:** a V4 foi posteriormente executada com OpenRouter real, com três respostas técnicas bem-sucedidas. A adequação das três minutas **para demonstração**, com ressalva editorial C01, foi confirmada pelo responsável, sem notas humanas RF13 por critério. Ver [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md).
 
 O executor `src/experimento_b_v2_real.py` agora aceita `--versao v4`; cria pasta própria `resultados/execucoes/prompts_b_v4_real/<UTC>/`. **V2 e V3 permanecem intactas.**
 
@@ -63,4 +63,4 @@ git pull --ff-only origin feature/estudante-1-prompts-avaliacao-documentacao
 O último comando chama OpenRouter de verdade com solicitações fictícias, usando a chave **somente do .env local**. Não cola credenciais em logs ou em GitHub; não envia minuta automaticamente.
 
 ### Próxima etapa
-Conferir saídas V4, medir latências e tokens, comparar versões **sem afirmar vencedor a partir de três exemplos**, registrar cinco notas por caso atribuídas pelo revisor humano após sua própria leitura e somente então elaborar parecer e eventual PR. Resultados `sucesso` na API não significam aprovação humana.
+A rodada V4 foi executada, suas latências e tokens foram registrados em [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md) e o responsável confirmou adequação das três saídas **para demonstração**, com pequeno ajuste editorial C01. Permanecem pendentes as cinco notas humanas por caso, a revisão dos nove resultados históricos A/B/C e a homologação institucional. Comparar versões **sem afirmar vencedor estatístico com três exemplos**; preparar PR somente após checar diferenças com a main. Resultados `sucesso` na API não significam aprovação humana.

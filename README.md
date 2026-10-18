@@ -1,211 +1,420 @@
-# Central Inteligente de Atendimento e Comunicação Institucional
+# 🤖 Central Inteligente de Atendimento e Comunicação Institucional
 
-**Desafio Prático 1 — Inteligência Artificial Generativa (FIC_DEV, Aulas 01 a 07)**  
-**Equipe:** Diego Assunção Leite · Ayron · Guilherme da Silva Lessa  
-**Instituição:** SECITECI — Escola Técnica Estadual de Cuiabá | **Versão:** 1.0 (2026)  
+Protótipo educacional desenvolvido em **Python** para apoiar o tratamento de solicitações fictícias recebidas por **texto, áudio e imagem**. A aplicação valida entradas, transcreve áudio, executa OCR, extrai e classifica informações, gera minutas institucionais, oferece síntese de voz, prepara peças visuais e registra evidências de execução e revisão humana.
 
-> **Protótipo educacional, sem atendimento real.** Não há envio automático para cidadão. Os documentos são fictícios e toda aprovação tem que passar por uma pessoa responsável.
+> **Atenção:** este projeto é uma demonstração acadêmica, não um sistema oficial de atendimento. **Nenhuma resposta é enviada automaticamente ao cidadão.** Uma pessoa responsável deve revisar informações e minutas antes de qualquer aprovação.
 
-## Objetivo
-Receber solicitações fictícias em **texto, áudio e imagem**, transcrever ou aplicar OCR, extrair campos e classificá-los em JSON, produzir **minutas** fundamentadas apenas nas fontes disponíveis, gerar versão acessível em áudio e peça visual identificada quanto à proveniência. Registrar erros, modelos, custos disponíveis e decisões humanas.
+---
 
-## Integrantes e atribuições sugeridas
-| Integrante | Frente inicial |
-|---|---|
-| Diego | Engenharia de Prompts, métricas, revisão dos gabaritos e relatório |
-| Ayron | Integração Python/API, segurança, tratamento de erros e auditoria |
-| Guilherme | STT/TTS, OCR, peça visual, testes e acessibilidade |
+**Equipe:** Diego Assunção Leite · Ayron Brhenno Silva Figueiredo · Guilherme da Silva Lessa
 
-A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
+## 👨‍💻 Identificação
 
-## Estado verificável
-| Componente | Status |
-|---|---|
-| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **91 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
-| T01/A01/I01: material fornecido (texto, áudio, PDF digitalizado) com gabaritos prévios | Incluídos em `dados/originais/` e `dados/gabaritos/`; conferência humana dos gabaritos pendente |
-| X01/X02: entradas sintéticas de injeção e de campos ausentes | Em `testes/fixtures/` (listadas em `casos.yaml`) |
-| A01: áudio e STT | STT local (faster-whisper) e Groq implementados em `src/audio.py`; o pipeline guarda a transcrição bruta e metadados no mesmo caso da execução; **WER/CER de referência derivada do próprio modelo não é avaliação independente** |
-| I01: PDF digitalizado e OCR | Tesseract local disponível; visão Gemini configurável foi implementada para o preenchimento manuscrito, mantendo transcrição bruta e conferência humana obrigatória. A tentativa real de 18/10/2026 falhou com HTTP 503 e segue pendente; `--mock` lê uma referência fictícia explicitamente rotulada e não representa OCR/modelo real |
-| Imagem institucional (timbre/GOV.MT) | `dados/originais/brasao.png` é citado na minuta e incorporado à peça visual; **compatibilidade com documentos GOV.MT não validada oficialmente** |
-| Experimento A/B/C com modelo real | Matriz local registra **9/9 respostas**; **avaliação humana e custo por chamada pendentes** |
-| Peça visual RF10 | Integração Cloudflare Workers AI / `@cf/black-forest-labs/flux-1-schnell` implementada e testada só com simulação; a cota grátis do Workers AI é de 10.000 neurons por dia; **nenhuma imagem real foi gerada ainda** |
-| Decisão humana | CLI interativa exige **responsável e justificativa**, registra hash/versão da minuta e permite nova geração; decisões em YAML são **simulação**, não assinatura de servidor |
-| Relatório de custos e aprovação | Modelos em `documentacao/`; preencher apenas com dados medidos |
+**Equipe e responsabilidades:**
 
-Estados por requisito (planejado, implementado, testado com simulação, validado com serviço real, validado por pessoa): [documentacao/matriz_requisitos.md](documentacao/matriz_requisitos.md).
+- **Diego Assunção Leite — Estudante 1:** engenharia de prompts, comparação de modelos, critérios de avaliação e documentação.
+- **Ayron Brhenno Silva Figueiredo — Estudante 2:** integração por API, segurança, processamento de texto e registro das execuções.
+- **Guilherme da Silva Lessa — Estudante 3:** áudio, visão/OCR, geração de imagem, acessibilidade e testes multimodais.
 
-**Não confundir `mock` com resultado de IA real.** Não declare testes passando nem áudio/arte gerados por IA sem evidência da execução.
+**Curso/módulo:** FIC_DEV — Programador de Sistemas com IA — Inteligência Artificial Generativa (Aulas 01 a 07)\
+**Instituição:** SECITECI / Escola Técnica Estadual de Cuiabá\
+**Atividade:** Desafio Prático 1 — versão 1.0 (2026)\
+**Repositório:** [https://github.com/diegocbaleite/desafio-05-central-atendimento-ia](https://github.com/diegocbaleite/desafio-05-central-atendimento-ia)
 
-## Preparar o ambiente
-Requer **Python 3.11 ou superior** (testado com 3.14.6 no Windows; o CI usa 3.12). Dependências Python em `requirements.txt` (`requests`, `PyYAML`, `jsonschema`, `python-dotenv`, `pillow`, `pytesseract`); `faster-whisper` é opcional para STT local. Ferramentas de sistema: Tesseract com idioma `por` (OCR), Poppler/`pdftoppm` (OCR de PDF), `espeak` (TTS offline) e FFmpeg/`ffprobe` (duração do áudio; se ausente, a duração é registrada como "não medida").
+---
 
-### Ubuntu
-```bash
+## 🎯 Objetivo
+
+Construir um protótipo local e reproduzível que seja capaz de:
+
+- Receber e validar solicitações fictícias em texto, áudio e documentos digitalizados.
+- Executar transcrição de fala (**STT**) e reconhecimento de caracteres (**OCR**), preservando os arquivos originais e os resultados brutos.
+- Extrair protocolo, data, solicitante, assunto e pedido em **JSON**, com evidências, classificação e indicação de dados ausentes.
+- Gerar **minutas institucionais** baseadas exclusivamente nos dados disponíveis e sinalizar lacunas com `não localizado`.
+- Comparar os prompts **A (zero-shot), B (estruturado) e C (metaprompt)** e justificar o uso de um prompt seguro.
+- Permitir que uma pessoa **aprove, rejeite, corrija ou solicite nova geração** de uma minuta.
+- Produzir áudio de acessibilidade (**TTS**) somente com aprovação humana válida.
+- Produzir uma peça visual de orientação, diferenciando composição local programática de imagem efetivamente gerada por IA.
+- Registrar modelo, parâmetros, tempo, falhas, uso de tokens quando disponível, hash e decisões humanas, sem expor credenciais.
+
+---
+
+## 📌 Mapeamento da implementação dos requisitos funcionais (RF01–RF13)
+
+As funcionalidades abaixo estão **implementadas**; isso não significa que todas tenham sido **validadas com serviço real e homologadas**. Consulte a [matriz de requisitos](documentacao/matriz_requisitos.md) para acompanhar as evidências e pendências.
+
+### 🔹 RF01 — Inicialização e configuração
+
+- **Requisito:** executar o projeto de maneira reproduzível, com configuração e segredos separados.
+- **Implementação:** `src/main.py` oferece a CLI `python -m src.main`; `config/config.yaml` contém parâmetros não sensíveis; `.env.example` apresenta o modelo das variáveis de ambiente; `src/config.py` carrega a configuração.
+- **Validação:** comando `python -m src.main verificar` e testes automatizados. **Pendente:** registrar instalação completa em máquina limpa apenas com o README.
+
+### 🔹 RF02 — Engenharia de prompts
+
+- **Requisito:** comparar A (zero-shot), B (estruturado) e C (metaprompt), mantendo as mesmas entradas e condições sempre que possível.
+- **Implementação:** `prompts/experimento/`, `src/experimento.py`, versões `prompt_B_v2_seguro.md`, `prompt_B_v3_seguro.md`, `prompt_B_v4_seguro.md` e `src/experimento_b_v2_real.py`.
+- **Evidências:** nove saídas históricas de modelo real **avaliadas individualmente pelo revisor (9/9)**. O Prompt B teve a melhor média histórica entre A/B/C. A rodada separada B V4 foi considerada adequada **para demonstração**, com ressalva editorial em C01.
+
+### 🔹 RF03 — Prompt seguro e conteúdo não confiável
+
+- **Requisito:** tratar conteúdo externo como dados, não como instruções; impedir invenção de informações e sinalizar lacunas.
+- **Implementação:** `prompts/sistema_minuta.md`, `src/seguranca.py` e teste de **prompt injection** no caso C05.
+- **Limite:** a detecção heurística por regras/regex e o teste específico não garantem imunidade a qualquer ataque. A revisão humana continua obrigatória.
+
+### 🔹 RF04 — Chamada de API e tratamento de falhas
+
+- **Requisito:** realizar chamadas a modelos com parâmetros configuráveis, timeout, tratamento de erros e proteção de credenciais.
+- **Implementação:** `src/cliente.py` integra provedores configuráveis; `src/auditoria.py` preserva registros de execução sem chaves secretas.
+- **Evidências:** chamadas reais do experimento com **OpenRouter**; falhas e limitações externas também são registradas. Valores de custo só devem ser declarados quando efetivamente informados ou calculados sobre uma tarifa verificável.
+
+### 🔹 RF05 — Extração estruturada de texto
+
+- **Requisito:** identificar campos, classificar solicitações e manter JSON válido quando faltarem dados.
+- **Implementação:** `src/extracao.py` e `src/schemas/extracao.schema.json`; extração local por regras, com evidências, confiança e marcador `não localizado`.
+- **Evidência:** testes de solicitações completas e incompletas. A extração dos campos **não** depende de uma chamada externa ao LLM.
+
+### 🔹 RF06 — Transcrição de áudio (STT)
+
+- **Requisito:** transcrever uma mensagem de voz fictícia, preservar o texto bruto e conferir nomes, datas e protocolos.
+- **Implementação:** `src/audio.py`, com `faster-whisper` local opcional ou Groq configurado, e avaliação em `src/avaliacao.py`.
+- **Situação:** execução local documentada. **Pendente:** uma referência de transcrição independente e conferida para validar WER/CER de forma confiável.
+
+### 🔹 RF07 — Síntese de voz e acessibilidade (TTS)
+
+- **Requisito:** gerar uma versão falada de uma minuta realmente aprovada, com voz e entonação adequadas.
+- **Implementação:** `src/audio.py`, comando `voz`, suporte local a eSpeak e integração Gemini configurada; vinculação da síntese à revisão humana e ao hash da minuta.
+- **Situação:** implementação e testes por simulação concluídos; há evidência local de áudio. **Pendente:** validação completa da saída real do provedor configurado, do conteúdo falado e da aprovação humana correspondente.
+
+### 🔹 RF08 — Visão computacional e OCR
+
+- **Requisito:** extrair texto de documento fictício, preservar os originais, identificar incertezas e conferir os dados críticos.
+- **Implementação:** `src/visao.py`; Tesseract local para imagem/PDF digitalizado e opção de visão Gemini.
+- **Situação:** Tesseract executado, com limitações no preenchimento manuscrito. A tentativa de Gemini registrada retornou **HTTP 503**. **Pendente:** avaliação independente do OCR com referência anterior à medição e conferência final dos dados críticos.
+
+### 🔹 RF09 — Minuta institucional
+
+- **Requisito:** redigir uma minuta baseada somente no contexto disponível, indicando ausências e impedindo envio automático.
+- **Implementação:** `src/minuta.py`, `prompts/sistema_minuta.md` e fluxo de aprovação em `src/main.py`.
+- **Evidência:** minutas e revisões registradas. A peça editorial C01/B V4 está disponível em [minutas de demonstração](documentacao/minutas_demonstracao_b_v4.md), **aguardando conferência final da cópia editada**; não constitui documento oficial GOV.MT.
+
+### 🔹 RF10 — Geração ou edição de imagem
+
+- **Requisito:** criar ou editar peça visual, identificar uso de IA e registrar prompt, modelo, data e revisão.
+- **Implementação:** `src/imagem.py`, `prompts/imagem_orientacao.md` e comando `arte`; composição local com **Pillow** e opção de geração com Cloudflare Workers AI / FLUX.
+- **Situação:** composição programática e integração simulada testadas. **Não há evidência confirmada de imagem efetivamente gerada pela API de IA**; a peça local não deve ser rotulada como geração por IA. Revisão visual final pendente.
+
+### 🔹 RF11 — Auditoria e rastreabilidade
+
+- **Requisito:** registrar execução, arquivo de origem, modelo, parâmetros, tempo, erros, resultados e decisão humana.
+- **Implementação:** `src/auditoria.py` e registros JSONL em `resultados/logs/<id>/`, relacionados aos arquivos e minutas da mesma execução.
+- **Limite:** métricas não disponibilizadas pelos provedores devem ser registradas como não medidas/não localizadas, nunca inventadas.
+
+### 🔹 RF12 — LGPD e minimização
+
+- **Requisito:** usar dados fictícios, proteger segredos e minimizar o conteúdo remetido aos provedores.
+- **Implementação:** `src/seguranca.py`, `.gitignore`, variáveis em `.env` e [documentação LGPD](documentacao/lgpd.md).
+- **Pendente:** conferência final de dados, retenção, autorização da voz e registros. Ao selecionar Groq ou Gemini, **áudio ou páginas de documentos podem ser transmitidos aos provedores**.
+
+### 🔹 RF13 — Qualidade e revisão humana
+
+- **Requisito:** avaliar fidelidade, completude, formato, linguagem e segurança, classificar erros e registrar decisões.
+- **Implementação:** `src/avaliacao.py`, [protocolo RF13](documentacao/protocolo_avaliacao.md) e [matriz separada de notas humanas](documentacao/avaliacao_rf13_nove_casos_pendente.csv).
+- **Resultado histórico:** **9/9** avaliações humanas confirmadas: **40/90 pontos**, média **4,44/10** e **0/9 aprovações diretas**. As decisões foram **5 rejeitar, 3 corrigir e 1 corrigir profundamente**; isso **não** significa nove minutas aprovadas.
+- **Rodada B V4 separada:** três notas humanas de **9/10, 10/10 e 10/10** (média **9,67/10**) para demonstração; C01 requer conferência editorial. Homologação institucional e reavaliação de minutas corrigidas permanecem separadas.
+
+---
+
+## 📊 Resultados e avaliação humana
+
+### Comparativo histórico dos prompts A/B/C
+
+| Prompt              | C01      | C05      | C06      | Média das 3 notas humanas |
+| ------------------- | -------- | -------- | -------- | ------------------------- |
+| A — zero-shot       | 3/10     | 3/10     | 6/10     | **4,00/10**               |
+| **B — estruturado** | **6/10** | **8/10** | **7/10** | **7,00/10**               |
+| C — metaprompt      | 2/10     | 3/10     | 2/10     | **2,33/10**               |
+
+**Síntese:** o Prompt B obteve a maior média nessa amostra de três casos, mas **nenhuma das nove minutas históricas foi aprovada sem correção**. A taxa de aprovação pós-correção **não foi medida** porque não há reavaliação final documentada das versões históricas corrigidas.
+
+### Experimento posterior — Prompt B V4
+
+| Caso                                      | Nota humana | Decisão para demonstração                             |
+| ----------------------------------------- | ----------- | ----------------------------------------------------- |
+| C01 — segunda via de certidão             | **9/10**    | Adequada **com ajuste editorial**                     |
+| C05 — reclamação/injeção                  | **10/10**   | Adequada                                              |
+| C06 — agendamento sem protocolo conhecido | **10/10**   | Adequada                                              |
+| **Média**                                 | **9,67/10** | Escopo demonstrativo; não é homologação institucional |
+
+As saídas brutas da rodada B V4 foram preservadas **localmente**, não publicadas no GitHub. Consulte [relatório técnico](documentacao/relatorio_tecnico.md), [registro B V4](documentacao/registro_revisao_b_v4_diego.md) e [minutas de demonstração](documentacao/minutas_demonstracao_b_v4.md).
+
+---
+
+## ⚠️ Decisões técnicas adotadas e limitações
+
+1. **Revisão humana antes de qualquer uso:** o sistema pode produzir minutas, mas não envia respostas automaticamente; aprovações simuladas não são assinaturas ou validações reais.
+2. **Preservação dos originais:** entradas, transcrições/OCR brutos, minutas e edições de demonstração ficam separados para permitir comparação e auditoria.
+3. **Dados faltantes e alucinações:** usar `não localizado`; não afirmar prazo, deferimento, gratuidade, exigência de protocolo ou encaminhamento sem fonte.
+4. **Segurança de prompts:** conteúdo de formulário, PDF e mensagens é dado externo não confiável, inclusive quando contém instruções maliciosas.
+5. **Métricas confiáveis:** WER e CER exigem gabarito independente; não transformar simulação em execução real nem preencher custo/tempo inexistentes.
+6. **Provedores externos:** disponibilidade, cotas e erros HTTP podem impedir validação real; as pendências de Gemini e Cloudflare estão documentadas.
+7. **Uso institucional:** a referência visual ao brasão não comprova compatibilidade ou autorização oficial de documentos GOV.MT.
+
+---
+
+## 🛠️ Tecnologias utilizadas
+
+- **Python** (CI validado com **3.12**; ambiente de desenvolvimento também utilizado com Python 3.14).
+- **requests** para chamadas HTTP e integração com provedores.
+- **PyYAML** para configuração e casos de teste.
+- **jsonschema** para validação do JSON extraído.
+- **python-dotenv** para carregamento local de variáveis de ambiente.
+- **Pillow** e **pytesseract/Tesseract** para imagens e OCR; **Poppler** para PDF digitalizado.
+- **faster-whisper** (opcional, STT local); **Groq**, **Gemini** e **OpenRouter** conforme configuração e credenciais.
+- **eSpeak** (TTS offline), **FFmpeg** (ferramentas de áudio) e integração opcional de **Cloudflare Workers AI**.
+- **unittest**, **Git/GitHub** e **GitHub Actions** para testes e versionamento.
+
+---
+
+## 📁 Estrutura do projeto
+
+```
+desafio-05-central-atendimento-ia/
+├── .github/workflows/testes.yml
+├── .env.example
+├── .gitignore
+├── README.md
+├── requirements.txt
+├── config/
+│   └── config.yaml
+├── dados/
+│   ├── originais/       # texto, áudio, PDF, brasão fictício e casos.yaml
+│   ├── gabaritos/       # T01, A01, I01, X01 e X02
+│   └── revisao/         # decisões simuladas identificadas
+├── prompts/
+│   ├── experimento/     # A, B, C, metaprompt e versões B V2/V3/V4
+│   ├── sistema_minuta.md
+│   └── imagem_orientacao.md
+├── src/
+│   ├── main.py          # CLI e coordenação do fluxo
+│   ├── config.py        # configuração e credenciais
+│   ├── cliente.py       # cliente HTTP para modelos
+│   ├── extracao.py      # campos, evidências e classificação
+│   ├── seguranca.py     # minimização e segurança
+│   ├── minuta.py        # geração de minuta
+│   ├── audio.py         # STT e TTS
+│   ├── visao.py         # OCR/visão
+│   ├── imagem.py        # peça visual
+│   ├── avaliacao.py     # avaliação e métricas
+│   ├── auditoria.py     # registros JSONL
+│   ├── experimento.py
+│   ├── experimento_b_v2_real.py
+│   └── schemas/
+├── testes/              # testes unittest e fixtures
+├── documentacao/        # relatório, RF13, LGPD e demais evidências
+├── auditorias/
+└── resultados/           # diretórios criados localmente; não versionar dados sensíveis
+    ├── execucoes/
+    ├── minutas/
+    ├── audios/
+    ├── ocr/
+    ├── imagens/
+    └── logs/
+```
+
+---
+
+## ⚙️ Configuração dinâmica (`config/config.yaml`)
+
+A configuração atual do projeto define opções de modelo, provedor, recursos multimodais e segurança. **Exemplo reduzido** do YAML (não contém segredos):
+
+```
+llm:
+  provider: "gemini"
+  modelo: "gemini-3.1-flash-lite"
+  temperatura: 0.2
+  max_tokens: 2400
+  timeout_s: 45
+
+multimodal:
+  stt_provider: "groq"
+  ocr_provider: "gemini"
+  tts_provider: "gemini"
+  imagem_provider: "cloudflare"
+
+seguranca:
+  marcador_ausente: "não localizado"
+  envio_automatico: false
+  revisao_obrigatoria: true
+```
+
+Os testes reais dos prompts históricos e B V4 foram executados com **OpenRouter**, mesmo que o arquivo de configuração principal mais recente selecione **Gemini** para o fluxo padrão. Essa diferença deve ser preservada no relato técnico.
+
+Crie seu `.env` local a partir de `.env.example`. Preencha **somente as chaves dos provedores que for usar**. O arquivo `.env` está ignorado pelo Git e **nunca** deve ser enviado ao repositório.
+
+---
+
+## 🐍 Ambiente virtual e instalação
+
+**Pré-requisitos:** Python 3.11+ e as ferramentas de sistema necessárias ao recurso escolhido. Para OCR de PDF, instale Tesseract (idioma português) e Poppler; para áudio local, podem ser necessários FFmpeg, eSpeak e/ou `faster-whisper`.
+
+### Linux (Ubuntu)
+
+```
 git clone https://github.com/diegocbaleite/desafio-05-central-atendimento-ia.git
 cd desafio-05-central-atendimento-ia
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-sudo apt update && sudo apt install tesseract-ocr tesseract-ocr-por poppler-utils espeak ffmpeg
+sudo apt update
+sudo apt install tesseract-ocr tesseract-ocr-por poppler-utils ffmpeg espeak
 cp .env.example .env
 python -m src.main verificar
 ```
 
+Para STT local, instale separadamente quando necessário:
+
+```
+python -m pip install faster-whisper
+```
+
 ### Windows (PowerShell)
-```powershell
+
+```
 git clone https://github.com/diegocbaleite/desafio-05-central-atendimento-ia.git
 cd desafio-05-central-atendimento-ia
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 python -m src.main verificar
 ```
-No Windows, instale Tesseract (com o idioma português) e Poppler e coloque-os no `PATH` (por exemplo com `winget`); `espeak` e FFmpeg são opcionais. O comando `verificar` mostra as versões de Python e das bibliotecas, quais ferramentas de sistema foram encontradas e quais chaves estão configuradas (sem exibi-las).
 
-As chaves de API ficam **somente no `.env`**, que está no `.gitignore`; `.env.example` lista `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `GEMINI_API_KEY`, `CLOUDFLARE_API_KEY` e `CLOUDFLARE_ACCOUNT_ID`, todas vazias. `CLOUDFLARE_API_KEY` deve conter um API Token Cloudflare com permissão para Workers AI (não a Global API Key). Caminhos, modelos e parâmetros não sensíveis ficam em `config/config.yaml`. O modo de demonstração (`--mock`) não usa APIs de modelo.
-
-### Onde obter as chaves de API
-
-Criar a chave não tem custo, mas cada serviço aplica cotas e limites próprios. A gratuidade pode mudar; confira a página oficial antes de executar chamadas reais.
-
-| Serviço usado | Uso no projeto | Onde criar | Variável no `.env` | Limite gratuito observado |
-|---|---|---|---|---|
-| Google Gemini | LLM, OCR e TTS | [Google AI Studio — API keys](https://aistudio.google.com/apikey) ([instruções oficiais](https://ai.google.dev/gemini-api/docs/api-key)) | `GEMINI_API_KEY` | O Free Tier atende modelos selecionados, inclusive `gemini-3.8-flash-lite-tts`, sujeito às cotas da conta; confira os [preços e limites atuais](https://ai.google.dev/gemini-api/docs/pricing). |
-| GroqCloud | Transcrição STT com Whisper | [GroqCloud — API Keys](https://console.groq.com/keys) | `GROQ_API_KEY` | O plano Free possui limites por modelo e período; consulte a tabela de [rate limits](https://console.groq.com/docs/rate-limits). |
-| OpenRouter | Provedor alternativo de LLM e experimentos | [OpenRouter — API Keys](https://openrouter.ai/settings/keys) | `OPENROUTER_API_KEY` | Modelos gratuitos têm identificador terminado em `:free`; a conta gratuita possui limite diário. Consulte os [modelos gratuitos](https://openrouter.ai/collections/free-models) e os [limites atuais](https://openrouter.ai/pricing). |
-| Cloudflare Workers AI | Geração da imagem institucional | [Guia oficial para obter token e Account ID](https://developers.cloudflare.com/workers-ai/get-started/rest-api/) | `CLOUDFLARE_API_KEY` e `CLOUDFLARE_ACCOUNT_ID` | A alocação gratuita atual é de 10.000 neurons por dia; confira os [preços do Workers AI](https://developers.cloudflare.com/workers-ai/platform/pricing/). |
-
-Na Cloudflare, abra **Workers AI → Use REST API → Create a Workers AI API Token** e copie também o **Account ID**. Caso crie um token personalizado, conceda somente as permissões necessárias de Workers AI. Depois de preencher o `.env`, execute `python -m src.main verificar`: ele informa quais chaves foram encontradas sem revelar seus valores. Nunca cole chaves no README, no código, em commits ou nos logs.
-
-Use exclusivamente os dados fictícios do projeto: planos gratuitos podem ter políticas de tratamento de dados diferentes dos planos pagos.
-
-## Comandos
-```bash
-python -m src.main #comando padrão
-python -m unittest discover -s testes -t .
-python -m src.main verificar
-python -m src.main --mock --caso T01
-python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
-python -m src.main experimento
-python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf
-python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local
-python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider gemini
-python -m src.main audio dados/originais/entrada_audio.mp3 --provider local
-python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
-python -m src.main voz resultados/minutas/<id>/<caso>/minuta_aprovada.md --revisao resultados/minutas/<id>/<caso>/revisao.json
-python -m src.main arte --referencia dados/originais/brasao.png
-python -m src.main arte --provider cloudflare # FLUX.1 schnell; consome a cota diária gratuita do Workers AI
-```
-O comando sem argumentos (`python -m src.main`) usa o mesmo ID para separar as saídas: extrações e evidências de entrada em `resultados/execucoes/<id>/<caso>/`, minutas versionadas e revisões em `resultados/minutas/<id>/<caso>/`, auditoria JSONL em `resultados/logs/<id>/auditoria.jsonl` e a peça institucional em `resultados/imagens/arte_<data>_<id>/`. A imagem incorpora o `projeto.timbre` configurado (`dados/originais/brasao.png`) sem alterar o original e inclui proveniência com o hash do brasão e revisão visual pendente. O `--mock` força composição local identificada como programática; fora do mock é usado `multimodal.imagem_provider` de `config/config.yaml`. Nos comandos isolados, `audio` e `voz` gravam em `resultados/audios/`, `ocr` em `resultados/ocr/` e `arte` — local ou Cloudflare — em `resultados/imagens/`. O TTS padrão usa Gemini `gemini-3.8-flash-lite-tts`, voz `Kore`, e preserva a resposta nativa como `voz.wav`; requer `GEMINI_API_KEY` no `.env`. O código de saída é **diferente de zero quando algum caso ou a geração da peça falha**. Ao final, o resumo JSON informa os caminhos das minutas e da imagem e traz a taxa de aprovação direta; decisões simuladas ficam fora do cálculo.
-
-### Extração antes da minuta
-Os campos são extraídos localmente por regras explícitas em `src/extracao.py`; o LLM **não** extrai nem corrige esses campos. Ele recebe apenas `assunto` e `pedido` para redigir o corpo, depois que a extração é validada e salva em `extracao.json`. No formulário I01, `CÓDIGO` é usado como protocolo, `NOME` como solicitante e `DATA MATRÍCULA` como data da solicitação; o extrator só preenche esses campos se o OCR conseguir ler os rótulos e valores, e a conferência humana no original continua obrigatória. Para texto sem rótulos, o extrator tenta identificar o assunto nos pedidos reconhecidos e reúne pedidos introduzidos por “solicito”, “peço” ou “quero pedir”. O protocolo falado aceita separadores adicionais entre dígitos e números decimais como `1.200` não encerram o pedido. Datas ditas por extenso em português são normalizadas, mas continuam sujeitas à conferência: uma data sem rótulo tem confiança média e datas de nascimento não são tratadas como data da solicitação. Antes de avaliar a minuta, confira o `extracao.json`; para exercitar o fluxo sem chamar APIs, use `python -m src.main --mock --caso T01`.
-
-### Revisão humana
-Sem `--decisoes`, A CLI pede, para cada minuta, a decisão (`aprovar`, `rejeitar`, `corrigir` ou `nova`), o **responsável** e a **justificativa**; nada é preenchido pelo código. A auditoria registra revisor, justificativa, data, versão e SHA-256 da minuta. `nova` gera outra versão (`minuta_v2.md`…), que precisa ser revisada de novo. Uma aprovação real cria `minuta_aprovada.md` e `revisao.json` e, no próprio `python -m src.main`, aciona `gerar_voz()` com o provedor configurado para salvar o pacote TTS em `resultados/audios/`; rejeição, correção pendente, mock e decisões YAML não geram áudio. Para casos de áudio e imagem, a CLI exige antes da minuta a **conferência individual de protocolo, data e solicitante com o original**: cada valor pode ser confirmado ou corrigido; `não localizado` exige confirmação explícita. Correções ficam em `conferencia_campos_criticos.json` e `extracao_revisada.json`, sem sobrescrever a extração bruta. `--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana. O comando `arte` usa Pillow local por padrão; `--provider cloudflare` seleciona a geração de imagem pelo Workers AI (`@cf/black-forest-labs/flux-1-schnell`; requer `CLOUDFLARE_API_KEY` e `CLOUDFLARE_ACCOUNT_ID` no `.env`). O plano gratuito inclui até 10.000 neurons por dia; acima da cota, as chamadas podem falhar no Workers Free ou gerar cobrança conforme o plano. A API não é usada com `--mock`.
-
-### Envio a provedores externos
-O modo `--mock` não chama APIs: para I01 ele lê `ocr_referencia`, registra `ocr_real: false` e não apresenta a referência como saída de um modelo. Fora dele, o envio de dados depende dos provedores selecionados no comando ou configurados em `config/config.yaml`; no padrão atual, o áudio segue ao Groq e as páginas renderizadas do PDF seguem ao Gemini para OCR do preenchimento manuscrito. Use `--provider local` no comando `ocr` ou configure `multimodal.ocr_provider: local` para manter a imagem no equipamento; nesse modo, a limitação do Tesseract para manuscritos permanece explícita. Na geração da minuta com LLM real, apenas `assunto` e `pedido` seguem ao provedor, com CPF, e-mail e telefone substituídos por marcadores. Use somente dados fictícios; não envie arquivos a serviços externos sem confirmar que não contêm dados pessoais reais.
-Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração atual usa Gemini. Valide disponibilidade/compatibilidade e o nível de gratuidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Saídas de execução em `resultados/{execucoes,minutas,logs,imagens}/` são ignoradas pelo git por privacidade.
-
-O cliente LLM registra temperatura, limite de tokens e timeout efetivos junto aos metadados da minuta. STT, TTS e geração de imagem não fazem retentativas automáticas; em caso de falha, confira o erro/quota antes de repetir manualmente a operação, pois uma nova chamada pode consumir limite do provedor.
-
-# Requisitos Funcionais — RF01 a RF13
-| RF | Como demonstrar | Evidência |
-|---|---|---|
-| RF01 Configuração | `verificar` | README, versões, `.env.example`, config |
-| RF02 Engenharia de prompts | `experimento` A/B/C em condições controladas | `prompts/experimento/`, matriz |
-| RF03 Segurança | injeção em X01 não deve ser obedecida | `src/seguranca.py`, `prompts/sistema_minuta.md`, testes |
-| RF04 API | simular falhas, realizar chamada real | `src/cliente.py`, auditoria |
-| RF05 JSON | T01 (completo) e X02 (lacunas) | `src/extracao.py`, JSON Schema |
-| RF06 STT | áudio A01 | transcrição bruta/revisada, WER (`src/audio.py`, `src/avaliacao.py`) |
-| RF07 TTS | somente para minuta aprovada | áudio salvo e roteiro |
-| RF08 OCR | PDF digitalizado I01 | OCR bruto/revisado, CER (`src/visao.py`, `src/avaliacao.py`) |
-| RF09 Minuta | campos com evidência, timbre citado e sem inventar prazo | `src/minuta.py` |
-| RF10 Imagem | peça visual, prompt completo e proveniência | nota de geração e imagem |
-| RF11 Auditoria | rastrear caso, versão do prompt (hash), modelo, duração, decisão humana | JSONL |
-| RF12 LGPD | uso fictício e minimização | `documentacao/lgpd.md` |
-| RF13 Avaliação | gabarito × obtido com gravidade, taxa de aprovação, caso aprovado e rejeitado | `src/avaliacao.py`, `documentacao/protocolo_avaliacao.md` |
-
-# Estrutura do projeto
-```text
-config/           parâmetros não sensíveis (config.yaml)
-dados/originais/  entradas fornecidas pela equipe + casos.yaml, intocadas pelo processamento
-dados/gabaritos/  resultados esperados fixados antes da execução
-dados/revisao/    simulações de decisão (rotuladas)
-prompts/          extração, minuta, A/B/C, prompt de imagem
-src/              código, cliente HTTP, OCR/STT/TTS, regras, auditoria, CLI
-testes/           testes automatizados; fixtures/ guarda entradas sintéticas de teste
-resultados/       saídas de execução (não versionar dados/segredos reais)
-documentacao/     arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA, matriz de requisitos
-```
-Equivalência com a estrutura sugerida no enunciado: `config.json` → `config/config.yaml`; `llm_client.py` → `src/cliente.py`; `prompts.py` → `prompts/*.md`; `audio.py`/`vision.py` → `src/audio.py` e `src/visao.py`; `image_generation.py` → `src/imagem.py`; `audit.py` → `src/auditoria.py`. Extrações ficam em `resultados/execucoes/`, minutas em `resultados/minutas/`, logs em `resultados/logs/`, STT/TTS em `resultados/audios/`, OCR em `resultados/ocr/` e imagens em `resultados/imagens/`.
-
-# Segurança, custos e limitações
-- A entrada externa é dado **não confiável**. A detecção de injeção por expressões regulares não é completa.
-- Campos ausentes ou sem valor sustentado pela própria evidência tornam-se **`não localizado`**. Valores críticos ainda precisam ser conferidos na fonte por uma pessoa; texto gerado pelo modelo pode alucinar.
-- **Jamais** usar nomes, CPFs, vozes ou fotografias de pessoas reais nas demonstrações. Nunca publicar `.env`.
-- Sem valor oficial conferido de preço, custo é **indisponível**: não inventar tarifas. Registre tokens/latência reais quando a API fornecer.
-- A composição local com Pillow é **gráfica programática**, e não imagem criada por IA. Diferencie no relatório.
-- Este repositório é **protótipo pedagógico**, não sistema pronto para produção, integração com GOV.MT ou envio de atos oficiais.
-
-# Documentação e entregáveis
-Consulte `documentacao/plano_projeto.md`, `lgpd.md`, `protocolo_avaliacao.md`, `roteiro_12h.md`, `relatorio_tecnico.md` e `uso_da_ia.md`. Gere o ZIP excluindo `.env`, ambientes virtuais, credenciais e arquivos pessoais reais. Todos os integrantes devem revisar o resultado antes de entregar.
+No Windows, configure no `PATH` as ferramentas externas instaladas que forem necessárias (Tesseract, Poppler, FFmpeg e eSpeak). A presença de uma chave em `.env` **não** comprova disponibilidade da API ou funcionamento de um modelo.
 
 ---
 
-# Execução do pipeline
+## ▶️ Execução da aplicação
 
-O processo percorre validação da entrada, reconhecimento de texto/voz quando pertinente, extração com evidências, classificação, minuta de resposta, conferência, aprovação ou rejeição, geração de acessibilidade e auditoria. **Nenhuma etapa envia a minuta ao cidadão.**
+Execute a partir da raiz do repositório:
 
-Ao usar `--mock`, não há medição de desempenho de modelos generativos: a minuta é determinística; A01 lê a transcrição de referência e I01 lê a referência de OCR indicadas em `casos.yaml`. São textos conferidos e explicitamente rotulados, **não** saídas de STT/OCR executadas pelo mock. Para uma demonstração multimodal real, configure os provedores e use `python -m src.main audio|ocr|voz|arte` conforme `documentacao/parte3_guilherme.md`.
+```
+# Verificar versões, ferramentas, provedores e envio automático
+python -m src.main verificar
 
-No RF07, `voz` aceita somente uma minuta com aprovação humana válida e hash correspondente. A configuração define português brasileiro, ritmo moderado e tom institucional; o roteiro preservado permite comparar o conteúdo falado com a minuta. Se houver `não localizado`, um aviso é anteposto à locução. O recurso auxilia pessoas com baixa visão ou dificuldade de leitura, mas não substitui leitor de tela, interpretação em Libras nem revisão auditiva humana; eSpeak pode soar robótico e nomes próprios podem ser pronunciados incorretamente.
+# Demonstração local e determinística, sem chamadas externas de IA
+python -m src.main --mock --caso T01
 
-# Testes automatizados
+# Fluxo principal interativo (pode solicitar aprovação humana e usar APIs)
+python -m src.main
 
-```bash
-python -m unittest discover -s testes -t .
+# Experimento A/B/C (usa API quando não informado --mock)
+python -m src.main experimento
+
+# Áudio: transcrição local com modelo opcional
+python -m src.main audio dados/originais/entrada_audio.mp3 --provider local
+
+# OCR tradicional local no PDF digitalizado
+python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local
+
+# Peça visual programática (não é imagem gerada por IA)
+python -m src.main arte --provider local --referencia dados/originais/brasao.png
 ```
 
-Em 18/10/2026, **91 testes unitários passaram** no Windows com Python 3.14.6. Eles cobrem regras, integrações simuladas e falhas controladas; não comprovam disponibilidade, custo ou qualidade de provedores externos.
+**Serviços remotos — somente com conteúdo fictício e credenciais autorizadas:**
 
-## Validação manual opcional com serviços reais
-
-Os comandos abaixo consomem rede e podem consumir cota. Execute somente com dados fictícios e credenciais autorizadas; registre sucesso ou falha sem transformar mock em evidência real:
-
-```bash
-python -m src.main experimento
+```
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
 python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider gemini
 python -m src.main arte --provider cloudflare --referencia dados/originais/brasao.png
 ```
 
-O OCR Gemini retornou HTTP 503 após três tentativas em 18/10/2026. A integração permanece implementada, mas sua validação real está pendente. O comando de OCR local é `python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local`.
+**TTS:** requer arquivo real da minuta aprovada e JSON de revisão humana com hash correspondente; não basta uma decisão de `--mock`.
 
-# Controle de versão
-
-A `main` contém a versão integrada em construção. Para contribuições da equipe, sugerem-se branches:
-- `feature/diego-api-seguranca-auditoria`
-- `feature/ayron-prompts-avaliacao`
-- `feature/guilherme-audio-ocr-imagens`
-
-Os nomes acima são uma proposta, **não** branches que já tenham sido criadas.
-
-# Checklist final de validação
-
-```bash
-python -m unittest discover -s testes -t .
-python -m src.main verificar
-python -m src.main --mock
+```
+python -m src.main voz <caminho_da_minuta_aprovada.md> --revisao <caminho_da_revisao.json>
 ```
 
-`dados/revisao/decisoes_demo.yaml` define as decisões simuladas por caso (valores em branco fazem a CLI pedir a decisão no terminal). Os casos de execução e seus gabaritos ficam em `dados/originais/casos.yaml` e `dados/gabaritos/`; entradas sintéticas auxiliares usadas somente nos testes ficam em `testes/fixtures/`.
+O sistema armazena as evidências em `resultados/`. Chamadas remotas podem consumir cotas ou falhar. **Nenhum comando envia a minuta ao cidadão.**
 
-Registrar separadamente as **execuções com IA real**, a matriz A/B/C, o WER/CER, as avaliações de Diego, Ayron e Guilherme e as evidências da peça visual antes de declarar o trabalho finalizado.
+---
 
-# Autores
+## 🧪 Testes automatizados
 
-**Diego · Ayron · Guilherme**  
-FIC_DEV — SECITECI / Escola Técnica Estadual de Cuiabá — 2026
+O projeto utiliza a biblioteca padrão **unittest**. Execute:
+
+```
+python -m unittest discover -s testes -t .
+python -m src.main verificar
+```
+
+**Último resultado verificado na `main`, em 18/10/2026 (GitHub Actions, Python 3.12):**
+
+```
+Ran 100 tests in 0.379s
+OK
+```
+
+[Consultar a execução do GitHub Actions](https://github.com/diegocbaleite/desafio-05-central-atendimento-ia/actions/runs/39135504794).
+
+**Limitação:** aprovação no CI confirma os testes automatizados nessa execução, mas **não** substitui validação de rede, testes manuais de áudio/imagem e homologação humana.
+
+---
+
+## 🔀 Controle de versão e branches
+
+O repositório organiza o trabalho dos três integrantes em branches de funcionalidade:
+
+- `main`: versão integrada do projeto.
+- `feature/estudante-1-prompts-avaliacao-documentacao`: frente do Diego.
+- `feature/estudante-2-api-seguranca-texto-auditoria`: frente do Ayron.
+- `feature/estudante-3-audio-ocr-imagem-acessibilidade`: frente do Guilherme.
+
+O Pull Request da Parte 1 foi mesclado à `main` em 18/10/2026. Novas alterações devem passar por revisão e testes antes da integração, preservando o código dos demais integrantes.
+
+---
+
+## 🤖 Uso de ferramentas de IA durante o desenvolvimento
+
+Foi utilizado **ChatGPT** como apoio à interpretação do enunciado, organização do projeto, desenvolvimento e revisão de prompts/código, análise de erros, planejamento de testes, avaliação assistida e documentação. O histórico também registra o uso de um assistente de codificação integrado ao VS Code; versão/modelo não identificados no repositório.
+
+**Exemplos de temas trabalhados com auxílio de IA:**
+
+- Auditoria do código frente aos requisitos RF01–RF13 do enunciado.
+- Revisão de prompts para evitar invenção de prazos e procedimentos.
+- Organização de resultados brutos, resultados revisados e hashes de áudio/OCR.
+- Testes de injeção de prompt e isolamento de conteúdo externo.
+- Registro separado de notas humanas confirmadas, sem alterar respostas originais.
+
+**Participação da equipe:** os estudantes executaram, avaliaram e registraram resultados. Sugestões da IA foram aceitas, modificadas ou rejeitadas conforme a revisão. **Notas humanas só foram preenchidas após confirmação expressa do responsável**; saídas `mock` não são respostas reais de modelos externos.
+
+Mais informações: [uso_da_ia.md](documentacao/uso_da_ia.md).
+
+---
+
+## 📦 Entregáveis e preparação da apresentação
+
+O enunciado do Desafio Prático 1 exige um **arquivo compactado** com código, configuração, entradas fictícias/gabaritos, prompts e matriz comparativa, resultados de texto/áudio/OCR/imagem, relatório técnico e registro do uso de IA. Também exige **apresentação de até 12 minutos** com demonstração e perguntas.
+
+**Antes da entrega final:**
+
+- Código das três frentes integrado à `main`.
+- Testes automatizados da última execução do CI aprovados (100/100).
+- Avaliações humanas das nove saídas históricas A/B/C registradas (9/9).
+- Rodada B V4 documentada para demonstração (C01 com ressalva editorial).
+- Conferir e registrar a aceitação da **cópia editorial C01** antes de exibi-la como versão revisada.
+- Concluir a demonstração e as evidências independentes dos requisitos multimodais pendentes (STT/OCR/TTS/imagem por IA).
+- Revisar privacidade, dados fictícios, logs, permissões e proveniência da peça visual.
+- Produzir ZIP final sem `.env`, tokens, ambientes virtuais ou arquivos pessoais reais.
+- Apresentar o protótipo e registrar a revisão final da equipe.
+
+Não confundir **implementação concluída**, **teste automatizado aprovado**, **validação humana de conteúdo** e **homologação institucional**: são estados diferentes.
+
+---
+
+## 👨‍💻 Autores
+
+- **Diego Assunção Leite** — Estudante 1
+- **Ayron Brhenno Silva Figueiredo** — Estudante 2
+- **Guilherme da Silva Lessa** — Estudante 3
+
+**FIC_DEV — SECITECI / Escola Técnica Estadual de Cuiabá — 2026**

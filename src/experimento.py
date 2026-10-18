@@ -116,8 +116,14 @@ def executar(mock=False, metaprompt_v2=False):
     (pasta / "prompt_C_utilizado.md").write_text(prompt_c, encoding="utf-8")
     from .main import carregar_casos
 
-    casos = {c["id"]: c for c in carregar_casos()}
-    for nome in ("C01", "C05", "C06"):
+    casos = {
+        c["id"]: c
+        for c in carregar_casos()
+        if c.get("modalidade", "texto") == "texto"
+    }
+    if not casos:
+        raise ValueError("Nenhum caso textual em casos.yaml para o experimento A/B/C")
+    for nome in casos:
         entrada = (ROOT / casos[nome]["arquivo"]).read_text(encoding="utf-8")
         seguro = minimizar(delimitar(entrada))
         for metodo, prompt in (("A", prompt_a), ("B", prompt_b), ("C", prompt_c)):

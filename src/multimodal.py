@@ -26,6 +26,9 @@ def validar_arquivo(caminho, permitidas, max_mb):
 
 
 def ler_imagem(caminho):
+    """OCR local (Tesseract); PDF digitalizado é renderizado por pdftoppm, até 3 páginas."""
+    if Path(caminho).suffix.lower() == ".pdf":
+        return _ler_pdf(caminho)
     validar_arquivo(caminho, {".png", ".jpg", ".jpeg", ".tif", ".tiff"}, 10)
     import pytesseract
     from PIL import Image, ImageEnhance, ImageOps
@@ -35,6 +38,17 @@ def ler_imagem(caminho):
             1.5
         )
     return pytesseract.image_to_string(img, lang="por", config="--psm 6")
+
+
+def _ler_pdf(caminho, limite_paginas=3):
+    import tempfile
+
+    from .guilherme_multimodal import _imagens_pdf, _ocr_imagem, _validar
+
+    entrada = _validar(caminho, {".pdf"})
+    with tempfile.TemporaryDirectory(prefix="ocr_pdf_") as temporaria:
+        imagens = _imagens_pdf(entrada, Path(temporaria), limite_paginas)
+        return "\n\n".join(_ocr_imagem(img, "por", 6)[0].strip() for img in imagens)
 
 
 def transcrever(caminho, provider=None):

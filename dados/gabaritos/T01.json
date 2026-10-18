@@ -1,0 +1,10 @@
+{
+  "caso_id": "T01",
+  "modalidade": "texto",
+  "categoria": "efetivacao_matricula",
+  "protocolo": "2026-000142",
+  "data_solicitacao": "14/10/2026",
+  "alerta_injecao": false,
+  "decisao_esperada": "aprovar após conferência; documentos pendentes, situação da matrícula e prazo devem constar como 'não localizado'",
+  "origem_gabarito": "Leitura direta de dados/originais/entrada_texto.txt antes da execução; conferência humana pendente."
+}

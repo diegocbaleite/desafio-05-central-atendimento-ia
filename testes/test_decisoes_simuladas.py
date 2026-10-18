@@ -140,13 +140,23 @@ class TestComandoArquivos(unittest.TestCase):
     def test_anuncia_fluxo_de_extracao(self, extrair_pasta):
         saida = StringIO()
         with (
-            patch.object(sys, "argv", ["main", "arquivos"]),
+            patch.object(sys, "argv", ["main", "arquivos", "--autorizar-api"]),
             redirect_stdout(saida),
         ):
             main.main()
 
         self.assertIn("extração multimodal de arquivos", saida.getvalue())
         self.assertTrue(callable(extrair_pasta.call_args.kwargs["progresso"]))
+
+    @patch("src.extracao_llm.extrair_pasta")
+    def test_bloqueia_envio_remoto_sem_autorizacao(self, extrair_pasta):
+        saida = StringIO()
+        with patch.object(sys, "argv", ["main", "arquivos"]), redirect_stdout(saida):
+            codigo = main.main()
+
+        self.assertEqual(codigo, 2)
+        self.assertIn("--autorizar-api", saida.getvalue())
+        extrair_pasta.assert_not_called()
 
 
 if __name__ == "__main__":

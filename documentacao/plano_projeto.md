@@ -47,6 +47,7 @@ Grade de cada saída: fidelidade, fatos inventados, formato, tom institucional, 
 Defesas em camadas: (1) system vs user, (2) delimitação de conteúdo externo, (3) instrução de não seguir comandos internos, (4) heurísticas de alerta, (5) esquema de saída e comparação com fonte, (6) modelo sem ferramenta capaz de enviar, (7) revisão humana obrigatória. Testar injeção textual (C05) e embutida no OCR (C03). Heurísticas têm falsos negativos: jamais tratá-las como garantia completa.
 
 ## 7 — Casos e gabaritos
+**Atualização (17/10/2026):** os casos vigentes estão em `dados/originais/casos.yaml` — **T01** (texto), **A01** (áudio) e **I01** (PDF digitalizado), o material fornecido pela equipe para a mesma solicitação, mais **X01** (injeção) e **X02** (campos ausentes), entradas sintéticas em `testes/fixtures/`. Os gabaritos prévios estão em `dados/gabaritos/<id>.json`. A tabela abaixo é o desenho original (C01–C06), mantido porque o experimento A/B/C e o relatório técnico se referem a ele; `testes/fixtures/completa.txt`, `injecao.txt` e `lacunas.txt` reproduzem C01, C05 e C06.
 | ID | Entrada | Esperado | Revisão |
 |---|---|---|---|
 | C01 | Solicitação completa (texto) | Segunda via, protocolo 2026.000123, sem vazar CPF/e-mail | Aprovar depois de conferir |

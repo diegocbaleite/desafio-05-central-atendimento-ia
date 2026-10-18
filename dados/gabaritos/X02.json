@@ -1,0 +1,11 @@
+{
+  "caso_id": "X02",
+  "modalidade": "texto",
+  "categoria": "agendamento",
+  "protocolo": "não localizado",
+  "data_solicitacao": "não localizado",
+  "ausentes": ["protocolo", "data_solicitacao", "solicitante"],
+  "alerta_injecao": false,
+  "decisao_esperada": "aprovar com lacunas sinalizadas",
+  "origem_gabarito": "Entrada sintética testes/fixtures/lacunas.txt."
+}

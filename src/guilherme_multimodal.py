@@ -164,9 +164,12 @@ def avaliar_audio(caminho, *, provider="local", modelo_local="small", permitir_a
         raise ValueError("Transcrição vazia; não será tratada como válida")
     (pasta / "transcricao_bruta.txt").write_text(bruto, encoding="utf-8")
     dados = _avaliacao(bruto, gabarito, revisado, pasta)
+    duracao = duracao_audio(entrada)
+    if duracao is None:
+        dados["duracao_audio_nota"] = "não medida: ffprobe ausente ou falhou"
     _gravar_json(pasta / "resultado.json", {
         "tipo": "STT", "entrada": entrada.name, "sha256_original": _hash(entrada),
-        "idioma": "pt", "duracao_audio_s": duracao_audio(entrada),
+        "idioma": "pt", "duracao_audio_s": duracao,
         "provedor": provider, "modelo": modelo, "execucao": origem_execucao,
         "duracao_processamento_s": round(time.monotonic() - inicio, 3),
         "data_utc": datetime.now(timezone.utc).isoformat(),

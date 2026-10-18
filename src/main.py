@@ -1,41 +1,62 @@
-"""CLI: python -m src.main verificar | processar | experimento | imagem."""
+"""CLI: python -m src.main verificar | processar | experimento | imagem | arquivos."""
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import platform
+import shutil
 import subprocess
+import sys
+from datetime import date
 from pathlib import Path
 
 import jsonschema
 
 from .auditoria import nova_execucao, registrar
+from .avaliacao import avaliar_campos, taxa_aprovacao
 from .cliente import ErroAPI
 from .config import ROOT, carregar, chave
 from .extracao import extrair
 from .minuta import redigir
 from .multimodal import imagem_local, ler_imagem, sintetizar, transcrever
 
+DECISOES = ("aprovar", "rejeitar", "corrigir", "nova")
+MAX_NOVAS_GERACOES = 3
+CAMPOS_CRITICOS = ("protocolo", "data_solicitacao", "solicitante")
+BIBLIOTECAS = (
+    "requests",
+    "PyYAML",
+    "jsonschema",
+    "python-dotenv",
+    "pillow",
+    "pytesseract",
+)
+FERRAMENTAS = ("tesseract", "pdftoppm", "espeak", "ffprobe")
+
 
 def _mensagem_erro(exc):
-    if isinstance(exc, (ErroAPI, ValueError)):
+    if isinstance(exc, (ErroAPI, ValueError, RuntimeError)):
         return str(exc)[:200]
     if isinstance(exc, jsonschema.ValidationError):
         return "Saída inválida conforme JSON Schema"
     return "Falha no processamento; conteúdo da solicitação omitido"
 
 
-def preparar_entrada(path, modo, mock=False):
+def preparar_entrada(path, modo, mock=False, referencia=None):
     if modo == "texto":
         return path.read_text(encoding="utf-8")
     if modo == "imagem":
         return ler_imagem(path)
     if modo == "audio":
         if mock:
-            # O modo mock lê somente uma referência fictícia explicitamente rotulada;
+            # O modo mock lê somente uma referência explicitamente rotulada;
             # não afirma ter transcrito o arquivo de áudio.
-            trans = path.parent / (
-                path.name.split("_audio")[0] + "_transcricao_ficticia.txt"
+            trans = (
+                Path(referencia)
+                if referencia
+                else path.parent
+                / (path.name.split("_audio")[0] + "_transcricao_ficticia.txt")
             )
             if not trans.exists():
                 raise ValueError(
@@ -49,14 +70,105 @@ def preparar_entrada(path, modo, mock=False):
 def carregar_casos():
     import yaml
 
-    return yaml.safe_load(
-        (ROOT / "dados/originais/casos.yaml").read_text(encoding="utf-8")
-    )["casos"]
+    caminho = ROOT / carregar().get("projeto", {}).get(
+        "casos", "dados/originais/casos.yaml"
+    )
+    return yaml.safe_load(caminho.read_text(encoding="utf-8"))["casos"]
+
+
+def _gravar_bytes(caminho, texto):
+    """Grava sem conversão de quebras de linha para que o SHA-256 do arquivo seja estável."""
+    caminho.write_bytes(texto.encode("utf-8"))
+
+
+def _sha256_texto(texto):
+    return hashlib.sha256(texto.encode("utf-8")).hexdigest()
+
+
+def _ler_terminal(pergunta):
+    try:
+        return input(pergunta).strip()
+    except EOFError as exc:
+        raise ValueError(
+            "Decisão humana necessária; nenhum resultado foi aprovado"
+        ) from exc
+
+
+def _conferir_campos_criticos(caso, ext, execucao, simulacao):
+    """RF06/RF08: dados críticos de STT/OCR exigem conferência humana antes da minuta."""
+    if caso["modalidade"] not in ("audio", "imagem"):
+        return None
+    if simulacao:
+        registrar(
+            execucao, caso["id"], "conferencia_campos_criticos", status="simulada"
+        )
+        return {"status": "simulada"}
+    print("\n--- Conferência com o ORIGINAL (" + caso["id"] + ") ---")
+    for nome in CAMPOS_CRITICOS:
+        print(f"  {nome}: {ext['campos'][nome]['valor']}")
+    confirmou = _ler_terminal(
+        "Os campos acima conferem com o original? [sim/nao]: "
+    ).lower()
+    responsavel = _ler_terminal("Responsável pela conferência: ")
+    if confirmou not in ("sim", "s") or not responsavel:
+        registrar(
+            execucao,
+            caso["id"],
+            "conferencia_campos_criticos",
+            status="bloqueada",
+            responsavel=responsavel or None,
+        )
+        raise ValueError(
+            "Conferência humana dos campos críticos não confirmada; minuta não gerada"
+        )
+    conferencia = {
+        "status": "confirmada",
+        "responsavel": responsavel,
+        "data": date.today().isoformat(),
+    }
+    registrar(execucao, caso["id"], "conferencia_campos_criticos", **conferencia)
+    return conferencia
+
+
+def _decisao_humana(caso_id, minuta, versao):
+    """Pede decisão, responsável e justificativa; nada é inferido ou preenchido pelo código."""
+    while True:
+        print(f"\n--- {caso_id} (versão {versao}) ---\n{minuta}\n")
+        decisao = _ler_terminal(
+            "Decisão humana [aprovar/rejeitar/corrigir/nova]: "
+        ).lower()
+        if decisao in DECISOES:
+            break
+        print("Decisão inválida; escolha aprovar, rejeitar, corrigir ou nova.")
+    revisor = _ler_terminal("Responsável pela decisão: ")
+    justificativa = _ler_terminal("Justificativa: ")
+    if not revisor or not justificativa:
+        raise ValueError(
+            "Responsável e justificativa são obrigatórios; nenhuma decisão registrada"
+        )
+    return decisao, revisor, justificativa
 
 
 def executar_caso(caso, execucao, mock=False, decisao=None, decisao_simulada=False):
     entrada = ROOT / caso["arquivo"]
-    texto = preparar_entrada(entrada, caso["modalidade"], mock)
+    if not entrada.is_file():
+        raise ValueError(
+            "Arquivo de entrada não encontrado: " + caso["arquivo"]
+            + " (confira dados/originais/casos.yaml)"
+        )
+    simulacao = decisao_simulada or mock
+    if decisao is not None and not simulacao:
+        raise ValueError(
+            "Decisão fornecida por código deve ser marcada como simulada; "
+            "decisão humana real só é obtida no terminal"
+        )
+    referencia = caso.get("transcricao_referencia")
+    texto = preparar_entrada(
+        entrada,
+        caso["modalidade"],
+        mock,
+        ROOT / referencia if referencia else None,
+    )
     hash_arquivo = hashlib.sha256(entrada.read_bytes()).hexdigest()
     pasta = registrar(
         execucao,
@@ -84,32 +196,63 @@ def executar_caso(caso, execucao, mock=False, decisao=None, decisao_simulada=Fal
         ausentes=ext["campos_ausentes"],
         alerta_injecao=ext["alerta_injecao"],
     )
+    avaliacao = avaliar_campos(ext, caso["id"])
+    if avaliacao is not None:
+        registrar(execucao, caso["id"], "avaliacao_gabarito", resultado=avaliacao)
+    conferencia = _conferir_campos_criticos(caso, ext, execucao, simulacao)
     provider = "mock" if mock else carregar()["llm"]["provider"]
-    minuta, meta = redigir(ext, caso["arquivo"], provider=provider)
-    (pasta_caso / "minuta_pendente.md").write_text(minuta, encoding="utf-8")
-    registrar(execucao, caso["id"], "geracao_minuta", **meta)
-    if decisao is None:
-        while decisao not in ("aprovar", "rejeitar", "corrigir", "nova"):
-            print("\n--- " + caso["id"] + " ---\n" + minuta + "\n")
-            try:
-                decisao = input(
-                    "Decisão humana [aprovar/rejeitar/corrigir/nova]: "
-                ).strip().lower()
-            except EOFError as exc:
-                raise ValueError(
-                    "Decisão humana necessária; nenhum resultado foi aprovado"
-                ) from exc
-            if decisao not in ("aprovar", "rejeitar", "corrigir", "nova"):
-                print("Decisão inválida; escolha aprovar, rejeitar, corrigir ou nova.")
-    if decisao not in ("aprovar", "rejeitar", "corrigir", "nova"):
-        raise ValueError("Decisão inválida")
-    simulacao = decisao_simulada or mock
-    if decisao_simulada:
-        estado_revisao = "decisao_simulada"
-    elif mock:
-        estado_revisao = "revisao_mock"
-    else:
-        estado_revisao = "revisao_humana"
+    versao = 1
+    revisor = justificativa = None
+    while True:
+        minuta, meta = redigir(ext, caso["arquivo"], provider=provider)
+        sha_minuta = _sha256_texto(minuta)
+        _gravar_bytes(pasta_caso / "minuta_pendente.md", minuta)
+        _gravar_bytes(pasta_caso / f"minuta_v{versao}.md", minuta)
+        registrar(
+            execucao,
+            caso["id"],
+            "geracao_minuta",
+            versao_minuta=versao,
+            sha256_minuta=sha_minuta,
+            **meta,
+        )
+        if decisao is None:
+            decisao, revisor, justificativa = _decisao_humana(
+                caso["id"], minuta, versao
+            )
+        if decisao not in DECISOES:
+            raise ValueError("Decisão inválida")
+        if decisao_simulada:
+            estado_revisao = "decisao_simulada"
+        elif mock:
+            estado_revisao = "revisao_mock"
+        else:
+            estado_revisao = "revisao_humana"
+        registrar(
+            execucao,
+            caso["id"],
+            estado_revisao,
+            decisao=decisao,
+            simulada=simulacao,
+            origem=(
+                "arquivo_yaml"
+                if decisao_simulada
+                else "terminal_mock"
+                if mock
+                else "terminal"
+            ),
+            revisor=revisor,
+            justificativa=justificativa,
+            data_revisao=None if simulacao else date.today().isoformat(),
+            versao_minuta=versao,
+            sha256_minuta=sha_minuta,
+        )
+        # Nova geração invalida qualquer decisão anterior: a próxima versão é revisada de novo.
+        if decisao == "nova" and not simulacao and versao <= MAX_NOVAS_GERACOES:
+            versao += 1
+            decisao = None
+            continue
+        break
     if simulacao:
         estado = "decisao_simulada"
     elif decisao == "aprovar":
@@ -127,13 +270,35 @@ def executar_caso(caso, execucao, mock=False, decisao=None, decisao_simulada=Fal
                 "Revisor deve corrigir a minuta e executar novamente.", encoding="utf-8"
             )
         else:
-            (pasta_caso / "minuta_aprovada.md").write_text(minuta, encoding="utf-8")
+            _gravar_bytes(pasta_caso / "minuta_aprovada.md", minuta)
+            # Mesmo formato exigido por guilherme_multimodal.gerar_voz.
+            (pasta_caso / "revisao.json").write_text(
+                json.dumps(
+                    {
+                        "decisao": "aprovar",
+                        "simulada": False,
+                        "origem": "revisao_humana",
+                        "revisor": revisor,
+                        "justificativa": justificativa,
+                        "data_revisao": date.today().isoformat(),
+                        "versao_minuta": versao,
+                        "sha256_minuta": sha_minuta,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
             # Áudio somente após revisão/aprovação; nunca enviar a terceiros.
             texto_aprovado = minuta.replace(
                 "# MINUTA — NÃO ENVIADA",
                 "Minuta aprovada para demonstração, não enviada",
             )
-            if not mock:
+            aprovada_intacta = (
+                hashlib.sha256((pasta_caso / "minuta_aprovada.md").read_bytes()).hexdigest()
+                == sha_minuta
+            )
+            if not mock and aprovada_intacta:
                 try:
                     arquivo_audio = sintetizar(
                         texto_aprovado, pasta_caso / "minuta_acessivel.mp3"
@@ -168,20 +333,6 @@ def executar_caso(caso, execucao, mock=False, decisao=None, decisao_simulada=Fal
             (pasta_caso / "roteiro_acessivel.txt").write_text(
                 texto_aprovado, encoding="utf-8"
             )
-    registrar(
-        execucao,
-        caso["id"],
-        estado_revisao,
-        decisao=decisao,
-        simulada=simulacao,
-        origem=(
-            "arquivo_yaml"
-            if decisao_simulada
-            else "terminal_mock"
-            if mock
-            else "terminal"
-        ),
-    )
     resumo = {
         "caso": caso["id"],
         "decisao": decisao,
@@ -192,11 +343,33 @@ def executar_caso(caso, execucao, mock=False, decisao=None, decisao_simulada=Fal
         "categoria": ext["categoria"]["codigo"],
         "alerta_injecao": ext["alerta_injecao"],
         "ausentes": ext["campos_ausentes"],
+        "versao_minuta": versao,
+        "sha256_minuta": sha_minuta,
+        "conferencia_campos_criticos": conferencia,
+        "avaliacao_gabarito": avaliacao,
     }
     (pasta_caso / "resultado.json").write_text(
         json.dumps(resumo, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     return resumo
+
+
+def _verificar(cfg):
+    print("Python", platform.python_version(), "sistema", platform.system())
+    for distribuicao in BIBLIOTECAS:
+        try:
+            print(distribuicao, importlib.metadata.version(distribuicao))
+        except importlib.metadata.PackageNotFoundError:
+            print(distribuicao, "não instalado")
+    for ferramenta in FERRAMENTAS:
+        print(
+            "ferramenta",
+            ferramenta,
+            "disponível" if shutil.which(ferramenta) else "ausente",
+        )
+    for nome in cfg["provedores"]:
+        print("chave", nome, "configurada" if chave(cfg, nome) else "ausente")
+    print("envio automatico:", cfg["seguranca"]["envio_automatico"])
 
 
 def main():
@@ -214,20 +387,16 @@ def main():
         "--decisoes",
         help="YAML contendo decisões de DEMONSTRAÇÃO; não é revisão de servidor real",
     )
+    p.add_argument(
+        "--autorizar-api",
+        action="store_true",
+        help="autoriza o envio de arquivos fictícios a provedores externos (comando arquivos)",
+    )
     a = p.parse_args()
     cfg = carregar()
     if a.comando == "verificar":
-        print("Python", platform.python_version(), "sistema", platform.system())
-        for k in ("jsonschema", "yaml", "requests", "PIL"):
-            try:
-                m = __import__(k)
-                print(k, getattr(m, "__version__", "instalado"))
-            except ImportError:
-                print(k, "não instalado")
-        for nome in cfg["provedores"]:
-            print("chave", nome, "configurada" if chave(cfg, nome) else "ausente")
-        print("envio automatico:", cfg["seguranca"]["envio_automatico"])
-        return
+        _verificar(cfg)
+        return 0
     if a.comando == "imagem":
         if a.mock:
             caminho = imagem_local(ROOT / "resultados/peca_visual.png")
@@ -236,8 +405,15 @@ def main():
 
             caminho = gerar(ROOT / "resultados/peca_visual.png")
         print(caminho)
-        return
+        return 0
     if a.comando == "arquivos":
+        if not a.autorizar_api:
+            print(
+                "Bloqueado: este comando envia PDF/áudio originais ao Gemini e o texto "
+                "minimizado ao OpenRouter. Confirme que os arquivos são totalmente "
+                "fictícios e execute novamente com --autorizar-api."
+            )
+            return 2
         from .extracao_llm import extrair_pasta
 
         print("Parte do sistema: extração multimodal de arquivos.")
@@ -246,20 +422,22 @@ def main():
             "estruturação dos campos, validação do JSON e auditoria."
         )
         resultados = extrair_pasta(progresso=print)
+        falhou = False
         for nome, r in resultados.items():
             print("==", nome)
             if "erro" in r:
+                falhou = True
                 print("ERRO:", r["erro"])
                 continue
             for k, v in r["campos"].items():
                 print(f"  {k}: {v['valor']} ({v['confianca']})")
             print("  categoria:", r["categoria"]["codigo"], "| revisão humana obrigatória")
-        return
+        return 1 if falhou else 0
     if a.comando == "experimento":
         from .experimento import executar
 
         executar(mock=a.mock, metaprompt_v2=a.metaprompt_v2)
-        return
+        return 0
     import yaml
 
     decisoes = {}
@@ -283,7 +461,14 @@ def main():
                     decisao_simulada=simulada,
                 )
             )
-        except (ErroAPI, ValueError, OSError, EOFError, jsonschema.ValidationError) as exc:
+        except (
+            ErroAPI,
+            ValueError,
+            RuntimeError,
+            OSError,
+            EOFError,
+            jsonschema.ValidationError,
+        ) as exc:
             falha = {
                 "caso": caso["id"],
                 "erro": type(exc).__name__,
@@ -303,12 +488,18 @@ def main():
             )
     print(
         json.dumps(
-            {"execucao": execucao, "casos": resumo, "falhas": falhas},
+            {
+                "execucao": execucao,
+                "casos": resumo,
+                "taxa_aprovacao": taxa_aprovacao(resumo),
+                "falhas": falhas,
+            },
             ensure_ascii=False,
             indent=2,
         )
     )
+    return 1 if falhas else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

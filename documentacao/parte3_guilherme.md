@@ -27,18 +27,18 @@ Para transcrever **localmente**, opcionalmente `pip install faster-whisper` (o p
 
 ### OCR local — PDF digitalizado do caso de matrícula
 ```bash
-python -m src.guilherme_multimodal ocr arquivos/entrada_pdf-imagem.pdf --psm 6
+python -m src.guilherme_multimodal ocr dados/originais/entrada_pdf-imagem.pdf --psm 6
 ```
 A saída fica em `resultados/guilherme/ocr_<id>/ocr_bruto.txt`, `resultado.json` e `PENDENTE_REVISAO.md`. Caso o OCR misture nomes e números manuscritos, não “corrigir” silenciosamente: conferir a imagem original e fornecer depois um arquivo `--revisado` manual.
 
 ### STT local (opcional, requer faster-whisper)
 ```bash
-python -m src.guilherme_multimodal audio arquivos/entrada_audio.mp3 --provider local
+python -m src.guilherme_multimodal audio dados/originais/entrada_audio.mp3 --provider local
 ```
 
 ### STT Groq — apenas para áudio fictício autorizado
 ```bash
-python -m src.guilherme_multimodal audio arquivos/entrada_audio.mp3 --provider groq --autorizar-api
+python -m src.guilherme_multimodal audio dados/originais/entrada_audio.mp3 --provider groq --autorizar-api
 ```
 Para medir WER/CER, acrescentar `--gabarito dados/gabaritos/referencia_audio_exata.txt`; **não usar automaticamente** `entrada_texto.txt` como transcrição: áudio e texto têm divergências de conteúdo/e-mail e métricas ficariam enganosas. O gabarito deve existir **antes da medição**.
 
@@ -62,11 +62,11 @@ A voz local é em português brasileiro via eSpeak (WAV). Se houver “não loca
 
 ### Peça visual
 ```bash
-python -m src.guilherme_multimodal arte --referencia arquivos/brasao.png
+python -m src.guilherme_multimodal arte --referencia dados/originais/brasao.png
 ```
 Com `multimodal.imagem_provider: local`, isso produz ilustração **programática**, não imagem gerada por IA. Para cumprir a demonstração de **geração por IA** da RF10, somente se houver API autorizada, alterar **localmente** a configuração de imagem para `openai`, preencher `OPENAI_API_KEY` no `.env` e executar:
 ```bash
-python -m src.guilherme_multimodal arte --referencia arquivos/brasao.png --autorizar-api
+python -m src.guilherme_multimodal arte --referencia dados/originais/brasao.png --autorizar-api
 ```
 Revisar texto, símbolos, pertinência institucional, selo sintético e metadata; o brasão fornecido é **referência**, não incorporado automaticamente. Nunca apresentar a arte como peça oficial GOV.MT.
 

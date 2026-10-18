@@ -94,6 +94,7 @@
             "atualizacao_cadastral",
             "agendamento",
             "reclamacao",
+            "efetivacao_matricula",
             "outros"
           ]
         },

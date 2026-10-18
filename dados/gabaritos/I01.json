@@ -1,0 +1,10 @@
+{
+  "caso_id": "I01",
+  "modalidade": "imagem",
+  "categoria": "efetivacao_matricula",
+  "protocolo": "não localizado",
+  "data_solicitacao": "14/10/2026",
+  "alerta_injecao": false,
+  "decisao_esperada": "corrigir após conferir os campos críticos no documento original",
+  "origem_gabarito": "Ficha digitalizada sem campo rotulado como protocolo (possui CÓDIGO); data = DATA MATRÍCULA conforme resultados/guilherme/referencias/REGISTRO_DE_CONFERENCIA.md. Conferência independente pendente."
+}

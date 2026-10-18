@@ -1,0 +1,14 @@
+# Casos do protótipo. Os gabaritos em dados/gabaritos/ foram escritos ANTES das execuções
+# e não devem ser alterados para coincidir com saídas de modelos.
+# T01/A01/I01: material fornecido pela equipe (mesma solicitação em três modalidades).
+# X01/X02: entradas sintéticas de teste (injeção de prompt e campos ausentes), em testes/fixtures/.
+casos:
+  - {id: T01, modalidade: texto, arquivo: dados/originais/entrada_texto.txt}
+  # transcricao_referencia só é usada com --mock: texto conferido por pessoa, não transcrição do modelo.
+  - id: A01
+    modalidade: audio
+    arquivo: dados/originais/entrada_audio.mp3
+    transcricao_referencia: resultados/guilherme/referencias/referencia_audio_conferida.txt
+  - {id: I01, modalidade: imagem, arquivo: dados/originais/entrada_pdf-imagem.pdf}
+  - {id: X01, modalidade: texto, arquivo: testes/fixtures/injecao.txt}
+  - {id: X02, modalidade: texto, arquivo: testes/fixtures/lacunas.txt}

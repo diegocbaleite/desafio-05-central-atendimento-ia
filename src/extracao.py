@@ -4,35 +4,78 @@ import re
 
 from .seguranca import AUSENTE, detectar
 
+_NOME = r"[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ]*"
+_DATA = r"\b(\d{2}/\d{2}/20\d{2})\b"
 CAMPOS = {
-    "protocolo": r"(?:protocolo|processo)\s*(?:n[ºo.]*)?\s*[:#-]?\s*(20\d{2}\.\d{6})",
-    "data_solicitacao": r"\b(\d{2}/\d{2}/20\d{2})\b",
-    "solicitante": r"(?:nome|meu nome é)\s*:?\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ]+(?:\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ÿ]+){1,4})",
+    "protocolo": r"(?:protocolo|processo)\s*(?:n[ºo.]*)?\s*(?:é|[:#-])?\s*(20\d{2}[.-]\d{6})",
+    # (?-i:...) mantém o nome case-sensitive; [ \t] evita atravessar linhas.
+    "solicitante": (
+        r"(?:nome|meu nome é)[ \t]*:?[ \t]*((?-i:"
+        + _NOME
+        + r"(?:[ \t]+(?:(?:de|da|do|dos|das|e)[ \t]+)?"
+        + _NOME
+        + r"){1,5}))"
+    ),
 }
+# Categorias documentadas; a ordem define a precedência na classificação.
 CATEGORIAS = {
     "segunda_via_documento": ("segunda via", "certidão"),
     "andamento_processo": ("andamento", "acompanhar"),
     "atualizacao_cadastral": ("atualização cadastral", "atualizar cadastro"),
     "agendamento": ("agendar", "remarcar", "agendamento"),
     "reclamacao": ("reclamação", "reclamar"),
+    "efetivacao_matricula": ("matrícula", "matricula"),
 }
+# Fallback conservador quando não há rótulo "Pedido:" na solicitação.
+PEDIDO_LIVRE = r"\b((?:solicito|solicitamos|peço|gostaria de)\b[^.\n]{5,200})"
+
+
+def _grupo(m):
+    return next((g for g in m.groups() if g), None) if m else None
+
+
+def _data_solicitacao(texto):
+    """Prefere data rotulada; no fallback ignora datas de nascimento. Devolve (match, confiança)."""
+    rotulada = re.search(
+        r"\bdata(?:\s+da\s+solicita[çc][ãa]o|\s+matr[ií]cula)?\s*:\s*" + _DATA,
+        texto,
+        re.IGNORECASE,
+    )
+    if rotulada:
+        return rotulada, "alta"
+    for m in re.finditer(_DATA, texto):
+        if "nasc" not in texto[max(0, m.start() - 40) : m.start()].lower():
+            return m, "media"
+    return None, "baixa"
 
 
 def extrair(texto, caso_id, origem, sha256, modalidade):
     campos = {}
     for nome, padrao in CAMPOS.items():
         m = re.search(padrao, texto, re.IGNORECASE)
+        valor = _grupo(m)
         campos[nome] = {
-            "valor": m.group(1).strip() if m else AUSENTE,
-            "evidencia": m.group(0) if m else None,
-            "confianca": "alta" if m else "baixa",
+            "valor": valor.strip() if valor else AUSENTE,
+            "evidencia": m.group(0) if valor else None,
+            "confianca": "alta" if valor else "baixa",
         }
+    m, confianca = _data_solicitacao(texto)
+    valor = _grupo(m)
+    campos["data_solicitacao"] = {
+        "valor": valor if valor else AUSENTE,
+        "evidencia": m.group(0) if valor else None,
+        "confianca": confianca,
+    }
     for nome in ("assunto", "pedido"):
         m = re.search(r"(?im)^\s*" + nome + r"\s*:\s*(.+)$", texto)
+        confianca = "alta"
+        if not m and nome == "pedido":
+            m = re.search(PEDIDO_LIVRE, texto, re.IGNORECASE)
+            confianca = "media"
         campos[nome] = {
             "valor": m.group(1).strip() if m else AUSENTE,
-            "evidencia": m.group(0) if m else None,
-            "confianca": "alta" if m else "baixa",
+            "evidencia": m.group(0).strip() if m else None,
+            "confianca": confianca if m else "baixa",
         }
     baixo = texto.lower()
     categoria = "outros"

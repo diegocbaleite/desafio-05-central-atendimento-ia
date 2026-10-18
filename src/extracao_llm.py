@@ -14,18 +14,12 @@ import requests
 from .auditoria import nova_execucao, registrar
 from .cliente import ErroAPI, conversar
 from .config import ROOT, carregar, chave
+from .extracao import CATEGORIAS as CATEGORIAS_REGRAS
 from .seguranca import AUSENTE, delimitar, detectar, minimizar
 
 MIME = {".pdf": "application/pdf", ".mp3": "audio/mpeg", ".txt": "text/plain"}
 MODALIDADE = {".pdf": "imagem", ".mp3": "audio", ".txt": "texto"}
-CATEGORIAS = [
-    "segunda_via_documento",
-    "andamento_processo",
-    "atualizacao_cadastral",
-    "agendamento",
-    "reclamacao",
-    "outros",
-]
+CATEGORIAS = [*CATEGORIAS_REGRAS, "outros"]
 CAMPOS = ["protocolo", "data_solicitacao", "solicitante", "assunto", "pedido"]
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"
 MAX_ARQUIVO_BYTES = 14 * 1024 * 1024
@@ -195,11 +189,22 @@ def _notificar(progresso, mensagem):
         progresso(mensagem)
 
 
+def _pasta_entrada_padrao(cfg):
+    return ROOT / cfg.get("extracao_llm", {}).get("pasta_entrada", "dados/originais")
+
+
+def _rotulo_fonte(caminho):
+    try:
+        return caminho.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return caminho.name
+
+
 def extrair_arquivo(
     caminho, saida=None, pasta_entrada=None, execucao=None, progresso=None
 ):
     cfg = carregar()
-    raiz_entrada = Path(pasta_entrada or ROOT / "arquivos")
+    raiz_entrada = Path(pasta_entrada or _pasta_entrada_padrao(cfg))
     id_execucao = execucao or nova_execucao()
     inicio = datetime.now(UTC).isoformat()
     inicio_monotonic = time.monotonic()
@@ -327,7 +332,7 @@ def extrair_arquivo(
             "versao_schema": "1.0",
             "caso_id": caminho.stem,
             "fonte": {
-                "arquivo": "arquivos/" + caminho.name,
+                "arquivo": _rotulo_fonte(caminho),
                 "sha256": sha,
                 "modalidade": MODALIDADE[sufixo],
                 "texto_fonte": arq_texto.name,
@@ -409,7 +414,7 @@ def extrair_arquivo(
 
 
 def extrair_pasta(pasta=None, progresso=None):
-    pasta = Path(pasta or ROOT / "arquivos").resolve()
+    pasta = Path(pasta or _pasta_entrada_padrao(carregar())).resolve()
     if not pasta.exists() or not pasta.is_dir():
         raise ValueError("Pasta de entrada não encontrada")
     id_execucao = nova_execucao()

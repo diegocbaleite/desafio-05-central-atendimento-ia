@@ -1,6 +1,9 @@
 projeto:
   nome: "Central Inteligente de Atendimento e Comunicação Institucional"
   orgao: "Secretaria Fictícia de Serviços ao Cidadão"
+  # Símbolo fornecido pela equipe; compatibilidade GOV.MT não validada oficialmente.
+  timbre: "dados/originais/brasao.png"
+  casos: "dados/originais/casos.yaml"
 
 llm:
   provider: "openrouter"
@@ -27,6 +30,7 @@ provedores:
     env_chave: "GEMINI_API_KEY"
 
 extracao_llm:
+  pasta_entrada: "dados/originais"
   gemini_modelo: "gemini-3.8-flash"
   estruturacao_provider: "openrouter"
   estruturacao_modelo: "nvidia/nemotron-3-super-120b-a12b:free"

@@ -50,7 +50,8 @@ class TestExperimento(unittest.TestCase):
                 }
             }
             casos.return_value = [
-                {"id": n, "arquivo": "dados/caso.txt"} for n in ("C01", "C05", "C06")
+                {"id": n, "arquivo": "dados/caso.txt", "modalidade": "texto"}
+                for n in ("C01", "C05", "C06")
             ]
             contador = [0]
 

@@ -30,16 +30,23 @@ def cer(referencia, obtido):
     return round(distancia(a, b) / max(len(a), 1), 4)
 
 
-def avaliar_campos(extracao):
-    arquivo = ROOT / "dados" / "gabaritos" / (extracao["caso_id"] + ".json")
+def avaliar_campos(extracao, caso_id=None):
+    """Compara campos críticos com o gabarito; devolve None se não houver gabarito."""
+    caso_id = caso_id or extracao["caso_id"]
+    arquivo = ROOT / "dados" / "gabaritos" / (caso_id + ".json")
+    if not arquivo.is_file():
+        return None
     esperado = json.loads(arquivo.read_text(encoding="utf-8"))
-    resultado = {"caso": extracao["caso_id"], "esperado": esperado, "campos": {}}
-    for chave in ("protocolo",):
+    resultado = {"caso": caso_id, "esperado": esperado, "campos": {}}
+    for chave in ("protocolo", "data_solicitacao"):
         if chave in esperado:
+            correto = esperado[chave] == extracao["campos"][chave]["valor"]
             resultado["campos"][chave] = {
                 "esperado": esperado[chave],
                 "obtido": extracao["campos"][chave]["valor"],
-                "correto": esperado[chave] == extracao["campos"][chave]["valor"],
+                "correto": correto,
+                # Protocolo ou data incorretos são erros críticos (protocolo_avaliacao.md).
+                "gravidade": None if correto else "critica",
             }
     if "categoria" in esperado:
         resultado["categoria_corresponde"] = (
@@ -50,3 +57,16 @@ def avaliar_campos(extracao):
             bool(esperado["alerta_injecao"]) == extracao["alerta_injecao"]
         )
     return resultado
+
+
+def taxa_aprovacao(resumos):
+    """Taxa simples de aprovação direta; decisões simuladas ficam fora do denominador."""
+    reais = [r for r in resumos if not r.get("simulada")]
+    aprovadas = sum(1 for r in reais if r.get("decisao") == "aprovar")
+    return {
+        "denominador": "casos com minuta e decisão humana real (exclui simulados/mock)",
+        "total_com_decisao_humana": len(reais),
+        "aprovadas_sem_correcao": aprovadas,
+        "excluidas_simuladas": len(resumos) - len(reais),
+        "taxa_aprovacao_direta": round(aprovadas / len(reais), 4) if reais else None,
+    }

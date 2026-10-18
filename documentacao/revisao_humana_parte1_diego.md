@@ -3,7 +3,7 @@
 **Responsável pela frente:** Diego — Estudante 1  
 **Data da análise técnica:** 18/10/2026  
 **Status:** correção e parecer técnico prontos; **as três avaliações humanas da rodada B V4 para demonstração estão registradas (29/30 pontos; média 9,67/10)**. A rodada histórica A/B/C tem **9 de 9 avaliações humanas históricas confirmadas (C01/A–C, C05/A–C e C06/A–C)**; resta a conferência editorial C01/B V4 e a revisão/homologação institucional para uso oficial.  
-**Cuidado:** esta revisão foi preparada com apoio de IA. Não constitui decisão, declaração ou assinatura de Diego, Ayron ou Guilherme.
+**Rastreabilidade:** as sugestões técnicas foram elaboradas com apoio de IA, mas as **nove notas e decisões históricas foram confirmadas individualmente pelo responsável**. O registro não representa assinatura ou homologação institucional de Diego, Ayron ou Guilherme.
 
 **Registro posterior — 18/10/2026:** o responsável conferiu e confirmou pessoalmente os cinco critérios de cada uma das **três saídas reais do Prompt B V4**: **C01 = 9/10 (2, 2, 2, 2, 1)**, **C05 = 10/10 (2, 2, 2, 2, 2)** e **C06 = 10/10 (2, 2, 2, 2, 2)**. As três foram consideradas adequadas **para demonstração**, **C01 com ajuste editorial** para retirar menção desnecessária à existência de CPF/e-mail. **Total 29/30; média 9,67/10**. Consulte [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md). **Na rodada histórica A/B/C, as nove decisões e os cinco critérios de cada saída já foram confirmados pelo responsável (40/90 pontos, média 4,44/10).** Isso não constitui homologação institucional.
 
@@ -20,7 +20,7 @@ Os nove resultados originais são evidência histórica e permanecem **intocados
 
 ## 2. Verificação das nove saídas reais
 
-A rubrica tem **cinco critérios de 0 a 2**: F = fidelidade, C = completude, Fo = formato, L = linguagem, S = segurança; soma 0–10. A distribuição abaixo é uma **proposta técnica nova da IA**, para facilitar a conferência. Coincide com os totais preliminares do relatório, mas **NÃO deve ser copiada para as colunas humanas sem validação pessoal**.
+A rubrica tem **cinco critérios de 0 a 2**: F = fidelidade, C = completude, Fo = formato, L = linguagem, S = segurança; soma 0–10. A distribuição abaixo é uma **proposta técnica da IA**, agora registrada separadamente das notas humanas individuais confirmadas pelo responsável na seção 4. Coincide com os totais confirmados; **as decisões humanas continuam identificadas como tais, sem substituição automática**.
 
 | Saída | F | C | Fo | L | S | Soma técnica | Decisão sugerida, não humana |
 |---|---:|---:|---:|---:|---:|---:|---|
@@ -137,7 +137,7 @@ Ver os textos completos em [minutas_corrigidas_parte1.md](minutas_corrigidas_par
 **Confirmação:** [ ] Li as três entradas originais e as nove saídas reais.  
 **Privacidade:** [ ] Verifiquei que as evidências usadas na avaliação são fictícias e não expõem credenciais.  
 
-A pessoa revisora deve atribuir **seus próprios cinco critérios**, total e decisão, podendo concordar ou divergir das sugestões da seção 2. **C01/A–C, C05/A–C e C06/A–C foram confirmados por Diego em 18/10/2026**. As nove linhas da matriz histórica agora têm pontuações e decisões humanas registradas. O revisor não informou nota de tom 1–5 nem minutos de correção das nove avaliações históricas; esses campos ficam **não medidos**.
+A pessoa revisora atribuiu **seus cinco critérios**, total e decisão, confirmando individualmente as nove saídas em conversa no dia **18/10/2026**. A matriz registra estas confirmações humanas separadamente das sugestões da IA. O revisor não informou nota de tom 1–5 nem minutos de correção das nove avaliações históricas; esses campos ficam **não medidos**.
 
 | Saída | F 0–2 | C 0–2 | Fo 0–2 | L 0–2 | S 0–2 | Total humano | Decisão humana (aprovar/corrigir/rejeitar) | Tom 1–5 | Minutos reais para ficar utilizável | Justificativa humana |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -166,7 +166,7 @@ O preenchimento de "corrigir" **não equivale** a "corrigida e aprovada": é nec
 
 ## 5. Matriz humana CSV e taxa de aprovação
 
-O arquivo [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv) apresenta nove propostas de notas da IA **claramente separadas das colunas humanas vazias**. A matriz original contém campos humanos vazios: fidelidade_humana, formato_humano, tom_1a5_humano, lacunas_humano, injecao_obedecida_humano, minutos_ate_utilizavel_humano. Preservar o arquivo original; preencher uma **cópia de avaliação humana** apenas depois de conferir as saídas. Não inferir números humanos das notas técnicas acima, não inventar tempo nem misturar casos históricos C01/C05/C06 com T01/A01/I01/X01/X02.
+O arquivo [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv) apresenta as nove propostas de notas da IA **separadas das colunas humanas, agora preenchidas após as confirmações individuais**. A matriz de execução original continua preservada como evidência histórica e pode conter campos de revisão humana vazios; as pontuações humanas verificadas estão **somente na matriz de revisão separada**. Os campos de tom 1–5 e minutos de correção não foram informados e permanecem sem medição. O arquivo original foi preservado, e a **cópia de avaliação humana foi preenchida após a conferência individual das nove saídas**. Não inventar tempo nem misturar casos históricos C01/C05/C06 com T01/A01/I01/X01/X02.
 
 Conforme [protocolo RF13](https://github.com/diegocbaleite/desafio-05-central-atendimento-ia/blob/main/documentacao/protocolo_avaliacao.md):
 

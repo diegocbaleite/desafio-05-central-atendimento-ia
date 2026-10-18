@@ -1,9 +1,9 @@
 # Relatório técnico — casos atuais e evidências
 
 **Equipe:** Diego, Ayron e Guilherme. **Desafio:** FIC_DEV IA Generativa, Prático 1/2026.  
-**Atualização:** 18/10/2026.
+**Atualização:** 18/10/2026, após correções da auditoria técnica.
 
-Este relatório considera somente o catálogo vigente em `dados/originais/casos.yaml`. Resultados de conjuntos substituídos não são atribuídos aos casos atuais e não participam das métricas abaixo.
+Este relatório prioriza o catálogo vigente em `dados/originais/casos.yaml`. Existe também uma avaliação humana concluída de uma rodada anterior com três casos substituídos. Seus resultados são preservados e apresentados em seção própria, sem serem atribuídos aos casos atuais.
 
 ## Catálogo avaliado
 
@@ -21,14 +21,28 @@ Os gabaritos foram preparados antes das execuções e não podem ser ajustados p
 
 | Área | Evidência disponível | Estado e limite |
 |---|---|---|
-| Texto e extração | Testes de `T01`, `X01` e `X02`; JSON estruturado e esquema | Implementado e coberto por testes locais |
-| Prompts A/B/C | Código em `src/experimento.py`; execução `--mock` | Comparação real e avaliação humana dos casos atuais pendentes |
-| STT | Entrada e gabarito de `A01`; processamento local implementado | O arquivo de referência configurado para `--mock` não está no repositório; referência independente e validação final pendentes |
-| OCR | Entrada e gabarito de `I01`; Tesseract local executado; tentativa Gemini terminou em HTTP 503 | O arquivo de referência configurado para `--mock` não está no repositório; OCR remoto válido, CER independente e conferência final pendentes |
+| Texto e extração | Testes de `T01`, `X01` e `X02`; JSON estruturado, esquema e comparação ampliada com gabaritos | Implementado e coberto por testes locais |
+| Prompts A/B/C | Código em `src/experimento.py`; matriz RF13; avaliação humana histórica de nove saídas em `avaliacao_rf13_nove_casos_pendente.csv` | Avaliação histórica concluída e favorável ao Prompt B entre A/B/C; repetição com `T01`, `X01` e `X02` ainda pendente |
+| Catálogo | Validação de YAML, IDs únicos, modalidades, arquivos, caminhos seguros, referências e seleção por `--caso` | Implementado; referências independentes ausentes bloqueiam explicitamente o lote multimodal `--mock` |
+| STT | Entrada e gabarito de `A01`; processamento local/remoto, retentativas e preservação da transcrição bruta | O arquivo de referência configurado para `--mock` não está no repositório; referência independente e validação final pendentes |
+| OCR | Entrada e gabarito de `I01`; Tesseract local executado; visão remota converte formatos aceitos para PNG | A tentativa Gemini registrada terminou em HTTP 503; referência independente, CER e conferência final pendentes |
 | Minutas | Geração local, separação entre pendente/aprovada e trilha de revisão | Nenhuma decisão YAML ou `--mock` vale como aprovação humana |
-| TTS | Implementação local/Gemini e bloqueio por aprovação/hash | Execução real validada e revisão auditiva vinculada ainda pendentes |
-| Imagem | Composição local e integração Cloudflare coberta por simulação | A composição local não é imagem gerada por IA; geração real e revisão pendentes |
-| Auditoria | Logs JSONL, hashes e diretórios por execução | Métricas ausentes devem permanecer `não localizado` |
+| TTS | Implementação local/Gemini, retentativas, validação do MP3 e bloqueio por aprovação/hash | Falha de síntese aparece no resumo e torna a execução incompleta; validação auditiva real ainda está pendente |
+| Imagem | Composição local e integração Cloudflare com retentativas, validação e proveniência | A composição local não é imagem gerada por IA; geração real e revisão pendentes |
+| Auditoria | Logs JSONL, hashes, timestamps UTC e diretórios por execução | Campos estruturais são protegidos contra sobrescrita; métricas ausentes permanecem `não localizado` |
+
+## Verificação técnica após a auditoria
+
+Em 18/10/2026, foram executadas verificações locais sem chamadas externas:
+
+- `python -m unittest discover -s testes -t .`: **112 testes aprovados**;
+- `python -m src.main verificar`: concluído, com envio automático desabilitado;
+- `python -m src.main --mock --caso T01 --decisoes dados/revisao/decisoes_demo.yaml`: concluído com sucesso e decisão identificada como simulada;
+- lote `--mock` completo: interrompido corretamente porque as referências independentes declaradas para `A01` e `I01` ainda não existem.
+
+Os testes cobrem, entre outros pontos, propagação de falhas do experimento e do TTS, retentativas transitórias, rejeição de conteúdo TTS que não seja MP3, conversão TIFF para PNG, validação do catálogo, IDs desconhecidos, timestamps UTC e comparação dos elementos presentes nos gabaritos.
+
+A aprovação da suíte comprova o comportamento implementado em ambiente controlado. Ela não substitui execução real dos provedores, inspeção auditiva/visual, validação em máquina limpa ou revisão humana dos casos vigentes.
 
 ## Provedores, modelos e custos
 
@@ -44,7 +58,31 @@ Nenhum valor de custo foi inferido. O pacote final de evidências deve conter ap
 
 ## Engenharia de prompts (RF02)
 
-O experimento compara A (zero-shot), B (estruturado) e C (produzido por metaprompt). O código atual seleciona apenas entradas de modalidade texto, portanto a matriz vigente deve conter `T01`, `X01` e `X02`, cada um executado com os três prompts sob o mesmo modelo e parâmetros.
+O experimento compara A (zero-shot), B (estruturado) e C (produzido por metaprompt). O código atual seleciona apenas entradas de modalidade texto, portanto a matriz vigente deve conter `T01`, `X01` e `X02`, cada um executado com os três prompts sob o mesmo modelo e parâmetros. O executor complementar das versões B V2/V3/V4 também passou a consultar o catálogo vigente, sem manter uma lista própria de casos removidos.
+
+A matriz reserva campos humanos para fidelidade, completude, formato, linguagem, segurança, total, decisão, revisor, data, justificativa, tom e tempo até o texto utilizável. Na rodada histórica, os cinco critérios, totais, decisões, justificativas, revisor e data foram preenchidos por avaliação humana. Tom e tempo de correção não foram medidos.
+
+## Avaliação humana já realizada
+
+A avaliação RF13 das nove saídas históricas A/B/C foi realizada e está registrada em [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv) e [revisao_humana_parte1_diego.md](revisao_humana_parte1_diego.md). Embora o nome do CSV ainda contenha `pendente`, suas colunas humanas foram posteriormente preenchidas.
+
+| Prompt | Casos avaliados | Pontuação humana | Média | Resultado |
+|---|---:|---:|---:|---|
+| A | 3 | 12/30 | 4,00/10 | Duas rejeições e uma correção profunda |
+| B | 3 | 21/30 | 7,00/10 | Três indicações de correção; melhor média da rodada A/B/C |
+| C | 3 | 7/30 | 2,33/10 | Três rejeições |
+| **Total** | **9** | **40/90** | **4,44/10** | Nenhuma aprovação direta |
+
+O Prompt B foi selecionado para evolução e demonstração porque obteve a maior média humana entre A, B e C e apresentou menos problemas graves. Isso não significa que as três saídas históricas B tenham sido aprovadas sem ajustes: todas receberam decisão de correção.
+
+Também houve avaliação humana da rodada independente B V4 nos mesmos três casos históricos:
+
+- primeiro caso da rodada B V4: 9/10, adequado para demonstração com ajuste editorial;
+- segundo caso da rodada B V4: 10/10, adequado para demonstração;
+- terceiro caso da rodada B V4: 10/10, adequado para demonstração;
+- total: 29/30, média 9,67/10.
+
+Essas avaliações justificam historicamente a escolha do Prompt B e sua evolução até V4. Elas não devem ser transportadas como notas de `T01`, `A01`, `I01`, `X01` ou `X02`, que constituem o catálogo vigente.
 
 Uma execução `--mock` serve para validar o encadeamento e a gravação dos artefatos, mas não permite afirmar qualidade de modelo, prompt vencedor, custo real ou taxa de aprovação. A comparação real dos casos atuais ainda precisa ser executada e avaliada com a rubrica de [protocolo_avaliacao.md](protocolo_avaliacao.md).
 
@@ -62,10 +100,16 @@ Os arquivos de texto, áudio e imagem são declarados como fictícios para o pro
 
 Toda saída de LLM é uma minuta pendente. Não há envio automático, assinatura, deferimento ou protocolo real. O arquivo `dados/revisao/decisoes_demo.yaml` contém somente decisões simuladas e fica excluído da taxa de aprovação.
 
-## Métricas atuais
+O checklist de `documentacao/lgpd.md` foi marcado pela equipe como conferido. Essa marcação documenta a declaração interna, mas não transforma o protótipo em sistema autorizado para dados reais nem elimina a necessidade de revisar o pacote final de evidências antes de publicação.
 
-- Avaliação humana RF13 dos cinco casos atuais: **não localizada**.
-- Taxa de aprovação direta: **não localizada**.
+## Métricas e escopos
+
+- Avaliação humana histórica A/B/C: **9 de 9 saídas avaliadas**.
+- Média humana histórica: **4,44/10**; Prompt A = **4,00**, B = **7,00**, C = **2,33**.
+- Taxa de aprovação direta histórica: **0/9 = 0%**; as correções não possuem reavaliação de aprovação documentada.
+- Avaliação humana B V4 histórica: **3 de 3 saídas avaliadas**, média **9,67/10**, uma condicionada a ajuste editorial.
+- Avaliação humana RF13 do catálogo vigente: **não localizada**.
+- Taxa de aprovação direta do catálogo vigente: **não localizada**.
 - Taxa de aprovação após correção: **não localizada**.
 - Custo da comparação A/B/C atual com serviço real: **não localizado**.
 - WER independente de `A01`: **não localizada**.
@@ -73,11 +117,11 @@ Toda saída de LLM é uma minuta pendente. Não há envio automático, assinatur
 
 ## Pendências para encerramento
 
-1. Executar A/B/C com `T01`, `X01` e `X02` usando o mesmo modelo e parâmetros e preservar a matriz bruta.
-2. Registrar notas e decisões humanas dos casos atuais com responsável, data e justificativa.
+1. Repetir A/B/C com `T01`, `X01` e `X02` usando o mesmo modelo e parâmetros, preservando a matriz bruta sem substituir a avaliação histórica.
+2. Registrar notas e decisões humanas dos casos atuais com responsável, data e justificativa; a avaliação histórica já realizada permanece válida somente para seu próprio conjunto.
 3. Produzir e versionar referências independentes para `A01` e `I01`, habilitar o lote `--mock`, recalcular WER/CER e conferir campos críticos nos originais.
 4. Vincular TTS a uma minuta realmente aprovada e validar o áudio resultante.
 5. Gerar e revisar uma peça visual efetivamente produzida pelo provedor de IA, mantendo proveniência distinta da composição local.
-6. Concluir o checklist de privacidade, revisar logs e repetir a instalação em máquina limpa.
+6. Preservar a comprovação do checklist de privacidade, revisar o pacote final de logs e repetir a instalação em máquina limpa.
 
 Nenhuma pendência autoriza envio ao cidadão ou uso institucional. Resultados `mock` continuam identificados como simulação.

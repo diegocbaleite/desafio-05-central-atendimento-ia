@@ -238,6 +238,24 @@ seguranca:
 
 O fluxo atual seleciona **Gemini** na configuração principal. O experimento A/B/C aceita o mesmo provedor configurado e deve registrar modelo, parâmetros, latência, tokens e falhas em uma pasta nova por execução. O modo `--mock` é apenas uma simulação local.
 
+### Custos dos modelos e serviços de IA
+
+Preços públicos consultados em **18/10/2026**, em dólares dos Estados Unidos. A tabela usa a modalidade padrão/síncrona paga. Camadas gratuitas, impostos, câmbio, franquias, limites e preços futuros podem alterar o valor efetivamente cobrado; confirme as páginas oficiais antes de executar.
+
+| Uso no projeto | Provedor e modelo | Entrada | Saída | Unidade real de cobrança |
+|---|---|---:|---:|---|
+| Minutas e experimento atual | Gemini `gemini-3.1-flash-lite` | US$ 0,25 por 1 milhão de tokens de texto/imagem/vídeo; áudio: US$ 0,50 | US$ 1,50 por 1 milhão de tokens | Tokens; há camada gratuita sujeita às condições do provedor |
+| OCR/visão remoto | Gemini `gemini-3.8-flash` | US$ 0,75 por 1 milhão de tokens | US$ 3,75 por 1 milhão de tokens | Preço introdutório válido até 31/12/2026; depois, US$ 1,50 de entrada e US$ 7,50 de saída |
+| Síntese de voz | Gemini `gemini-3.8-flash-lite-tts` | US$ 0,50 por 1 milhão de tokens de texto | US$ 6,00 por 1 milhão de tokens de áudio | Até 31/12/2026; equivalente informado pelo provedor de US$ 0,0015 por 10 segundos de áudio |
+| Transcrição de áudio | Groq `whisper-large-v3-turbo` | n/a | n/a | **US$ 0,04 por hora de áudio**, não por milhão de tokens |
+| Imagem | Cloudflare `@cf/black-forest-labs/flux-1-schnell` | n/a | n/a | US$ 0,0000528 por bloco 512×512 e US$ 0,0001056 por etapa; com as 4 etapas configuradas, a parcela de etapas é US$ 0,0004224, além dos blocos |
+| Experimento histórico | OpenRouter `nvidia/nemotron-3-super-120b-a12b:free` | US$ 0,00 por 1 milhão de tokens | US$ 0,00 por 1 milhão de tokens | Endpoint gratuito e sujeito a limites de uso |
+| Alternativas locais | `faster-whisper`, Tesseract, eSpeak e Pillow | n/a | n/a | Sem tarifa de API por token; hardware, energia e operação não foram medidos |
+
+Fontes oficiais: [preços da API Gemini](https://ai.google.dev/gemini-api/docs/pricing), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/latest-model), [Groq Whisper Large V3 Turbo](https://console.groq.com/docs/model/whisper-large-v3-turbo), [Cloudflare Workers AI](https://developers.cloudflare.com/workers-ai/platform/pricing/), [Cloudflare FLUX.1 schnell](https://developers.cloudflare.com/workers-ai/models/flux-1-schnell) e [OpenRouter Nemotron gratuito](https://openrouter.ai/nvidia/nemotron-3-super-120b-a12b%3Afree/pricing).
+
+Esses valores são tarifas públicas de referência, não custos medidos das execuções do projeto. Quando o provedor não informa o custo da chamada, o artefato deve registrar `não localizado` em vez de estimar um gasto.
+
 Crie seu `.env` local a partir de `.env.example`. Preencha **somente as chaves dos provedores que for usar**. O arquivo `.env` está ignorado pelo Git e **nunca** deve ser enviado ao repositório.
 
 ---

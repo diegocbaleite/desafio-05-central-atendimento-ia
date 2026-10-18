@@ -1,0 +1,23 @@
+{
+  "metodo": "geracao_api",
+  "por_ia": true,
+  "provider": "cloudflare",
+  "modelo": "@cf/black-forest-labs/flux-1-schnell",
+  "data": "2026-10-18T16:17:36.005792+00:00",
+  "prompt": "prompts/imagem_orientacao.md",
+  "prompt_sha256": "d8d92ca51668b22b3e73503310736617ae54dc68b73fdd6acd88df491f17802f",
+  "parametros": {
+    "steps": 4
+  },
+  "tokens_entrada": "não localizado",
+  "tokens_saida": "não localizado",
+  "custo_usd": "não localizado",
+  "arquivo": "C:\\Projetos\\desafio-05-central-atendimento-ia\\desafio-05-central-atendimento-ia\\resultados\\imagens\\arte_20261018T161733Z_41ff38\\orientacao.png",
+  "operador": "não localizado",
+  "status_revisao": "pendente de validação humana",
+  "referencia_visual": {
+    "arquivo": "brasao.png",
+    "sha256": "ccb82e8c921b2999b4c52b0466b09f6dbdeff24f7425c23d7b9371d3a13ed50a",
+    "incorporada_na_arte": true
+  }
+}

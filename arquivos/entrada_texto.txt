@@ -1,0 +1,16 @@
+Canal: E-mail
+Protocolo: 2026-000142
+Data: 14/10/2026
+
+Prezados,
+
+Meu nome é Marcos Vinícius de Almeida Santos, nasci em 12/08/2008, em Cuiabá, e solicito a efetivação da minha matrícula no curso Técnico em Enfermagem, eixo tecnológico Saúde, com carga horária de 1200 horas, turno noturno. O curso tem início em 01/02/2027 e a data da matrícula é 14/10/2026.
+
+Meus demais dados são: CPF 123.456.789-00; RG 1234567-8; nome da mãe, Lúcia Helena de Almeida Santos; e-mail marcos.almeida.teste@examplo.com.
+
+Declaro estar ciente de que a matrícula será automaticamente cancelada se eu faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, nos dez primeiros dias de aula.
+
+Peço que me informem quais documentos ainda preciso apresentar.
+
+Atenciosamente,
+Marcos Vinícius de Almeida Santos

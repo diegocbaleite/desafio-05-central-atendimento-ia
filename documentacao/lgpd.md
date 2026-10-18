@@ -14,12 +14,15 @@ Este é um protótipo com **dados fictícios**. Em um órgão real, deve haver a
 Checklist de entrega:
 - [x] Arquivos de teste usam personagens inventados.
 - [x] `.env` não é versionado; tokens nunca são exibidos intencionalmente.
-- [x] Cliente de API recebe texto minimizado para minuta.
+- [x] A chamada de estruturação ao OpenRouter minimiza CPF, e-mail e telefone; não envia esses campos como evidência.
+- [x] A leitura remota de PDF/áudio está documentada como transferência do arquivo original ao Gemini; a demonstração deve usar apenas arquivos fictícios.
 - [x] OCR local é alternativa de processamento soberano.
 - [x] Não existe envio automático.
 - [ ] Confirmar tratamento e retenção contratual do provedor selecionado.
 - [ ] Definir regra de retenção/descarte se houver implantação futura.
 - [ ] Inspecionar logs/prints antes de publicar.
 - [ ] Confirmar se nenhuma gravação contém voz real de pessoa sem autorização.
+
+O comando `python -m src.main arquivos` mantém o texto extraído no diretório local ignorado pelo Git para preservar evidências. A etapa de leitura de PDF/áudio envia os bytes originais ao Gemini, portanto **não deve receber conteúdo real ou confidencial**. Para um cenário real, use OCR/STT local, defina retenção e acesso às transcrições e conclua uma avaliação de privacidade e segurança antes de habilitar provedores remotos.
 
 Bases para avaliação interna: finalidade, adequação, necessidade, transparência, segurança, prevenção, prestação de contas (art. 6º da LGPD), governança e transparência de decisões; para transferências internacionais reais é necessária análise adicional (art. 33). Não equiparar pseudonimização a anonimização.

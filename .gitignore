@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 resultados/execucoes/
+resultados/arquivos_fornecidos/
 dados/originais/*.wav
 dados/originais/*.mp3
-python
+Python

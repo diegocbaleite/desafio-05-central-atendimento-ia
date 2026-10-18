@@ -1,9 +1,8 @@
 # Central Inteligente de Atendimento e Comunicação Institucional
 
 **Desafio Prático 1 — Inteligência Artificial Generativa (FIC_DEV, Aulas 01 a 07)**  
-**Equipe:** Diego · Ayron · Guilherme  
+**Equipe:** Diego Assunção Leite · Ayron · Guilherme  
 **Instituição:** SECITECI — Escola Técnica Estadual de Cuiabá | **Versão:** 1.0 (2026)  
-**Referência de organização:** [Desafio 03 — Pipeline de Recomendação](https://github.com/diegocbaleite/desafio-03-pipeline-recomendacao).
 
 > **Protótipo educacional, sem atendimento real.** Não há envio automático para cidadão. Os documentos são fictícios e toda aprovação tem que passar por uma pessoa responsável.
 
@@ -13,8 +12,8 @@ Receber solicitações fictícias em **texto, áudio e imagem**, transcrever ou 
 ## Integrantes e atribuições sugeridas
 | Integrante | Frente inicial |
 |---|---|
-| Diego | Integração Python/API, segurança, tratamento de erros e auditoria |
-| Ayron | Prompts A/B/C, métricas, revisão dos gabaritos e relatório |
+| Diego | Engenharia de Prompts, métricas, revisão dos gabaritos e relatório |
+| Ayron | Integração Python/API, segurança, tratamento de erros e auditoria |
 | Guilherme | STT/TTS, OCR, peça visual, testes e acessibilidade |
 
 A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
@@ -27,8 +26,8 @@ A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
 | C02: áudio com ruído e STT | Há roteiro/transcrição de referência; **gravação/execução real devem ser comprovadas** |
 | C03: formulário e OCR | Há transcrição fictícia de referência; **imagem e execução do OCR devem ser comprovadas** |
 | C04: timbre compatível com GOV.MT | **Produzir/inspecionar timbre fictício**, sem uso indevido de símbolo oficial |
-| Experimento A/B/C com modelo real | Código preparado; **pendente medição real e avaliação humana** |
-| Peça visual RF10 | Arte local por código não é arte produzida por IA; **execução com gerador de IA pendente se exigida** |
+| Experimento A/B/C com modelo real | Matriz local versionada registra **9/9 respostas**; **avaliação humana e custo por chamada pendentes** |
+| Peça visual RF10 | CLI aceita gerador OpenAI configurável; configuração atual é local e **geração por IA não demonstrada** |
 | Decisão humana | CLI interativa disponível; decisões em YAML são **simulação**, não assinatura de servidor |
 | Relatório de custos e aprovação | Modelos em `documentacao/`; preencher apenas com dados medidos |
 
@@ -55,11 +54,16 @@ python -m src.main --mock --caso C01
 python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
 python -m src.main experimento --mock
 python -m src.main experimento
-python -m src.main imagem
+python -m src.main imagem 
+python -m src.main arquivos  # comando padrão
 ```
-`--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana. Sem a opção, a CLI pergunta a decisão no terminal.
+`--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana; elas são registradas como simuladas e não criam minuta aprovada nem acionam TTS. Sem a opção, a CLI pede a decisão no terminal. A opção `imagem --mock` força a composição local; sem `--mock`, o comando segue `multimodal.imagem_provider` (local por padrão, OpenAI somente se configurado).
 
-Para usar LLM real: ajuste `llm.provider` de `mock` para `groq`, `openai` ou `gemini` em `config/config.yaml`, ajuste `llm.modelo` e a chave correspondente no `.env`. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
+Ao executar `python -m src.main arquivos`, a CLI informa que está no fluxo de extração multimodal e mostra as etapas por arquivo: validação da entrada, leitura local ou OCR/transcrição com Gemini, estruturação dos campos pelo provedor configurado, validação de evidências e JSON Schema e gravação/auditoria.
+
+Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq`, `openai` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração inicial usa OpenRouter. Valide disponibilidade/compatibilidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Resultados ficam em `resultados/execucoes/<id>/`, ignorados pelo git por privacidade.
+
+Para extrair arquivos fictícios da pasta `arquivos/`, configure as chaves Gemini e OpenRouter e execute `python -m src.main arquivos`. PDF e áudio são enviados ao Gemini para leitura; texto transcrito e texto simples seguem minimizados (CPF, e-mail e telefone substituídos) ao OpenRouter para estruturar o JSON. Arquivos são limitados a 14 MiB e não podem sair da pasta de entrada autorizada. A transcrição é salva localmente e a auditoria registra provedor, modelo, latência, tokens disponíveis, hash e falhas, sem guardar prompts nem credenciais. Saídas ficam em `resultados/arquivos_fornecidos/` e são ignoradas pelo git. **Não use documentos, vozes ou dados reais:** a leitura remota de PDF/áudio ainda transmite o original ao Gemini; para dados reais, substitua por OCR/STT local e faça avaliação de privacidade antes do uso.
 
 # Requisitos Funcionais — RF01 a RF13
 | RF | Como demonstrar | Evidência |
@@ -93,7 +97,7 @@ documentacao/  arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA
 
 # Segurança, custos e limitações
 - A entrada externa é dado **não confiável**. A detecção de injeção por expressões regulares não é completa.
-- Campos ausentes tornam-se **`não localizado`**. Valores críticos precisam ser conferidos na fonte pelo servidor; texto gerado pelo modelo pode alucinar.
+- Campos ausentes ou sem valor sustentado pela própria evidência tornam-se **`não localizado`**. Valores críticos ainda precisam ser conferidos na fonte por uma pessoa; texto gerado pelo modelo pode alucinar.
 - **Jamais** usar nomes, CPFs, vozes ou fotografias de pessoas reais nas demonstrações. Nunca publicar `.env`.
 - Sem valor oficial conferido de preço, custo é **indisponível**: não inventar tarifas. Registre tokens/latência reais quando a API fornecer.
 - A composição local com Pillow é **gráfica programática**, e não imagem criada por IA. Diferencie no relatório.

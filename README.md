@@ -1,7 +1,7 @@
 # Central Inteligente de Atendimento e Comunicação Institucional
 
 **Desafio Prático 1 — Inteligência Artificial Generativa (FIC_DEV, Aulas 01 a 07)**  
-**Equipe:** Diego Assunção Leite · Ayron · Guilherme  
+**Equipe:** Diego Assunção Leite · Ayron · Guilherme da Silva Lessa  
 **Instituição:** SECITECI — Escola Técnica Estadual de Cuiabá | **Versão:** 1.0 (2026)  
 
 > **Protótipo educacional, sem atendimento real.** Não há envio automático para cidadão. Os documentos são fictícios e toda aprovação tem que passar por uma pessoa responsável.

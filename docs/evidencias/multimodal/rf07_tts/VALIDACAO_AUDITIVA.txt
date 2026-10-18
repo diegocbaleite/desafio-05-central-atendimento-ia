@@ -1,0 +1,1 @@
+﻿Validação auditiva em 18/10/2026: áudio conferido por escuta humana. Aviso inicial e conteúdo da minuta reproduzidos corretamente. Limitação: voz robótica e pouco natural, característica do eSpeak. Resultado funcional aprovado, com ressalva de qualidade vocal.

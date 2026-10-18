@@ -1,0 +1,38 @@
+{
+  "tipo": "OCR",
+  "fonte": "resumo derivado do resultado.json da execucao ocr_20261018T152602Z_b29a45",
+  "campos_de_texto_documental": "omitidos para evitar publicacao de dados pessoais",
+  "entrada": "entrada_pdf-imagem.pdf",
+  "sha256_original": "a4b3bc0518df73244856ab27e010b561680b5f60ee8e730be4df83b3b567505f",
+  "motor": "Tesseract",
+  "provedor": "local",
+  "configuracao": {
+    "psm": 6,
+    "limite_paginas": 3,
+    "dpi_pdf": 300
+  },
+  "paginas_processadas": 1,
+  "duracao_processamento_s": 7.828,
+  "metricas": {
+    "bruta": {
+      "wer": 0.6892,
+      "cer": 0.4661,
+      "erros_palavras": 102,
+      "palavras_referencia": 148,
+      "erros_caracteres": 440,
+      "caracteres_referencia": 944,
+      "aviso": "WER/CER só são comparáveis quando o gabarito representa exatamente esta modalidade."
+    },
+    "revisada": {
+      "wer": 0.0,
+      "cer": 0.0,
+      "erros_palavras": 0,
+      "palavras_referencia": 148,
+      "erros_caracteres": 0,
+      "caracteres_referencia": 944,
+      "aviso": "WER/CER só são comparáveis quando o gabarito representa exatamente esta modalidade."
+    }
+  },
+  "revisao_humana": "texto revisado fornecido; confirmar autoria e conferência",
+  "observacao": "WER/CER revisados de 0 nao constituem precisao do OCR bruto; referencia e revisado compartilham texto idêntico."
+}

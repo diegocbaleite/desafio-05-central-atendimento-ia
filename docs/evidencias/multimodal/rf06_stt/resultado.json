@@ -1,0 +1,26 @@
+{
+  "tipo": "STT",
+  "entrada": "entrada_audio.mp3",
+  "sha256_original": "aa396a4bc0d990ef05b031d8771cbad2d46ebc45ec1ad1adf4d23cb3c7cd2fa6",
+  "idioma": "pt",
+  "duracao_audio_s": 89.16,
+  "provedor": "local",
+  "modelo": "small",
+  "execucao": "modelo local",
+  "duracao_processamento_s": 27.109,
+  "data_utc": "2026-10-18T15:00:43.639396+00:00",
+  "arquivo_bruto": "transcricao_bruta.txt",
+  "requer_revisao_humana": true,
+  "revisao_humana": "pendente",
+  "metricas": {
+    "bruta": {
+      "wer": 0.0,
+      "cer": 0.0,
+      "erros_palavras": 0,
+      "palavras_referencia": 140,
+      "erros_caracteres": 0,
+      "caracteres_referencia": 790,
+      "aviso": "WER/CER só são comparáveis quando o gabarito representa exatamente esta modalidade."
+    }
+  }
+}

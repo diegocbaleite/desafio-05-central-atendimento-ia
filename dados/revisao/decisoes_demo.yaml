@@ -1,5 +1,6 @@
-C01:
-C02:
-C03:
-C05:
-C06:
+# Decisões fictícias para demonstrar o fluxo. Não representam revisão humana real.
+T01: aprovar
+A01: corrigir
+I01: corrigir
+X01: rejeitar
+X02: aprovar

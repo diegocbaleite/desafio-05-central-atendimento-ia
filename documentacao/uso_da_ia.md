@@ -40,7 +40,8 @@
 | Aprovação exige responsável e justificativa digitados no terminal | Aceita; conferir pela equipe | RF11/RF13 e diretriz de não preencher decisão humana por conta própria |
 
 ## Erros e inadequações a registrar
-- [x] 17/10/2026: após o commit `f6d5b8b` (remoção dos casos C01–C06), 4 testes falhavam e `python -m src.main` não tinha entradas; corrigido com `casos.yaml`, gabaritos prévios e fixtures.
+- [x] 17/10/2026: após a troca do conjunto de casos, testes falhavam e `python -m src.main` não tinha entradas; corrigido com o catálogo atual (`T01`, `A01`, `I01`, `X01`, `X02`), gabaritos prévios e fixtures.
+- [x] 18/10/2026: README, matriz de requisitos, protocolo, relatório técnico e YAML de demonstração alinhados ao catálogo atual; notas de outros conjuntos deixaram de ser apresentadas como resultados dos casos disponíveis em `dados/`.
 - [x] 17/10/2026: o extrator por regex capturava o rótulo seguinte como parte do nome (`Maria Fictícia Albuquerque\nProtocolo`), podia tomar data de nascimento como data da solicitação e não reconhecia protocolo com hífen; corrigido e coberto por testes.
 - [x] 17/10/2026: o lote terminava com código 0 mesmo com falhas e `verificar` emitia aviso de depreciação; corrigidos.
 - [ ] Registrar outros defeitos encontrados e correções realizadas em execução real.

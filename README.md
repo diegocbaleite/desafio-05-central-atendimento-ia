@@ -47,25 +47,26 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 - **Requisito:** executar o projeto de maneira reproduzível, com configuração e segredos separados.
 - **Implementação:** `src/main.py` oferece a CLI `python -m src.main`; `config/config.yaml` contém parâmetros não sensíveis; `.env.example` apresenta o modelo das variáveis de ambiente; `src/config.py` carrega a configuração.
-- **Validação:** comando `python -m src.main verificar` e testes automatizados. **Pendente:** registrar instalação completa em máquina limpa apenas com o README.
+- **Validação:** comando `python -m src.main verificar` e testes automatizados.
 
 ### 🔹 RF02 — Engenharia de prompts
 
 - **Requisito:** comparar A (zero-shot), B (estruturado) e C (metaprompt), mantendo as mesmas entradas e condições sempre que possível.
 - **Implementação:** `prompts/experimento/`, `src/experimento.py`, versões `prompt_B_v2_seguro.md`, `prompt_B_v3_seguro.md`, `prompt_B_v4_seguro.md` e `src/experimento_b_v2_real.py`.
-- **Evidências:** nove saídas históricas de modelo real **avaliadas individualmente pelo revisor (9/9)**. O Prompt B teve a melhor média histórica entre A/B/C. A rodada separada B V4 foi considerada adequada **para demonstração**, com ressalva editorial em C01.
+- **Casos atuais:** o experimento usa as entradas textuais `T01`, `X01` e `X02` definidas em `dados/originais/casos.yaml`. Cada execução grava uma matriz nova e preserva as saídas por caso e prompt.
+- **Situação:** há cobertura automatizada e execução `--mock`; uma comparação real dos prompts com os casos atuais ainda precisa ser executada e revisada por pessoa. Não são reaproveitadas notas de conjuntos de dados anteriores.
 
 ### 🔹 RF03 — Prompt seguro e conteúdo não confiável
 
 - **Requisito:** tratar conteúdo externo como dados, não como instruções; impedir invenção de informações e sinalizar lacunas.
-- **Implementação:** `prompts/sistema_minuta.md`, `src/seguranca.py` e teste de **prompt injection** no caso C05.
+- **Implementação:** `prompts/sistema_minuta.md`, `src/seguranca.py` e teste de **prompt injection** no caso atual `X01`.
 - **Limite:** a detecção heurística por regras/regex e o teste específico não garantem imunidade a qualquer ataque. A revisão humana continua obrigatória.
 
 ### 🔹 RF04 — Chamada de API e tratamento de falhas
 
 - **Requisito:** realizar chamadas a modelos com parâmetros configuráveis, timeout, tratamento de erros e proteção de credenciais.
 - **Implementação:** `src/cliente.py` integra provedores configuráveis; `src/auditoria.py` preserva registros de execução sem chaves secretas.
-- **Evidências:** chamadas reais do experimento com **OpenRouter**; falhas e limitações externas também são registradas. Valores de custo só devem ser declarados quando efetivamente informados ou calculados sobre uma tarifa verificável.
+- **Evidências:** cliente e retentativas cobertos por testes; a comparação real com os casos atuais ainda está pendente. Falhas externas são registradas, e valores de custo só devem ser declarados quando fornecidos pelo provedor ou calculados sobre tarifa verificável.
 
 ### 🔹 RF05 — Extração estruturada de texto
 
@@ -95,7 +96,7 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 - **Requisito:** redigir uma minuta baseada somente no contexto disponível, indicando ausências e impedindo envio automático.
 - **Implementação:** `src/minuta.py`, `prompts/sistema_minuta.md` e fluxo de aprovação em `src/main.py`.
-- **Evidência:** minutas e revisões registradas. A peça editorial C01/B V4 está disponível em [minutas de demonstração](documentacao/minutas_demonstracao_b_v4.md), **aguardando conferência final da cópia editada**; não constitui documento oficial GOV.MT.
+- **Evidência:** o fluxo gera minutas pendentes para os casos atuais e mantém original, extração, minuta e revisão em artefatos separados. Decisões carregadas de YAML são sempre simulações e não constituem aprovação ou documento oficial GOV.MT.
 
 ### 🔹 RF10 — Geração ou edição de imagem
 
@@ -118,34 +119,22 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 ### 🔹 RF13 — Qualidade e revisão humana
 
 - **Requisito:** avaliar fidelidade, completude, formato, linguagem e segurança, classificar erros e registrar decisões.
-- **Implementação:** `src/avaliacao.py`, [protocolo RF13](documentacao/protocolo_avaliacao.md) e [matriz separada de notas humanas](documentacao/avaliacao_rf13_nove_casos_pendente.csv).
-- **Resultado histórico:** **9/9** avaliações humanas confirmadas: **40/90 pontos**, média **4,44/10** e **0/9 aprovações diretas**. As decisões foram **5 rejeitar, 3 corrigir e 1 corrigir profundamente**; isso **não** significa nove minutas aprovadas.
-- **Rodada B V4 separada:** três notas humanas de **9/10, 10/10 e 10/10** (média **9,67/10**) para demonstração; C01 requer conferência editorial. Homologação institucional e reavaliação de minutas corrigidas permanecem separadas.
+- **Implementação:** `src/avaliacao.py`, [protocolo RF13](documentacao/protocolo_avaliacao.md) e gabaritos prévios em `dados/gabaritos/`.
+- **Situação atual:** os cinco casos possuem gabarito anterior à execução, mas ainda não há uma matriz de notas humanas dos casos atuais. A taxa de aprovação permanece `não localizada` até existirem decisões humanas reais; decisões `--mock` e YAML não entram no cálculo.
 
 ---
 
-## 📊 Resultados e avaliação humana
+## 📊 Casos atuais e estado da avaliação
 
-### Comparativo histórico dos prompts A/B/C
+| Caso | Modalidade | Finalidade de teste | Estado da evidência |
+|---|---|---|---|
+| `T01` | texto | Solicitação fictícia de efetivação de matrícula | Entrada e gabarito disponíveis; avaliação humana da minuta pendente |
+| `A01` | áudio | Mesma solicitação por voz, com conferência de campos críticos | Entrada e gabarito disponíveis; arquivo de referência do modo `--mock` e validação independente de STT pendentes |
+| `I01` | imagem/PDF | Mesma solicitação em documento digitalizado | Entrada e gabarito disponíveis; arquivo de referência do modo `--mock`, OCR remoto válido e referência independente pendentes |
+| `X01` | texto | Reclamação fictícia com tentativa de injeção de prompt | Detector e fluxo seguro cobertos por testes; revisão humana da minuta pendente |
+| `X02` | texto | Agendamento fictício com campos ausentes | Uso de `não localizado` coberto por testes; revisão humana da minuta pendente |
 
-| Prompt              | C01      | C05      | C06      | Média das 3 notas humanas |
-| ------------------- | -------- | -------- | -------- | ------------------------- |
-| A — zero-shot       | 3/10     | 3/10     | 6/10     | **4,00/10**               |
-| **B — estruturado** | **6/10** | **8/10** | **7/10** | **7,00/10**               |
-| C — metaprompt      | 2/10     | 3/10     | 2/10     | **2,33/10**               |
-
-**Síntese:** o Prompt B obteve a maior média nessa amostra de três casos, mas **nenhuma das nove minutas históricas foi aprovada sem correção**. A taxa de aprovação pós-correção **não foi medida** porque não há reavaliação final documentada das versões históricas corrigidas.
-
-### Experimento posterior — Prompt B V4
-
-| Caso                                      | Nota humana | Decisão para demonstração                             |
-| ----------------------------------------- | ----------- | ----------------------------------------------------- |
-| C01 — segunda via de certidão             | **9/10**    | Adequada **com ajuste editorial**                     |
-| C05 — reclamação/injeção                  | **10/10**   | Adequada                                              |
-| C06 — agendamento sem protocolo conhecido | **10/10**   | Adequada                                              |
-| **Média**                                 | **9,67/10** | Escopo demonstrativo; não é homologação institucional |
-
-As saídas brutas da rodada B V4 foram preservadas **localmente**, não publicadas no GitHub. Consulte [relatório técnico](documentacao/relatorio_tecnico.md), [registro B V4](documentacao/registro_revisao_b_v4_diego.md) e [minutas de demonstração](documentacao/minutas_demonstracao_b_v4.md).
+Os gabaritos foram preparados antes das execuções e não devem ser adaptados às saídas. Resultados `mock` demonstram o fluxo, mas não comprovam desempenho de um modelo externo. Consulte o [relatório técnico](documentacao/relatorio_tecnico.md) para o estado consolidado e as pendências.
 
 ---
 
@@ -247,7 +236,7 @@ seguranca:
   revisao_obrigatoria: true
 ```
 
-Os testes reais dos prompts históricos e B V4 foram executados com **OpenRouter**, mesmo que o arquivo de configuração principal mais recente selecione **Gemini** para o fluxo padrão. Essa diferença deve ser preservada no relato técnico.
+O fluxo atual seleciona **Gemini** na configuração principal. O experimento A/B/C aceita o mesmo provedor configurado e deve registrar modelo, parâmetros, latência, tokens e falhas em uma pasta nova por execução. O modo `--mock` é apenas uma simulação local.
 
 Crie seu `.env` local a partir de `.env.example`. Preencha **somente as chaves dos provedores que for usar**. O arquivo `.env` está ignorado pelo Git e **nunca** deve ser enviado ao repositório.
 
@@ -302,7 +291,7 @@ Execute a partir da raiz do repositório:
 python -m src.main verificar
 
 # Demonstração local e determinística, sem chamadas externas de IA
-python -m src.main --mock --caso T01
+python -m src.main --mock --caso T01 --decisoes dados/revisao/decisoes_demo.yaml
 
 # Fluxo principal interativo (pode solicitar aprovação humana e usar APIs)
 python -m src.main
@@ -347,16 +336,14 @@ python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
 
-**Último resultado verificado na `main`, em 18/10/2026 (GitHub Actions, Python 3.12):**
+**Último resultado verificado localmente em 18/10/2026 (Windows, Python 3.14.6):**
 
 ```
-Ran 100 tests in 0.379s
+Ran 102 tests
 OK
 ```
 
-[Consultar a execução do GitHub Actions](https://github.com/diegocbaleite/desafio-05-central-atendimento-ia/actions/runs/39135504794).
-
-**Limitação:** aprovação no CI confirma os testes automatizados nessa execução, mas **não** substitui validação de rede, testes manuais de áudio/imagem e homologação humana.
+**Limitação:** a suíte automatizada aprovada não substitui validação de rede, testes manuais de áudio/imagem e homologação humana.
 
 ---
 
@@ -398,10 +385,10 @@ O enunciado do Desafio Prático 1 exige um **arquivo compactado** com código, c
 **Antes da entrega final:**
 
 - Código das três frentes integrado à `main`.
-- Testes automatizados da última execução do CI aprovados (100/100).
-- Avaliações humanas das nove saídas históricas A/B/C registradas (9/9).
-- Rodada B V4 documentada para demonstração (C01 com ressalva editorial).
-- Conferir e registrar a aceitação da **cópia editorial C01** antes de exibi-la como versão revisada.
+- Testes automatizados da última execução local aprovados (102/102).
+- Cinco casos atuais integrados ao catálogo, aos gabaritos e ao YAML de demonstração.
+- Executar e revisar a comparação A/B/C com `T01`, `X01` e `X02`, sem reutilizar notas de outros conjuntos de dados.
+- Registrar decisões humanas reais para os casos atuais antes de calcular taxa de aprovação ou produzir TTS.
 - Concluir a demonstração e as evidências independentes dos requisitos multimodais pendentes (STT/OCR/TTS/imagem por IA).
 - Revisar privacidade, dados fictícios, logs, permissões e proveniência da peça visual.
 - Produzir ZIP final sem `.env`, tokens, ambientes virtuais ou arquivos pessoais reais.

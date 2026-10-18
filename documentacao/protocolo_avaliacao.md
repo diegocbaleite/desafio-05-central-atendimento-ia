@@ -14,7 +14,7 @@ Erros **críticos** (protocolo incorreto, prazo inventado, dado pessoal exposto,
 
 Avaliar extrações contra os gabaritos previamente fixados para T01, A01, I01, X01 e X02. STT: WER = (substituições + inserções + deleções) / palavras de referência. OCR: CER análoga para caracteres. Só calcular essas métricas quando houver referência independente, preparada sem copiar a saída do modelo/OCR; sem isso, registrar como não medida. Entidades críticas devem ser conferidas diretamente no original, independentemente de WER/CER.
 
-Matriz A/B/C: mesma entrada, modelo e parâmetros; registrar tempo em segundos, tokens e custo quando fornecidos. Medir tom (1–5) e minutos até texto utilizável por pessoa. Não declarar vencedor com base em simulação. Os casos C01/C05/C06 citados em relatórios anteriores são uma rodada histórica e não devem ser tratados como os casos atuais.
+Matriz A/B/C: usar os casos textuais atuais `T01`, `X01` e `X02`, mantendo entrada, modelo e parâmetros iguais entre os prompts. Registrar tempo em segundos, tokens e custo quando fornecidos. Medir tom (1–5) e minutos até texto utilizável por pessoa. Não declarar vencedor com base em simulação nem transportar notas de outro conjunto de dados.
 
 Taxa de aprovação direta = minutas aprovadas sem correção / total com minuta.
 Taxa incluindo correção = (aprovadas + corrigidas e então aprovadas) / total com minuta.

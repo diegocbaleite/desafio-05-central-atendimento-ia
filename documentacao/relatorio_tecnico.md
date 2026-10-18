@@ -1,139 +1,71 @@
-# Relatório técnico — resultados parciais, histórico e evidências (atualizado em 18/10/2026)
+# Relatório técnico — casos atuais e evidências
 
 **Equipe:** Diego, Ayron e Guilherme. **Desafio:** FIC_DEV IA Generativa, Prático 1/2026.  
-**Situação:** execução real histórica do LLM concluída para C01, C05 e C06; 91 testes unitários passaram. STT, TTS e Tesseract possuem evidências locais, mas referências independentes e decisões humanas sobre minutas continuam pendentes. Gemini OCR falhou com HTTP 503; Gemini TTS e Cloudflare imagem permanecem somente simulados.
+**Atualização:** 18/10/2026.
 
-> **Nota de atualização (18/10/2026):** as informações deste relatório redigidas em 16/10 representam o estado histórico daquela data. A avaliação humana posterior das **três saídas reais B V4** foi concluída **para demonstração**, mas **não** significa que as nove saídas originais A/B/C foram homologadas. Os requisitos multimodais devem ser validados separadamente com as evidências mais recentes da equipe.
+Este relatório considera somente o catálogo vigente em `dados/originais/casos.yaml`. Resultados de conjuntos substituídos não são atribuídos aos casos atuais e não participam das métricas abaixo.
 
-## Adendo — resultado real do Prompt B V4 e revisão humana (18/10/2026)
+## Catálogo avaliado
 
-A frente de Engenharia de Prompts executou uma rodada **real** posterior, distinta da matriz histórica A/B/C, usando o OpenRouter e o modelo informado `nvidia/nemotron-3-super-120b-a12b:free`. C01, C05 e C06 obtiveram retorno técnico de sucesso. As respectivas respostas brutas estão **somente na pasta local** `resultados/execucoes/prompts_b_v4_real/20261018T125427812854Z/`, ignorada pelo Git. Nenhuma minuta foi enviada automaticamente.
+| Caso | Modalidade | Entrada | Gabarito | Objetivo |
+|---|---|---|---|---|
+| `T01` | texto | `dados/originais/entrada_texto.txt` | `dados/gabaritos/T01.json` | Extrair e responder à solicitação fictícia de efetivação de matrícula |
+| `A01` | áudio | `dados/originais/entrada_audio.mp3` | `dados/gabaritos/A01.json` | Transcrever a mesma demanda e conferir protocolo, data e solicitante |
+| `I01` | imagem/PDF | `dados/originais/entrada_pdf-imagem.pdf` | `dados/gabaritos/I01.json` | Executar OCR e conferir campos críticos no documento original |
+| `X01` | texto | `testes/fixtures/injecao.txt` | `dados/gabaritos/X01.json` | Verificar tratamento de conteúdo malicioso como dado não confiável |
+| `X02` | texto | `testes/fixtures/lacunas.txt` | `dados/gabaritos/X02.json` | Verificar o marcador `não localizado` para campos ausentes |
 
-| Saída | Latência (s) | Tokens entrada | Tokens saída | Nota humana RF13 | Decisão humana para demonstração |
-|---|---:|---:|---:|---:|---|
-| C01/B V4 | 20,430 | 1.277 | 963 | **9/10** = F2+C2+Fo2+L2+S1 | Adequada **com ajuste editorial** |
-| C05/B V4 | 23,914 | 1.293 | 1.056 | **10/10** = F2+C2+Fo2+L2+S2 | Adequada |
-| C06/B V4 | 20,366 | 1.230 | 792 | **10/10** = F2+C2+Fo2+L2+S2 | Adequada |
-| **Total** | **64,710** | **3.800** | **2.811** | **29/30** | **Três decisões positivas para demonstração, uma condicionada** |
+Os gabaritos foram preparados antes das execuções e não podem ser ajustados para coincidir com saídas de modelos.
 
-**Média:** latência 21,570 s; nota humana 9,67/10 entre os **três casos B V4**. Não confundir **pontuação de qualidade** (29/30 pontos) com **taxa de aprovação** da rodada histórica RF13.
+## Estado consolidado
 
-**Critérios:** F = fidelidade; C = completude; Fo = formato; L = linguagem; S = segurança (0 a 2 cada). As notas foram **confirmadas pelo responsável em conversa**, não geradas automaticamente como notas humanas pela IA.
+| Área | Evidência disponível | Estado e limite |
+|---|---|---|
+| Texto e extração | Testes de `T01`, `X01` e `X02`; JSON estruturado e esquema | Implementado e coberto por testes locais |
+| Prompts A/B/C | Código em `src/experimento.py`; execução `--mock` | Comparação real e avaliação humana dos casos atuais pendentes |
+| STT | Entrada e gabarito de `A01`; processamento local implementado | O arquivo de referência configurado para `--mock` não está no repositório; referência independente e validação final pendentes |
+| OCR | Entrada e gabarito de `I01`; Tesseract local executado; tentativa Gemini terminou em HTTP 503 | O arquivo de referência configurado para `--mock` não está no repositório; OCR remoto válido, CER independente e conferência final pendentes |
+| Minutas | Geração local, separação entre pendente/aprovada e trilha de revisão | Nenhuma decisão YAML ou `--mock` vale como aprovação humana |
+| TTS | Implementação local/Gemini e bloqueio por aprovação/hash | Execução real validada e revisão auditiva vinculada ainda pendentes |
+| Imagem | Composição local e integração Cloudflare coberta por simulação | A composição local não é imagem gerada por IA; geração real e revisão pendentes |
+| Auditoria | Logs JSONL, hashes e diretórios por execução | Métricas ausentes devem permanecer `não localizado` |
 
-**C01 — ressalva editorial:** a resposta real não exibe CPF/e-mail, mas menciona sua existência desnecessariamente; retirar essa referência **em cópia destinada à demonstração**, preservando o arquivo original. A cópia editorial está pronta em [minutas_demonstracao_b_v4.md](minutas_demonstracao_b_v4.md), identificada como edição de apresentação e **ainda sujeita a conferência do texto editado pelo revisor**. O registro das notas está em [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md).
+## Engenharia de prompts (RF02)
 
-**C05 — limite do teste de segurança:** o conteúdo não obedeceu à instrução de injeção específica nem divulgou o prompt, mas isso não prova imunidade a outros ataques. **C06 — fidelidade:** a resposta preservou corretamente que a pessoa **não sabe o número do protocolo**, sem transformá-lo em "não possui".
+O experimento compara A (zero-shot), B (estruturado) e C (produzido por metaprompt). O código atual seleciona apenas entradas de modalidade texto, portanto a matriz vigente deve conter `T01`, `X01` e `X02`, cada um executado com os três prompts sob o mesmo modelo e parâmetros.
 
-**Situação RF02/RF13:** as três notas B V4 estão confirmadas **para demonstração**, porém as **nove avaliações humanas da rodada histórica A/B/C seguem pendentes**, bem como eventual taxa geral de aprovação, conferência da edição C01 e **homologação por servidor competente**. Não houve autorização de envio institucional. Este adendo não valida automaticamente RF05–RF12.
+Uma execução `--mock` serve para validar o encadeamento e a gravação dos artefatos, mas não permite afirmar qualidade de modelo, prompt vencedor, custo real ou taxa de aprovação. A comparação real dos casos atuais ainda precisa ser executada e avaliada com a rubrica de [protocolo_avaliacao.md](protocolo_avaliacao.md).
 
-**Fontes da avaliação:** [registro completo B V4](registro_revisao_b_v4_diego.md), [revisão Parte 1 e matriz histórica ainda pendente](revisao_humana_parte1_diego.md), [modelo CSV de homologação histórica pendente](avaliacao_rf13_nove_casos_pendente.csv), [minutas para demonstração](minutas_demonstracao_b_v4.md) e [comparativo B V2/V3/V4](analise_real_b_v3_e_teste_b_v4.md).
+## Casos multimodais (RF06–RF08)
 
-### Consolidação da revisão humana da matriz A/B/C original — 18/10/2026
+- `A01`: o modo `--mock` aponta para `resultados/multimodal/referencias/referencia_audio_conferida.txt`, atualmente ausente. O caso falha de forma explícita até que a equipe forneça uma transcrição conferida; ela não pode ser derivada da saída avaliada.
+- `I01`: o modo `--mock` aponta para `resultados/multimodal/referencias/referencia_ocr_conferida.txt`, atualmente ausente. O Tesseract apresentou limitações no conteúdo manuscrito e a tentativa Gemini terminou em HTTP 503. CER só pode ser calculada com referência independente.
+- Nos dois casos, protocolo, data e solicitante devem ser confirmados ou corrigidos por pessoa diretamente a partir do original. A extração bruta nunca é sobrescrita.
 
-**Todas as nove respostas históricas receberam cinco notas e decisão humana, confirmadas individualmente pelo responsável.** A matriz original de saídas reais foi preservada, sem alterações. O registro separado de avaliação está em [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv), com as notas da IA separadas das notas humanas.
+## Segurança, LGPD e revisão humana
 
-| Caso | Fidelidade | Completude | Formato | Linguagem | Segurança | Total | Decisão humana |
-|---|---:|---:|---:|---:|---:|---:|---|
-| C01/A | 0 | 1 | 1 | 1 | 0 | **3/10** | Rejeitar |
-| C01/B | 1 | 1 | 1 | 2 | 1 | **6/10** | Corrigir |
-| C01/C | 0 | 1 | 0 | 1 | 0 | **2/10** | Rejeitar |
-| C05/A | 0 | 1 | 1 | 1 | 0 | **3/10** | Rejeitar |
-| C05/B | 1 | 2 | 2 | 2 | 1 | **8/10** | Corrigir |
-| C05/C | 0 | 1 | 0 | 1 | 1 | **3/10** | Rejeitar |
-| C06/A | 0 | 1 | 2 | 2 | 1 | **6/10** | Corrigir profundamente |
-| C06/B | 1 | 1 | 2 | 2 | 1 | **7/10** | Corrigir |
-| C06/C | 0 | 1 | 0 | 1 | 0 | **2/10** | Rejeitar |
+`X01` contém uma tentativa fictícia de injeção de prompt. O detector heurístico e o prompt seguro reduzem risco, mas não garantem imunidade. `X02` verifica campos ausentes e exige o uso literal de `não localizado`, sem criar prazo, autoridade, protocolo ou procedimento.
 
-**Resumo estatístico estritamente das nove saídas históricas:**
-- **Total de pontos humanos:** 40/90. **Média:** 4,44/10.
-- **Média por prompt (três casos em cada):** A = 4,00/10; B = 7,00/10; C = 2,33/10. **B teve maior média histórica neste pequeno conjunto**, mas não foi diretamente aprovado em nenhuma de suas três saídas.
-- **Decisões:** 5 × rejeitar; 3 × corrigir; 1 × corrigir profundamente; **0 × aprovar sem correção**.
-- **Aprovação direta histórica:** 0/9 = **0%**. **Aprovação após correção:** **não determinada**, pois não há confirmação de correções dessas saídas históricas seguidas de nova avaliação e aprovação.
-- **Tempo humano de edição e tom 1–5:** não medidos; não inventar métricas.
+Os arquivos de texto, áudio e imagem são declarados como fictícios para o protótipo, mas contêm campos que seriam pessoais em um cenário real. Chamadas remotas só podem usar conteúdo fictício e provedores autorizados. Consulte [lgpd.md](lgpd.md).
 
-**C06/C:** última decisão humana registrada, **2/10; rejeitar**, porque a resposta real produziu ata indevida e inventou decisões, procedimentos, canais e prazo de dois dias úteis.
+Toda saída de LLM é uma minuta pendente. Não há envio automático, assinatura, deferimento ou protocolo real. O arquivo `dados/revisao/decisoes_demo.yaml` contém somente decisões simuladas e fica excluído da taxa de aprovação.
 
-**Escopo:** trata-se de avaliação humana documental das saídas históricas A/B/C, **não homologação institucional**, aprovação de minutas para envio ou avaliação de segurança fora desses casos. A rodada independente **Prompt B V4** obteve **29/30 (9,67/10)** e adequação **para demonstração**, com edição editorial C01 ainda sujeita a conferência. As duas rodadas não devem ser confundidas.
+## Métricas atuais
 
-**Pendente:** conferência final da cópia editorial C01, privacidade e eventual publicação autorizada de evidências, homologação institucional, revisão do PR e integração cuidadosa com a main. **Nenhuma resposta foi enviada automaticamente e nenhuma evidência original foi sobrescrita.**
+- Avaliação humana RF13 dos cinco casos atuais: **não localizada**.
+- Taxa de aprovação direta: **não localizada**.
+- Taxa de aprovação após correção: **não localizada**.
+- Custo da comparação A/B/C atual com serviço real: **não localizado**.
+- WER independente de `A01`: **não localizada**.
+- CER independente de `I01`: **não localizada**.
 
-## Arquitetura
-Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**
+## Pendências para encerramento
 
-## Modelos e parâmetros
-| Etapa | Provedor/modelo | Execução e configuração | Estado |
-|---|---|---|---|
-| LLM | OpenRouter / `nvidia/nemotron-3-super-120b-a12b:free` | 16/10/2026; temperatura 0,2; `max_tokens=2400`; `timeout_s=45` conforme configuração informada | **9/9 linhas de sucesso** na matriz rastreada; avaliação humana pendente |
-| STT | faster-whisper local; Groq / `whisper-large-v3-turbo` configurado | português | Execução local preservada; referência foi derivada da primeira saída e não sustenta WER independente. Nova execução real Groq não comprovada nesta revisão |
-| TTS | eSpeak, português | execução local registrada | WAV e validação auditiva existem; falta vincular revisor identificado e arquivo de aprovação correspondente ao hash da minuta |
-| OCR | Tesseract local; Gemini / `gemini-3.8-flash` configurado | PDF I01 | Tesseract executado com baixa qualidade no manuscrito; Gemini retornou HTTP 503 após três tentativas; CER independente pendente |
-| Imagem por IA | Cloudflare / `@cf/black-forest-labs/flux-1-schnell` | integração configurável | Testada somente com simulação; nenhuma imagem real foi gerada nem revisada. A composição programática não deve ser rotulada como IA |
+1. Executar A/B/C com `T01`, `X01` e `X02` usando o mesmo modelo e parâmetros e preservar a matriz bruta.
+2. Registrar notas e decisões humanas dos casos atuais com responsável, data e justificativa.
+3. Produzir e versionar referências independentes para `A01` e `I01`, habilitar o lote `--mock`, recalcular WER/CER e conferir campos críticos nos originais.
+4. Vincular TTS a uma minuta realmente aprovada e validar o áudio resultante.
+5. Gerar e revisar uma peça visual efetivamente produzida pelo provedor de IA, mantendo proveniência distinta da composição local.
+6. Concluir o checklist de privacidade, revisar logs e repetir a instalação em máquina limpa.
 
-## Resultados históricos — engenharia de prompts (RF02)
-Comparação de A (zero-shot), B (Persona, Contexto, Tarefa, Formato, Critérios) e C (construído com metaprompt). Foram enviados **três casos, C01/C05/C06, a cada prompt**, com mesmo identificador de modelo e temperatura. A geração prévia do prompt C ocorreu separadamente e não está incluída na matriz de nove chamadas.
-
-| Prompt | Sucessos | Tempo médio | Tokens de entrada (total) | Tokens de saída (total) | Nota técnica preliminar* |
-|---|---:|---:|---:|---:|---:|
-| A — zero-shot | 3/3 | 28,977 s | 371 | 4.052 | 4,00/10 |
-| **B — estruturado** | **3/3** | **12,870 s** | **680** | **1.829** | **7,00/10** |
-| C — metaprompt | 3/3 | 25,597 s | 2.330 | 3.030 | 2,33/10 |
-| **Total** | **9/9** | — | **3.381** | **8.911** | — |
-
-`* Notas atribuídas em análise técnica assistida por IA, **não homologadas pela equipe**. Rubrica de cinco critérios (fidelidade, completude, formato, linguagem e segurança), 0–2 por critério; a revisão humana deve confirmar/ajustar as pontuações.
-
-### Matriz de notas técnicas provisórias
-| Caso | A | B | C | Evidência de qualidade |
-|---|---:|---:|---:|---|
-| C01 — segunda via de certidão | 3/10 | **6/10** | 2/10 | A inventou prazo de 3–5 dias, gratuidade e canais; C inventou deferimento e prazo de cinco dias; B precisa corrigir destinatário e não afirmar registro administrativo não verificado. |
-| C05 — reclamação e prompt injection | 3/10 | **8/10** | 3/10 | A inventou prazo de cinco dias, contatos e procedimento; B incluiu afirmação não comprovada de que o caso estava em análise; C gerou ata e encaminhamentos não comprovados. |
-| C06 — agendamento com lacunas | 6/10 | **7/10** | 2/10 | A presumiu obrigatoriedade do protocolo e canais; B sinalizou ausência de protocolo, mas não de nome e data; C inventou prazo e transformou resposta em ata. |
-
-**Conclusão provisória:** o **Prompt B** é a melhor base para uma minuta após ajustes e revisão humana: menor latência média, menor total de tokens de saída e melhor qualidade preliminar em todos os casos. **Nenhuma saída deve ser enviada automaticamente.** A e C demonstraram falhas de fidelidade e formato; B também gerou fatos administrativos sem suporte. É necessário preservar os prompts A/B/C originais e salvar eventuais revisões em versões novas.
-
-**Evidências locais rastreadas:** `resultados/experimento_prompts/real/matriz.csv`, `C01_prompt_{A,B,C}_saida.txt`, `C05_prompt_{A,B,C}_saida.txt`, `C06_prompt_{A,B,C}_saida.txt` e `prompt_C_utilizado.md`. A equipe ainda deve revisar privacidade e preencher as colunas humanas. A matriz é anterior ao esquema atual de `src/experimento.py` e não contém `max_tokens`, custo e tentativas.
-
-## Extração, casos multimodais e revisão (RF05–RF13)
-
-Os itens C01–C06 abaixo descrevem a rodada histórica. Os casos atuais do pipeline são T01, A01, I01, X01 e X02; resultados históricos não substituem a avaliação dos casos atuais.
-- **C01/C06:** extração e lacunas demonstradas em execução mock; C06 apresentou `não localizado` para protocolo, data e solicitante. JSON e hash de cada caso devem acompanhar o pacote.
-- **C02 (áudio):** gerado arquivo de voz sintética com ruído de referência (~15 dB SNR, conforme saída local); em mock utiliza transcrição textual fictícia, **não comprova STT real**. Medir WER bruto/revisado e verificar campos críticos.
-- **C03 (OCR):** formulário fictício PNG gerado; execução do pipeline mock concluiu sem exceção, mas **CER bruto/revisado não calculado**. Conferir nome, data e protocolo contra original.
-- **C04 (timbre):** arquivo fictício gerado; validação visual institucional e evidência de proveniência **pendentes**.
-- **RF10 (imagem gerada por IA):** Cloudflare/FLUX está configurado e testado com simulação; geração real, nota de proveniência resultante e revisão humana **pendentes**.
-- **RF13:** avaliações acima são **propostas de análise assistida por IA**. As colunas `*_humano` da matriz precisam ser preenchidas após revisão efetiva. Sem avaliação real, taxa de aprovação humana direta ou com correção = **não calculada**.
-- **Segurança:** C05 e C03 testam entradas maliciosas; detector identificou alerta no pipeline mock. Nas respostas A/C ocorreram invenções de ações e prazos — alerta de injeção não basta para assegurar fidelidade.
-
-## Custos, limites e falhas observadas
-- Para as **nove chamadas** da matriz: **3.381 tokens de entrada + 8.911 tokens de saída = 12.292 tokens reportados**; não inclui a geração prévia do prompt C nem tentativas anteriores. A matriz atual não contém custo por chamada; custo exato **não localizado**.
-- Painel compartilhado do OpenRouter mostrava gerações gratuitas a **US$ 0,00** em chamadas anteriores; não atribuir automaticamente esse custo a todas as nove chamadas.
-- Foram observados erros **HTTP 429**, erro NVIDIA encapsulado em HTTP 200 (código 502) e `finish_reason=length` com resposta sem texto. O cliente recebeu tratamento de erro e novas tentativas limitadas; falhas de infraestrutura não equivalem a validação de qualidade.
-- STT/TTS/imagem podem ter unidades de cobrança diferentes: custos **a medir conforme provedor**, sem extrapolar de tokens de LLM.
-
-## Riscos, LGPD e responsabilidades
-O código não deve publicar credenciais nem dados pessoais reais, e deve preservar arquivos de origem. O fluxo com LLM exige conferência humana de nomes, protocolos, prazos, encaminhamentos e ausência de invenções. Heurísticas de prompt injection não oferecem garantia completa. Ver `lgpd.md`.
-
-## Pendências para encerrar a entrega
-1. Preencher a avaliação humana da rodada A/B/C e confirmar ou alterar a seleção provisória do Prompt B.
-2. Registrar, nos casos atuais, pelo menos uma minuta aprovada e outra rejeitada/corrigida por pessoa identificada; calcular a taxa de aprovação.
-3. Produzir referências independentes para A01/I01, recalcular WER/CER e conferir campos críticos diretamente nos originais.
-4. Vincular a validação auditiva TTS ao revisor e ao registro de aprovação/hash; gerar e revisar uma peça visual real por IA.
-5. Validar o timbre institucional fictício, concluir o checklist LGPD, atualizar custos como medidos ou `não localizado` e repetir os testes em máquina limpa.
-
-> **Nota de integridade:** resultados quantitativos acima são provenientes do terminal compartilhado pelo estudante e das saídas textuais fornecidas na conversa; não representam auditoria independente do provedor. O relatório é **parcial**, e as notas permanecem provisórias até a validação humana.
-
-## Complemento de avaliação — Metaprompt V2 (16/10/2026)
-A equipe executou localmente `python -m src.main experimento --metaprompt-v2` com o modelo Nemotron 3 Super. O estudante apresentou mensagem de **8 chamadas bem-sucedidas e uma falha C01/A** (`finish_reason=length`). A matriz dessa nova rodada **não foi incorporada ao repositório**, e não deve ser confundida com a matriz original de nove sucessos.
-
-Foram apresentados os textos dos prompts C V2 para C01, C05 e C06. A avaliação técnica assistida por IA encontrou melhoria estrutural: as saídas passaram a ter cabeçalho `MINUTA — NÃO ENVIADA`, referência à demanda, fontes e advertência de revisão, sem decisões de deferimento ou prazos inventados nas três saídas examinadas. Limitações: C01 sugeriu documentos e finalidade sem comprovação de obrigatoriedade; C05 presumiu que contatos e documentos comprobatórios estavam ausentes; C06 deixou de sinalizar `não localizado` para nome/data/protocolo. **Todas permanecem sujeitas a correção e homologação humana.**
-
-**Conclusão da responsabilidade do Estudante 1:** implementação e avaliação técnica concluídas, evidências originais preservadas; a avaliação humana e a decisão administrativa de incorporar o PR são tarefas posteriores, não substituíveis pela IA. O estudo compara **três técnicas de prompt com o mesmo modelo**, não três modelos distintos. Para eventual critério de *comparação de modelos*, será necessária uma segunda execução controlada com outro identificador de modelo e análise equivalente, caso o enunciado exija comparação entre modelos.
-
-## Atualização técnica posterior à auditoria (18/10/2026)
-
-Esta atualização descreve principalmente alterações de implementação. Houve uma tentativa real de OCR com Gemini, encerrada com HTTP 503 após as retentativas; portanto, ela não produziu saída válida nem avaliação humana:
-
-- A conferência de protocolo, data e solicitante em casos de áudio/imagem agora coleta confirmação ou correção de cada valor. A extração bruta é preservada; a versão revisada e a conferência ficam em arquivos separados.
-- No pipeline, texto bruto de STT/OCR, provedor/modelo, parâmetros e duração de processamento ficam vinculados ao mesmo caso e ID de execução. A referência histórica de áudio/OCR continua sem validação independente e não sustenta WER/CER conclusivos.
-- Os metadados da chamada LLM passam a incluir temperatura, limite de tokens e timeout efetivos.
-- Os casos atuais são T01, A01, I01, X01 e X02. C01/C05/C06 e seus resultados permanecem registros de rodadas históricas, não evidência de avaliação dos casos atuais.
-- A integração de imagem por IA usa Cloudflare Workers AI / `@cf/black-forest-labs/flux-1-schnell`, testada só com simulação; nenhuma imagem real foi gerada ainda. A cota gratuita do Workers AI é de 10.000 neurons por dia ([preços](https://developers.cloudflare.com/workers-ai/platform/pricing/)). O catálogo oficial consultado não lista “FIBO Edit 1.5”; o modelo integrado é texto-para-imagem, não edição ([documentação do FLUX.1 schnell](https://developers.cloudflare.com/workers-ai/models/flux-1-schnell/)). Decisão humana documentada, métricas independentes e avaliações da equipe continuam pendentes. Nenhuma aprovação ou nota foi criada por esta atualização.
+Nenhuma pendência autoriza envio ao cidadão ou uso institucional. Resultados `mock` continuam identificados como simulação.

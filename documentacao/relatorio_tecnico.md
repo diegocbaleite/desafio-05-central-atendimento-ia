@@ -30,7 +30,7 @@ A frente de Engenharia de Prompts executou uma rodada **real** posterior, distin
 
 ### Andamento da revisão humana da matriz A/B/C original — 18/10/2026
 
-**Confirmadas 6 de 9 respostas históricas** pelo responsável:
+**Confirmadas 7 de 9 respostas históricas** pelo responsável:
 
 - **C01/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar** por prazo, gratuidade e procedimentos inventados.
 - **C01/B:** F1 C1 Fo1 L2 S1 = **6/10**, **corrigir** por alegação de registro não comprovado, destinatário incorreto e lacunas omitidas.
@@ -38,8 +38,9 @@ A frente de Engenharia de Prompts executou uma rodada **real** posterior, distin
 - **C05/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar** por registro e análise fictícios da reclamação, prazo e canais institucionais inventados.
 - **C05/B:** F1 C2 Fo2 L2 S1 = **8/10**, **corrigir** por afirmar análise administrativa da reclamação não comprovada.
 - **C05/C:** F0 C1 Fo0 L1 S1 = **3/10**, **rejeitar** por gerar ata indevida e inventar abertura de procedimento e encaminhamento à ouvidoria.
+- **C06/A:** F0 C1 Fo2 L2 S1 = **6/10**, **corrigir profundamente** por presumir obrigatoriedade do protocolo e inventar procedimentos de recuperação e canais institucionais sem fonte.
 
-**C06/A–C permanecem pendentes de avaliação humana.** As saídas originais do OpenRouter não foram alteradas. A [planilha RF13 histórica](avaliacao_rf13_nove_casos_pendente.csv) preserva separadas as notas sugeridas da IA e as notas humanas confirmadas. A homologação final RF13 segue pendente.
+**C06/B e C06/C permanecem pendentes de avaliação humana.** As saídas originais do OpenRouter não foram alteradas. A [planilha RF13 histórica](avaliacao_rf13_nove_casos_pendente.csv) preserva separadas as notas sugeridas da IA e as notas humanas confirmadas. A homologação final RF13 segue pendente.
 
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**

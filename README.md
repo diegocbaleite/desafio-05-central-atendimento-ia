@@ -65,6 +65,21 @@ No Windows, instale Tesseract (com o idioma português) e Poppler e coloque-os n
 
 As chaves de API ficam **somente no `.env`**, que está no `.gitignore`; `.env.example` lista `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `GEMINI_API_KEY`, `CLOUDFLARE_API_KEY` e `CLOUDFLARE_ACCOUNT_ID`, todas vazias. `CLOUDFLARE_API_KEY` deve conter um API Token Cloudflare com permissão para Workers AI (não a Global API Key). Caminhos, modelos e parâmetros não sensíveis ficam em `config/config.yaml`. O modo de demonstração (`--mock`) não usa APIs de modelo.
 
+### Onde obter as chaves de API
+
+Criar a chave não tem custo, mas cada serviço aplica cotas e limites próprios. A gratuidade pode mudar; confira a página oficial antes de executar chamadas reais.
+
+| Serviço usado | Uso no projeto | Onde criar | Variável no `.env` | Limite gratuito observado |
+|---|---|---|---|---|
+| Google Gemini | LLM, OCR e TTS | [Google AI Studio — API keys](https://aistudio.google.com/apikey) ([instruções oficiais](https://ai.google.dev/gemini-api/docs/api-key)) | `GEMINI_API_KEY` | O Free Tier atende modelos selecionados, inclusive `gemini-3.8-flash-lite-tts`, sujeito às cotas da conta; confira os [preços e limites atuais](https://ai.google.dev/gemini-api/docs/pricing). |
+| GroqCloud | Transcrição STT com Whisper | [GroqCloud — API Keys](https://console.groq.com/keys) | `GROQ_API_KEY` | O plano Free possui limites por modelo e período; consulte a tabela de [rate limits](https://console.groq.com/docs/rate-limits). |
+| OpenRouter | Provedor alternativo de LLM e experimentos | [OpenRouter — API Keys](https://openrouter.ai/settings/keys) | `OPENROUTER_API_KEY` | Modelos gratuitos têm identificador terminado em `:free`; a conta gratuita possui limite diário. Consulte os [modelos gratuitos](https://openrouter.ai/collections/free-models) e os [limites atuais](https://openrouter.ai/pricing). |
+| Cloudflare Workers AI | Geração da imagem institucional | [Guia oficial para obter token e Account ID](https://developers.cloudflare.com/workers-ai/get-started/rest-api/) | `CLOUDFLARE_API_KEY` e `CLOUDFLARE_ACCOUNT_ID` | A alocação gratuita atual é de 10.000 neurons por dia; confira os [preços do Workers AI](https://developers.cloudflare.com/workers-ai/platform/pricing/). |
+
+Na Cloudflare, abra **Workers AI → Use REST API → Create a Workers AI API Token** e copie também o **Account ID**. Caso crie um token personalizado, conceda somente as permissões necessárias de Workers AI. Depois de preencher o `.env`, execute `python -m src.main verificar`: ele informa quais chaves foram encontradas sem revelar seus valores. Nunca cole chaves no README, no código, em commits ou nos logs.
+
+Use exclusivamente os dados fictícios do projeto: planos gratuitos podem ter políticas de tratamento de dados diferentes dos planos pagos.
+
 ## Comandos
 ```bash
 python -m src.main #comando padrão
@@ -92,7 +107,7 @@ Sem `--decisoes`, A CLI pede, para cada minuta, a decisão (`aprovar`, `rejeitar
 
 ### Envio a provedores externos
 O modo `--mock` não chama APIs: para I01 ele lê `ocr_referencia`, registra `ocr_real: false` e não apresenta a referência como saída de um modelo. Fora dele, o envio de dados depende dos provedores selecionados no comando ou configurados em `config/config.yaml`; no padrão atual, o áudio segue ao Groq e as páginas renderizadas do PDF seguem ao Gemini para OCR do preenchimento manuscrito. Use `--provider local` no comando `ocr` ou configure `multimodal.ocr_provider: local` para manter a imagem no equipamento; nesse modo, a limitação do Tesseract para manuscritos permanece explícita. Na geração da minuta com LLM real, apenas `assunto` e `pedido` seguem ao provedor, com CPF, e-mail e telefone substituídos por marcadores. Use somente dados fictícios; não envie arquivos a serviços externos sem confirmar que não contêm dados pessoais reais.
-Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração inicial usa OpenRouter. Valide disponibilidade/compatibilidade e o nível de gratuidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Saídas de execução em `resultados/{execucoes,minutas,logs,imagens}/` são ignoradas pelo git por privacidade.
+Para usar LLM real no pipeline, configure `llm.provider` como `openrouter`, `groq` ou `gemini`, selecione um modelo disponível e configure a variável correspondente no `.env`. A configuração atual usa Gemini. Valide disponibilidade/compatibilidade e o nível de gratuidade do modelo antes da aula. A aplicação nunca deve imprimir a chave. Saídas de execução em `resultados/{execucoes,minutas,logs,imagens}/` são ignoradas pelo git por privacidade.
 
 O cliente LLM registra temperatura, limite de tokens e timeout efetivos junto aos metadados da minuta. STT, TTS e geração de imagem não fazem retentativas automáticas; em caso de falha, confira o erro/quota antes de repetir manualmente a operação, pois uma nova chamada pode consumir limite do provedor.
 

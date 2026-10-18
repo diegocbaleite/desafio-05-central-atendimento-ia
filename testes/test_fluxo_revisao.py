@@ -299,7 +299,7 @@ class TestCli(unittest.TestCase):
 
     def test_mock_arte_ignora_provedor_pago(self):
         args = SimpleNamespace(
-            comando="arte", provider="openrouter", mock=True, referencia=None
+            comando="arte", provider="cloudflare", mock=True, referencia=None
         )
         with (
             patch("src.main.gerar_visual", return_value=Path("arte")) as gerar,

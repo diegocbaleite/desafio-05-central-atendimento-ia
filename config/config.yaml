@@ -25,6 +25,11 @@ provedores:
     base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
     env_chave: "GEMINI_API_KEY"
 
+  cloudflare:
+    base_url: "https://api.cloudflare.com/client/v4"
+    env_chave: "CLOUDFLARE_API_KEY"
+    env_conta: "CLOUDFLARE_ACCOUNT_ID"
+
 multimodal:
   stt_provider: "groq"
   stt_modelo: "whisper-large-v3-turbo"
@@ -34,7 +39,7 @@ multimodal:
   tts_voz: "coral"
 
   imagem_provider: "local"
-  imagem_modelo: "google/gemini-3.1-flash-image"
+  imagem_modelo: "@cf/black-forest-labs/flux-1-schnell"
 
 seguranca:
   marcador_ausente: "não localizado"

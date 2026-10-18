@@ -51,7 +51,7 @@ Mantenha uma matriz com requisito, arquivo responsável, teste, evidência e pen
 2. **Planejar.** Monte a matriz RF01–RF13 e proponha a menor arquitetura que cubra os requisitos. Não acrescente interface web, serviços ou frameworks sem utilidade para o pedido.
 3. **Preparar os casos.** Crie dados exclusivamente fictícios e gabaritos antes da execução. Inclua texto completo, campos ausentes, áudio com ruído moderado, documento com OCR e tentativa de prompt injection.
 4. **Implementar por partes.** Configure execução e logs; desenvolva extração textual; integre o modelo; acrescente OCR e áudio; implemente revisão humana, geração visual e avaliação. Adapte a sequência às dependências reais.
-5. **Verificar.** Execute os comandos disponíveis, capture resultados reais e corrija falhas encontradas. Faça testes relevantes para os riscos; não repita verificações sem uma dúvida concreta.
+5. **Verificar.** Execute os comandos disponíveis, capture resultados reais e corrija falhas encontradas. Faça testes relevantes para os riscos; não repita verificações sem uma dúvida concreta. Ao investigar campos incorretos, confira primeiro `extracao.json`: `src/extracao.py` usa regras locais determinísticas e não é uma chamada de IA; o LLM de `src/minuta.py` recebe apenas assunto e pedido para redigir a minuta. Teste o formato real da entrada, incluindo campos sem rótulo, datas faladas, separadores de protocolo introduzidos pelo STT e números com pontuação decimal, antes de atribuir a falha ao modelo.
 6. **Explicar.** Mostre o que cada módulo faz, como os dados passam pelo sistema e por que as escolhas atendem ao desafio. Ajude o estudante a compreender e justificar o código.
 7. **Entregar, quando solicitado.** Prepare um arquivo ZIP com código, README, configuração, dependências, `.env.example`, `.gitignore`, dados e gabaritos, prompts e comparativo, resultados multimodais, relatório técnico e registro do uso de IA. Prepare orientações para a apresentação de até 12 minutos.
 
@@ -89,7 +89,7 @@ O agente pode fazer revisão técnica automatizada, mas não pode apresentá-la 
 
 ## Testes prioritários
 
-Verifique JSON válido com campos ausentes; preservação dos originais; tentativas de prompt injection; resposta vazia ou inválida; autenticação, limite e timeout; validação de arquivos; ausência de credenciais nos logs; bloqueio de minuta antes da conferência de áudio/OCR; invalidação da aprovação após alteração; e bloqueio de TTS sem aprovação válida.
+Verifique JSON válido com campos ausentes; extração de pedidos múltiplos, rótulos ausentes, datas por extenso, protocolos segmentados pelo STT e números decimais; preservação dos originais; tentativas de prompt injection; resposta vazia ou inválida; autenticação, limite e timeout; validação de arquivos; ausência de credenciais nos logs; bloqueio de minuta antes da conferência de áudio/OCR; invalidação da aprovação após alteração; e bloqueio de TTS sem aprovação válida.
 
 Use testes unitários para regras e falhas controladas, e testes de integração para os serviços efetivamente disponíveis. Registre separadamente os resultados simulados e reais.
 

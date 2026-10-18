@@ -43,6 +43,7 @@ class TestSeguranca(unittest.TestCase):
         )
         minuta, meta = redigir(x, "teste.txt", provider="mock")
         self.assertIn("NÃO ENVIADA", minuta)
+        self.assertIn("Registramos a solicitação sobre certidão.", minuta)
         self.assertEqual(meta["provider"], "mock")
 
 

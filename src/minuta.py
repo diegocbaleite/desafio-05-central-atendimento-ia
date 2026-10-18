@@ -28,7 +28,7 @@ def redigir(extracao, origem, provider=None):
     pedido = c["pedido"]["valor"]
     if provider == "mock":
         corpo = (
-            "Registramos a solicitação referente a " + assunto + ". "
+            "Registramos a solicitação sobre " + assunto + ". "
             "O pedido registrado é: " + pedido + ". "
             "Esta minuta não confirma deferimento ou prazo de atendimento."
         )

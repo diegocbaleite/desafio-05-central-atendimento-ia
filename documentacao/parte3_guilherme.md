@@ -10,7 +10,7 @@ Base: *Desafio Prático 1 — Central Inteligente de Atendimento e Comunicação
 | RF06/STT | `audio` usa Whisper local opcional (`faster-whisper`) ou Groq conforme seleção/configuração | Preserva texto bruto, SHA-256, idioma, duração, modelo, relatório WER/CER contra **gabarito da mesma modalidade**; não declara STT real nos testes com mock. |
 | RF07/TTS | `voz` usa eSpeak offline ou provedor já implementado pelo projeto | Exige revisão humana documentada, nome/data/referência SHA-256; decisões de mock/YAML são recusadas. Adiciona aviso falado sobre “não localizado”. Não envia mensagem. |
 | RF08/OCR | `ocr` lê PNG/JPG/TIFF e PDF digitalizado usando `pdftoppm` + Tesseract local | Preserva original, OCR bruto, trechos com baixa confiança, data, SHA-256 e revisão pendente. Calcula CER/WER se existir transcrição de referência **prévia**. |
-| RF10/Imagem | `arte` usa `imagem.gerar()` | Pillow local continua disponível; `--provider openrouter` seleciona `google/gemini-3.1-flash-image` via API de imagem OpenRouter (paga). Exige nota de proveniência, registra custo/tokens quando reportados, mantém revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
+| RF10/Imagem | `arte` usa `imagem.gerar()` | Pillow local continua disponível; `--provider cloudflare` seleciona `@cf/black-forest-labs/flux-1-schnell` via Workers AI. O plano gratuito inclui 10.000 neurons por dia; a API não reporta custo por imagem, portanto a proveniência registra `não localizado`. Exige nota de proveniência, mantém revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
 | Testes | `testes/test_audio_visao_imagem.py` | Testes locais determinísticos, sem APIs e sem credenciais (a contagem atual vem de `python -m unittest discover -s testes -t .`). |
 
 ## Pré-requisitos Ubuntu
@@ -66,11 +66,11 @@ A voz local é em português brasileiro via eSpeak (WAV). Se houver “não loca
 ```bash
 python -m src.main arte --referencia dados/originais/brasao.png
 ```
-Com o padrão local, isso produz ilustração **programática**, não imagem gerada por IA. Para usar a integração de IA paga com OpenRouter, execute explicitamente:
+Com o padrão local, isso produz ilustração **programática**, não imagem gerada por IA. Para usar a integração de IA gratuita da Cloudflare, execute explicitamente:
 ```bash
-python -m src.main arte --provider openrouter --referencia dados/originais/brasao.png
+python -m src.main arte --provider cloudflare --referencia dados/originais/brasao.png
 ```
-O modelo é pago e cada chamada pode gerar custos; confira saldo/limites do provedor antes de executar. `--mock` força composição local e não faz chamada remota. Nesta revisão, a única chamada autorizada retornou HTTP 402 por créditos insuficientes; nenhum arquivo foi gerado. Não repita a chamada sem nova autorização. Revisar texto, símbolos, pertinência institucional, selo sintético e metadados; o brasão fornecido é **referência**, não incorporado automaticamente. Nunca apresentar a arte como peça oficial GOV.MT.
+O catálogo oficial do Workers AI documenta o FLUX.1 schnell como texto-para-imagem, não como modelo de edição. A chamada requer `CLOUDFLARE_ACCOUNT_ID` e um API Token com permissão para Workers AI, armazenado localmente em `CLOUDFLARE_API_KEY` no `.env`; não use a Global API Key nem publique credenciais. A cota gratuita do Workers AI é de 10.000 neurons por dia; monitore o consumo no painel Cloudflare. No plano Workers Free, operações acima do limite falham; planos pagos podem cobrar o excedente. `--mock` força composição local e não faz chamada remota. A tentativa anterior que retornou HTTP 402 foi feita no OpenRouter e não testou a integração Cloudflare. Nenhuma geração real via Cloudflare foi executada ainda. Revisar texto, símbolos, pertinência institucional, selo sintético e metadados; o brasão fornecido é **referência**, não incorporado automaticamente. Nunca apresentar a arte como peça oficial GOV.MT. Consulte [modelo FLUX.1 schnell](https://developers.cloudflare.com/workers-ai/models/flux-1-schnell/) e [preços do Workers AI](https://developers.cloudflare.com/workers-ai/platform/pricing/).
 
 ## Onde ficam resultados e auditoria
 
@@ -81,7 +81,7 @@ Cada execução cria uma pasta única em `resultados/multimodal/` com metadados 
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
-Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração OpenRouter tem testes simulados; a geração real ficou pendente após HTTP 402, assim como a homologação humana. A suíte completa tem 74 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
+Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 75 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
 - [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.

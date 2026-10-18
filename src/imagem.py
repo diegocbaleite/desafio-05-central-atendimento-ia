@@ -11,6 +11,7 @@ import datetime as dt
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 
 import requests
@@ -20,6 +21,7 @@ from .cliente import ErroAPI
 from .config import ROOT, carregar, chave
 from .seguranca import FORMATOS_IMAGEM, validar_arquivo
 
+LIMITE_PROMPT_CLOUDFLARE = 2048
 FONTE_DEJAVU = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONTES_LOCAIS = (FONTE_DEJAVU, "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf")
 
@@ -69,23 +71,23 @@ def gerar(destino=None, *, provider=None):
     caminho = Path(destino or ROOT / "resultados" / "peca_visual.png")
     if provider == "local":
         return imagem_local(caminho)
-    if provider != "openrouter":
+    if provider != "cloudflare":
         raise ErroAPI("Provedor de imagem inválido")
-    token = chave(cfg, "openrouter")
-    if not token:
-        raise ErroAPI("OPENROUTER_API_KEY ausente para geração real da imagem")
+    item = cfg["provedores"]["cloudflare"]
+    token = chave(cfg, "cloudflare")
+    conta = os.getenv(item.get("env_conta", ""), "")
+    if not token or not conta:
+        raise ErroAPI(
+            "CLOUDFLARE_API_KEY e CLOUDFLARE_ACCOUNT_ID são necessários para geração real da imagem"
+        )
     prompt = (ROOT / "prompts" / "imagem_orientacao.md").read_text(encoding="utf-8")
+    if len(prompt) > LIMITE_PROMPT_CLOUDFLARE:
+        raise ErroAPI("Prompt de imagem excede o limite do modelo (2048 caracteres)")
     modelo = cfg["multimodal"]["imagem_modelo"]
-    parametros = {
-        "model": modelo,
-        "prompt": prompt,
-        "resolution": "1K",
-        "aspect_ratio": "2:3",
-        "n": 1,
-    }
+    parametros = {"prompt": prompt, "steps": 4}
     try:
         r = requests.post(
-            cfg["provedores"]["openrouter"]["base_url"].rstrip("/") + "/images",
+            f"{item['base_url'].rstrip('/')}/accounts/{conta}/ai/run/{modelo}",
             headers={"Authorization": "Bearer " + token},
             json=parametros,
             timeout=180,
@@ -102,11 +104,10 @@ def gerar(destino=None, *, provider=None):
         raise ErroAPI("Gerador retornou JSON inválido") from e
     if not isinstance(dados_api, dict):
         raise ErroAPI("Gerador retornou formato inesperado")
-    imagens = dados_api.get("data")
-    if not isinstance(imagens, list) or not imagens or not isinstance(imagens[0], dict):
+    resultado = dados_api.get("result", dados_api)
+    if not isinstance(resultado, dict):
         raise ErroAPI("Gerador não retornou imagem")
-    imagem_api = imagens[0]
-    codificado = imagem_api.get("b64_json")
+    codificado = resultado.get("image")
     if not isinstance(codificado, str) or not codificado:
         raise ErroAPI("Gerador retornou imagem sem dados")
     try:
@@ -133,28 +134,20 @@ def gerar(destino=None, *, provider=None):
     )
     caminho.parent.mkdir(parents=True, exist_ok=True)
     im.save(caminho)
-    uso = dados_api.get("usage")
-    if not isinstance(uso, dict):
-        uso = {}
     gravar_json(
         caminho.parent / (caminho.stem + ".proveniencia.json"),
         {
             "metodo": "geracao_api",
             "por_ia": True,
-            "provider": "openrouter",
+            "provider": "cloudflare",
             "modelo": modelo,
             "data": dt.datetime.now(dt.UTC).isoformat(),
             "prompt": "prompts/imagem_orientacao.md",
             "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
-            "parametros": {
-                "resolution": parametros["resolution"],
-                "aspect_ratio": parametros["aspect_ratio"],
-                "n": parametros["n"],
-            },
-            "tokens_entrada": uso.get("prompt_tokens", "não localizado"),
-            "tokens_saida": uso.get("completion_tokens", "não localizado"),
-            "custo_usd": uso.get("cost", "não localizado"),
-            "media_type_retorno": imagem_api.get("media_type", "não localizado"),
+            "parametros": {"steps": parametros["steps"]},
+            "tokens_entrada": "não localizado",
+            "tokens_saida": "não localizado",
+            "custo_usd": "não localizado",
             "arquivo": str(caminho),
             "operador": "não localizado",
             "status_revisao": "pendente de validação humana",

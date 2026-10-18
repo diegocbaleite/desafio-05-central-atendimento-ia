@@ -69,9 +69,67 @@ class TestCasos(unittest.TestCase):
         self.assertTrue(r["categoria_corresponde"])
         self.assertTrue(r["alerta_injecao_corresponde"])
 
+    def test_texto_sem_rotulos_extrai_assunto_e_pedidos_multiplo(self):
+        entrada = ROOT / "dados/originais/entrada_texto.txt"
+        x = extrair(
+            entrada.read_text(encoding="utf-8"),
+            "T01",
+            str(entrada),
+            "f" * 64,
+            "texto",
+        )
+        self.assertEqual(
+            x["campos"]["assunto"]["valor"],
+            "efetivação da minha matrícula no curso Técnico em Enfermagem",
+        )
+        self.assertIn(
+            "solicito a efetivação da minha matrícula",
+            x["campos"]["pedido"]["valor"],
+        )
+        self.assertIn(
+            "Peço que me informem quais documentos",
+            x["campos"]["pedido"]["valor"],
+        )
+        self.assertIn(
+            "Peço que me informem quais documentos",
+            x["campos"]["pedido"]["evidencia"],
+        )
+        self.assertNotIn("123.456.789-00", x["campos"]["pedido"]["evidencia"])
+        self.assertEqual(x["campos"]["data_solicitacao"]["valor"], "14/10/2026")
+
+    def test_data_falada_por_extenso_e_normalizada(self):
+        texto = (
+            "Meu protocolo é 2026-000142, de 14 de outubro de 2026. "
+            "Meu nome é Maria Fictícia Albuquerque."
+        )
+        x = extrair(texto, "X05", "x", "1" * 64, "audio")
+        self.assertEqual(x["campos"]["data_solicitacao"]["valor"], "14/10/2026")
+        self.assertEqual(x["campos"]["data_solicitacao"]["confianca"], "media")
+        self.assertIn(
+            "14 de outubro de 2026",
+            x["campos"]["data_solicitacao"]["evidencia"],
+        )
+
+    def test_stt_protocolo_separado_e_decimal_no_pedido(self):
+        texto = (
+            "Meu protocolo é 2026-000-142 de 14 de outubro de 2026. "
+            "Quero pedir a efetivação da matrícula no curso técnico com "
+            "carga horária de 1.200 horas no turno. "
+            "Peço que informem quais documentos preciso apresentar."
+        )
+        x = extrair(texto, "X07", "x", "3" * 64, "audio")
+        self.assertEqual(x["campos"]["protocolo"]["valor"], "2026-000142")
+        self.assertIn("1.200 horas", x["campos"]["pedido"]["valor"])
+        self.assertIn("Peço que informem", x["campos"]["pedido"]["valor"])
+
     def test_data_de_nascimento_nao_vira_data_da_solicitacao(self):
         texto = "Nasci em 12/08/2008 e peço a matrícula."
         x = extrair(texto, "X03", "x", "d" * 64, "texto")
+        self.assertEqual(x["campos"]["data_solicitacao"]["valor"], "não localizado")
+
+    def test_data_de_nascimento_por_extenso_nao_vira_data_da_solicitacao(self):
+        texto = "Nasci em 12 de agosto de 2008 e peço a matrícula."
+        x = extrair(texto, "X06", "x", "2" * 64, "audio")
         self.assertEqual(x["campos"]["data_solicitacao"]["valor"], "não localizado")
 
     def test_protocolo_falado_e_reconhecido(self):

@@ -574,7 +574,7 @@ def main():
     )
     p.add_argument(
         "--provider",
-        help="audio: local|groq; voz: provedor TTS; imagem/arte: local|openrouter (pago)",
+        help="audio: local|groq; voz: provedor TTS; imagem/arte: local|cloudflare (FLUX.1 schnell; cota grátis de 10.000 neurons/dia)",
     )
     p.add_argument("--modelo-local", default="small", help="audio local (Whisper)")
     p.add_argument(

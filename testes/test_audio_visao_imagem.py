@@ -268,7 +268,7 @@ class TestControleHumano(unittest.TestCase):
                     json.dumps({
                         "por_ia": True,
                         "metodo": "geracao_api",
-                        "provider": "openrouter",
+                        "provider": "cloudflare",
                         "modelo": "modelo-ficticio",
                     }),
                     encoding="utf-8",
@@ -279,15 +279,15 @@ class TestControleHumano(unittest.TestCase):
                 patch("src.imagem.gerar", side_effect=gerar_mock) as gerar,
             ):
                 pasta = imagem.gerar_visual(
-                    saida=raiz / "saida", provider="openrouter"
+                    saida=raiz / "saida", provider="cloudflare"
                 )
             gerar.assert_called_once()
-            self.assertEqual(gerar.call_args.kwargs["provider"], "openrouter")
+            self.assertEqual(gerar.call_args.kwargs["provider"], "cloudflare")
             info = json.loads((pasta / "revisao_visual.json").read_text(encoding="utf-8"))
             self.assertTrue(info["por_ia"])
-            self.assertEqual(info["provider"], "openrouter")
+            self.assertEqual(info["provider"], "cloudflare")
 
-    def test_openrouter_gera_png_e_registra_custo_sem_chamada_real(self):
+    def test_cloudflare_gera_png_sem_chamada_real(self):
         from PIL import Image
 
         with tempfile.TemporaryDirectory() as d:
@@ -297,45 +297,38 @@ class TestControleHumano(unittest.TestCase):
             config = {
                 "multimodal": {
                     "imagem_provider": "local",
-                    "imagem_modelo": "google/gemini-3.1-flash-image",
+                    "imagem_modelo": "@cf/black-forest-labs/flux-1-schnell",
                 },
                 "provedores": {
-                    "openrouter": {
-                        "base_url": "https://api.example.test/v1",
+                    "cloudflare": {
+                        "base_url": "https://api.example.test/client/v4",
+                        "env_conta": "CONTA_FALSA_TESTE",
                     }
                 },
             }
             resposta = Mock(ok=True)
             resposta.json.return_value = {
-                "data": [
-                    {
-                        "b64_json": base64.b64encode(buffer.getvalue()).decode("ascii"),
-                        "media_type": "image/png",
-                    }
-                ],
-                "usage": {
-                    "prompt_tokens": 50,
-                    "completion_tokens": 1300,
-                    "cost": 0.04,
+                "result": {
+                    "image": base64.b64encode(buffer.getvalue()).decode("ascii")
                 },
+                "success": True,
             }
             with (
                 patch("src.imagem.carregar", return_value=config),
                 patch("src.imagem.chave", return_value="token-falso"),
+                patch.dict("os.environ", {"CONTA_FALSA_TESTE": "conta123"}),
                 patch("src.imagem.requests.post", return_value=resposta) as post,
             ):
-                imagem.gerar(destino, provider="openrouter")
+                imagem.gerar(destino, provider="cloudflare")
 
             post.assert_called_once()
             self.assertEqual(
-                post.call_args.args[0], "https://api.example.test/v1/images"
+                post.call_args.args[0],
+                "https://api.example.test/client/v4/accounts/conta123/ai/run/"
+                "@cf/black-forest-labs/flux-1-schnell",
             )
-            self.assertEqual(
-                post.call_args.kwargs["json"]["model"],
-                "google/gemini-3.1-flash-image",
-            )
-            self.assertEqual(post.call_args.kwargs["json"]["aspect_ratio"], "2:3")
-            self.assertEqual(post.call_args.kwargs["json"]["n"], 1)
+            self.assertIn("prompt", post.call_args.kwargs["json"])
+            self.assertEqual(post.call_args.kwargs["json"]["steps"], 4)
             with Image.open(destino) as gerada:
                 self.assertEqual(gerada.size, (40, 60))
             proveniencia = json.loads(
@@ -343,13 +336,31 @@ class TestControleHumano(unittest.TestCase):
                     encoding="utf-8"
                 )
             )
-            self.assertEqual(proveniencia["provider"], "openrouter")
-            self.assertEqual(proveniencia["custo_usd"], 0.04)
-            self.assertEqual(proveniencia["tokens_saida"], 1300)
+            self.assertEqual(proveniencia["provider"], "cloudflare")
+            self.assertTrue(proveniencia["por_ia"])
+            self.assertEqual(proveniencia["custo_usd"], "não localizado")
             self.assertEqual(proveniencia["operador"], "não localizado")
             self.assertEqual(
                 proveniencia["status_revisao"], "pendente de validação humana"
             )
+
+    def test_cloudflare_sem_conta_falha_sem_chamar_api(self):
+        config = {
+            "multimodal": {"imagem_provider": "local", "imagem_modelo": "x"},
+            "provedores": {
+                "cloudflare": {"base_url": "u", "env_conta": "CONTA_FALSA_TESTE"}
+            },
+        }
+        with (
+            tempfile.TemporaryDirectory() as d,
+            patch("src.imagem.carregar", return_value=config),
+            patch("src.imagem.chave", return_value="token-falso"),
+            patch.dict("os.environ", {}, clear=True),
+            patch("src.imagem.requests.post") as post,
+            self.assertRaisesRegex(ErroAPI, "CLOUDFLARE_ACCOUNT_ID"),
+        ):
+            imagem.gerar(Path(d) / "peca.png", provider="cloudflare")
+        post.assert_not_called()
 
     def test_falha_de_api_nao_deixa_pasta_de_evidencia_vazia(self):
         with tempfile.TemporaryDirectory() as d:
@@ -358,7 +369,7 @@ class TestControleHumano(unittest.TestCase):
                 patch("src.imagem.gerar", side_effect=ErroAPI("HTTP 402")),
                 self.assertRaisesRegex(ErroAPI, "HTTP 402"),
             ):
-                imagem.gerar_visual(saida=destino, provider="openrouter")
+                imagem.gerar_visual(saida=destino, provider="cloudflare")
             self.assertEqual(list(destino.iterdir()), [])
 
     def test_imagem_local_grava_proveniencia_sem_ia(self):

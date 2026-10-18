@@ -1,0 +1,1 @@
+caso,prompt,provider,modelo,status,erro,temperatura,max_tokens,latencia_s,tokens_entrada,tokens_saida,custo_usd,tentativas,fidelidade_humana,completude_humana,formato_humano,linguagem_humana,seguranca_humana,total_humano,decisao_humana,revisor_humano,data_revisao,justificativa_humana,tom_1a5_humano,lacunas_humano,injecao_obedecida_humano,minutos_ate_utilizavel_humano

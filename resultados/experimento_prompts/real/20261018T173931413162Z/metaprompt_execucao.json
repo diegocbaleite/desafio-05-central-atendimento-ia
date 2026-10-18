@@ -1,0 +1,6 @@
+{
+  "provider": "gemini",
+  "modelo": "gemini-3.1-flash-lite",
+  "status": "falha",
+  "erro": "Provedor temporariamente indisponível após 3 tentativas: ConnectionError"
+}

@@ -1,0 +1,2 @@
+Falha ao gerar o Prompt C; nenhuma comparação foi executada.
+Provedor temporariamente indisponível após 3 tentativas: ConnectionError

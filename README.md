@@ -54,7 +54,7 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 - **Requisito:** comparar A (zero-shot), B (estruturado) e C (metaprompt), mantendo as mesmas entradas e condições sempre que possível.
 - **Implementação:** `prompts/experimento/`, `src/experimento.py`, versões `prompt_B_v2_seguro.md`, `prompt_B_v3_seguro.md`, `prompt_B_v4_seguro.md` e `src/experimento_b_v2_real.py`.
 - **Casos atuais:** o experimento usa as entradas textuais `T01`, `X01` e `X02` definidas em `dados/originais/casos.yaml`. Cada execução grava uma matriz nova e preserva as saídas por caso e prompt.
-- **Situação:** há cobertura automatizada e execução `--mock`; uma comparação real dos prompts com os casos atuais ainda precisa ser executada e revisada por pessoa. Não são reaproveitadas notas de conjuntos de dados anteriores.
+- **Situação:** comparação real concluída com 9/9 chamadas bem-sucedidas para `T01`, `X01` e `X02`. A avaliação RF13 atual está registrada em [avaliação do catálogo atual](documentacao/avaliacao_rf13_catalogo_atual.csv): A = 3,67/10, B = 7,33/10 e C = 5,33/10. O Prompt B foi selecionado para evolução por obter a melhor média relativa, embora suas saídas ainda exijam correção. Não foram reutilizadas notas de conjuntos anteriores.
 
 ### 🔹 RF03 — Prompt seguro e conteúdo não confiável
 
@@ -66,7 +66,7 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 - **Requisito:** realizar chamadas a modelos com parâmetros configuráveis, timeout, tratamento de erros e proteção de credenciais.
 - **Implementação:** `src/cliente.py` integra provedores configuráveis; `src/auditoria.py` preserva registros de execução sem chaves secretas.
-- **Evidências:** cliente e retentativas cobertos por testes; a comparação real com os casos atuais ainda está pendente. Falhas externas são registradas, e valores de custo só devem ser declarados quando fornecidos pelo provedor ou calculados sobre tarifa verificável.
+- **Evidências:** cliente e retentativas cobertos por testes. O fluxo atual foi executado com serviços reais e registrou chamadas ao Gemini para minutas, comparação A/B/C, OCR e TTS, ao Groq para STT e à Cloudflare para imagem. A rodada A/B/C atual preservou matriz, saídas, tokens, latência e tentativas. Falhas externas são registradas, e valores de custo só são declarados quando fornecidos pelo provedor ou calculados sobre tarifa verificável.
 
 ### 🔹 RF05 — Extração estruturada de texto
 
@@ -78,19 +78,19 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 - **Requisito:** transcrever uma mensagem de voz fictícia, preservar o texto bruto e conferir nomes, datas e protocolos.
 - **Implementação:** `src/audio.py`, com `faster-whisper` local opcional ou Groq configurado, e avaliação em `src/avaliacao.py`.
-- **Situação:** execução local documentada. **Pendente:** uma referência de transcrição independente e conferida para validar WER/CER de forma confiável.
+- **Situação:** execução real pelo Groq e execução local documentadas. A referência independente de `A01` está vinculada ao catálogo e os campos críticos foram conferidos. Métricas consolidadas: **WER 11,43%** e **CER 5,06%**. Resultado aprovado para demonstração, com referência e transcrição bruta preservadas separadamente.
 
 ### 🔹 RF07 — Síntese de voz e acessibilidade (TTS)
 
 - **Requisito:** gerar uma versão falada de uma minuta realmente aprovada, com voz e entonação adequadas.
 - **Implementação:** `src/audio.py`, comando `voz`, suporte local a eSpeak e integração Gemini configurada; vinculação da síntese à revisão humana e ao hash da minuta.
-- **Situação:** implementação e testes por simulação concluídos; há evidência local de áudio. **Pendente:** validação completa da saída real do provedor configurado, do conteúdo falado e da aprovação humana correspondente.
+- **Situação:** execução real do Gemini TTS concluída e validada para demonstração, com WAV, roteiro falado, duração, hashes, vínculo com a minuta e confirmação auditiva registrados. O áudio representativo tem 29,04 segundos, voz `Kore`, formato mono a 24 kHz e permanece sem uso oficial ou envio ao cidadão.
 
 ### 🔹 RF08 — Visão computacional e OCR
 
 - **Requisito:** extrair texto de documento fictício, preservar os originais, identificar incertezas e conferir os dados críticos.
 - **Implementação:** `src/visao.py`; Tesseract local para imagem/PDF digitalizado e opção de visão Gemini.
-- **Situação:** Tesseract executado, com limitações no preenchimento manuscrito. A tentativa de Gemini registrada retornou **HTTP 503**. **Pendente:** avaliação independente do OCR com referência anterior à medição e conferência final dos dados críticos.
+- **Situação:** Tesseract e Gemini foram executados; uma tentativa anterior do Gemini retornou **HTTP 503**, e uma execução posterior foi concluída. A referência independente foi conferida. Métricas da saída remota: **WER 91,89%** e **CER 85,91%**. A revisão corrigiu os campos críticos para código `2026-000142`, data `14/10/2026` e solicitante `MARCOS VINÍCIUS DE ALMEIDA SANTOS`. A execução foi validada, mas a saída bruta foi rejeitada por baixa fidelidade e permanece preservada.
 
 ### 🔹 RF09 — Minuta institucional
 
@@ -102,7 +102,7 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 - **Requisito:** criar ou editar peça visual, identificar uso de IA e registrar prompt, modelo, data e revisão.
 - **Implementação:** `src/imagem.py`, `prompts/imagem_orientacao.md` e comando `arte`; composição local com **Pillow** e opção de geração com Cloudflare Workers AI / FLUX.
-- **Situação:** composição programática e integração simulada testadas. **Não há evidência confirmada de imagem efetivamente gerada pela API de IA**; a peça local não deve ser rotulada como geração por IA. Revisão visual final pendente.
+- **Situação:** composição programática local testada e geração real pela API Cloudflare Workers AI / FLUX concluída. Imagem, prompt, modelo, parâmetros, hashes e proveniência estão registrados em `resultados/imagens/`. A revisão visual foi registrada como aprovada para demonstração, mantendo `uso_oficial: false` e a identificação explícita de imagem gerada por IA.
 
 ### 🔹 RF11 — Auditoria e rastreabilidade
 
@@ -114,13 +114,13 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 - **Requisito:** usar dados fictícios, proteger segredos e minimizar o conteúdo remetido aos provedores.
 - **Implementação:** `src/seguranca.py`, `.gitignore`, variáveis em `.env` e [documentação LGPD](documentacao/lgpd.md).
-- **Pendente:** conferência final de dados, retenção, autorização da voz e registros. Ao selecionar Groq ou Gemini, **áudio ou páginas de documentos podem ser transmitidos aos provedores**.
+- **Situação:** checklist acadêmico de dados fictícios, retenção, inspeção de registros e autorização de voz concluído em [documentação LGPD](documentacao/lgpd.md). A validação vale para este protótipo e seus dados fictícios; uma implantação real ainda exigiria análise jurídica, contratual, de segurança e de transferência de dados. Ao selecionar Groq ou Gemini, **áudio ou páginas de documentos podem ser transmitidos aos provedores**.
 
 ### 🔹 RF13 — Qualidade e revisão humana
 
 - **Requisito:** avaliar fidelidade, completude, formato, linguagem e segurança, classificar erros e registrar decisões.
 - **Implementação:** `src/avaliacao.py`, [protocolo RF13](documentacao/protocolo_avaliacao.md) e gabaritos prévios em `dados/gabaritos/`.
-- **Situação atual:** os cinco casos possuem gabarito anterior à execução, mas ainda não há uma matriz de notas humanas dos casos atuais. A taxa de aprovação permanece `não localizada` até existirem decisões humanas reais; decisões `--mock` e YAML não entram no cálculo.
+- **Situação atual:** os cinco casos possuem gabarito anterior à execução e foram processados em fluxo real. A rodada A/B/C dos três casos textuais recebeu avaliação nos cinco critérios RF13, decisão e justificativa em [avaliação do catálogo atual](documentacao/avaliacao_rf13_catalogo_atual.csv). Foram avaliadas 9/9 saídas, com média geral 5,44/10 e taxa de aprovação direta de **0/9 (0%)**; esse resultado documenta as falhas e sustenta a escolha relativa do Prompt B. Decisões `--mock` e YAML permanecem fora do cálculo.
 
 ---
 
@@ -128,11 +128,11 @@ As funcionalidades abaixo estão **implementadas**; isso não significa que toda
 
 | Caso | Modalidade | Finalidade de teste | Estado da evidência |
 |---|---|---|---|
-| `T01` | texto | Solicitação fictícia de efetivação de matrícula | Entrada e gabarito disponíveis; avaliação humana da minuta pendente |
-| `A01` | áudio | Mesma solicitação por voz, com conferência de campos críticos | Entrada e gabarito disponíveis; arquivo de referência do modo `--mock` e validação independente de STT pendentes |
-| `I01` | imagem/PDF | Mesma solicitação em documento digitalizado | Entrada e gabarito disponíveis; arquivo de referência do modo `--mock`, OCR remoto válido e referência independente pendentes |
-| `X01` | texto | Reclamação fictícia com tentativa de injeção de prompt | Detector e fluxo seguro cobertos por testes; revisão humana da minuta pendente |
-| `X02` | texto | Agendamento fictício com campos ausentes | Uso de `não localizado` coberto por testes; revisão humana da minuta pendente |
+| `T01` | texto | Solicitação fictícia de efetivação de matrícula | Entrada, gabarito, execução real A/B/C e avaliação RF13 registradas |
+| `A01` | áudio | Mesma solicitação por voz, com conferência de campos críticos | STT real validado; WER 11,43%, CER 5,06% e campos críticos conferidos |
+| `I01` | imagem/PDF | Mesma solicitação em documento digitalizado | OCR real avaliado; baixa fidelidade documentada e campos críticos corrigidos pela referência |
+| `X01` | texto | Reclamação fictícia com tentativa de injeção de prompt | Detector, fluxo seguro, execução real A/B/C e avaliação da injeção registrados |
+| `X02` | texto | Agendamento fictício com campos ausentes | Uso de `não localizado`, execução real A/B/C e avaliação RF13 registrados |
 
 Os gabaritos foram preparados antes das execuções e não devem ser adaptados às saídas. Resultados `mock` demonstram o fluxo, mas não comprovam desempenho de um modelo externo. Consulte o [relatório técnico](documentacao/relatorio_tecnico.md) para o estado consolidado e as pendências.
 
@@ -327,7 +327,7 @@ python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local
 python -m src.main arte --provider local --referencia dados/originais/brasao.png
 ```
 
-O lote `--mock` sem `--caso` valida também `A01` e `I01` e, por projeto, termina com erro enquanto as referências independentes declaradas no catálogo estiverem ausentes. Não crie essas referências copiando uma saída de STT/OCR ou o gabarito. O exemplo com `--caso T01` é a demonstração reproduzível disponível no estado atual.
+O lote `--mock` sem `--caso` valida também `A01` e `I01`. As referências independentes conferidas já estão declaradas no catálogo e disponíveis em `resultados/multimodal/referencias/`, permitindo a demonstração completa do lote. Elas são evidências humanas separadas das saídas de STT/OCR e dos gabaritos.
 
 **Serviços remotos — somente com conteúdo fictício e credenciais autorizadas:**
 
@@ -359,7 +359,7 @@ python -m src.main verificar
 **Último resultado verificado localmente em 18/10/2026 (Windows, Python 3.14.6):**
 
 ```
-Ran 112 tests
+Ran 114 tests
 OK
 ```
 
@@ -402,17 +402,17 @@ Mais informações: [uso_da_ia.md](documentacao/uso_da_ia.md).
 
 O enunciado do Desafio Prático 1 exige um **arquivo compactado** com código, configuração, entradas fictícias/gabaritos, prompts e matriz comparativa, resultados de texto/áudio/OCR/imagem, relatório técnico e registro do uso de IA. Também exige **apresentação de até 12 minutos** com demonstração e perguntas.
 
-**Antes da entrega final:**
+**Validações documentadas:**
 
 - Código das três frentes integrado à `main`.
-- Testes automatizados da última execução local aprovados (112/112).
+- Testes automatizados da última execução local aprovados (114/114).
 - Cinco casos atuais integrados ao catálogo, aos gabaritos e ao YAML de demonstração.
-- Executar e revisar a comparação A/B/C com `T01`, `X01` e `X02`, sem reutilizar notas de outros conjuntos de dados.
-- Registrar decisões humanas reais para os casos atuais antes de calcular taxa de aprovação ou produzir TTS.
-- Concluir a demonstração e as evidências independentes dos requisitos multimodais pendentes (STT/OCR/TTS/imagem por IA).
-- Revisar privacidade, dados fictícios, logs, permissões e proveniência da peça visual.
-- Produzir ZIP final sem `.env`, tokens, ambientes virtuais ou arquivos pessoais reais.
-- Apresentar o protótipo e registrar a revisão final da equipe.
+- Comparação A/B/C atual executada e avaliada com `T01`, `X01` e `X02`, sem reutilizar notas de outros conjuntos de dados.
+- Avaliação RF13 atual registrada com critérios, justificativas e taxa de aprovação direta.
+- STT, OCR, TTS e imagem por IA executados com serviços reais; referências, métricas, correções e revisões registradas.
+- Checklist de privacidade e dados fictícios concluído; logs, permissões e proveniência registrados. A inspeção do pacote final deve ser repetida antes da publicação.
+
+Registro consolidado: [validações do catálogo atual](documentacao/registro_validacoes_catalogo_atual.md).
 
 Não confundir **implementação concluída**, **teste automatizado aprovado**, **validação humana de conteúdo** e **homologação institucional**: são estados diferentes.
 

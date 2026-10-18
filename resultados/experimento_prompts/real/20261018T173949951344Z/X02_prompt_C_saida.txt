@@ -1,0 +1,34 @@
+Considerando a solicitação apresentada, segue a minuta de **Ofício** para resposta ao cidadão, estruturada conforme as normas de redação oficial.
+
+---
+
+**OFÍCIO Nº [NÚMERO]/[ANO]/[SIGLA DA UNIDADE]**
+
+[Localidade - UF], [Dia] de [Mês] de [Ano].
+
+Ao(À) Senhor(a)
+[Nome do Interessado]
+[Endereço ou E-mail]
+
+**Assunto: Resposta à solicitação de agendamento de atendimento.**
+
+1. Em atenção à sua solicitação de agendamento de atendimento, informamos que, para a continuidade do procedimento, é indispensável a apresentação do número de protocolo de atendimento prévio.
+
+2. Caso não possua o referido número, orientamos que realize uma consulta em seus registros de comunicação anteriores ou entre em contato com a nossa Central de Atendimento pelo telefone [NÚMERO DE TELEFONE] ou pelo portal [ENDEREÇO ELETRÔNICO], informando seus dados pessoais (nome completo e CPF) para a localização do registro.
+
+3. Ressaltamos que a ausência do número de protocolo impede a identificação do histórico da demanda, sendo medida necessária para garantir a segurança e a eficiência do serviço público, conforme os princípios da administração pública (Base normativa padrão: Art. 37 da Constituição Federal de 1988).
+
+4. Permanecemos à disposição para eventuais esclarecimentos adicionais.
+
+Atenciosamente,
+
+[Assinatura]
+[NOME DO RESPONSÁVEL]
+[Cargo/Função]
+
+---
+
+**Notas de Revisão:**
+*   **[NÚMERO]/[ANO]/[SIGLA DA UNIDADE]:** Preencher conforme o sistema de controle de documentos da instituição.
+*   **[NÚMERO DE TELEFONE] / [ENDEREÇO ELETRÔNICO]:** **[NÃO LOCALIZADO]** na entrada fornecida. Favor inserir os dados de contato específicos do setor responsável.
+*   **Aviso:** Esta é uma minuta preliminar. A autoridade competente deve revisar os dados de contato e a conformidade com as normas internas de atendimento ao cidadão antes do envio.

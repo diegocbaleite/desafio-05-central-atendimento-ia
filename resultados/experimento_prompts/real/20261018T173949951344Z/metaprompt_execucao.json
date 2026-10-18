@@ -1,0 +1,10 @@
+{
+  "provider": "gemini",
+  "modelo": "gemini-3.1-flash-lite",
+  "duracao_s": 2.287,
+  "tokens_entrada": 94,
+  "tokens_saida": 474,
+  "custo_usd": null,
+  "tentativas": 1,
+  "status": "sucesso"
+}

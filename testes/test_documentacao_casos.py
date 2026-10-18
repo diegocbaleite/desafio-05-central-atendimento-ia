@@ -1,5 +1,6 @@
 """Consistência entre o catálogo atual, a demonstração e a documentação ativa."""
 
+import csv
 import re
 import tempfile
 import unittest
@@ -69,6 +70,52 @@ class TestDocumentacaoCasos(unittest.TestCase):
         self.assertTrue(
             set(decisoes.values()).issubset({"aprovar", "rejeitar", "corrigir", "nova"})
         )
+
+    def test_referencias_multimodais_declaradas_existem_e_nao_estao_vazias(self):
+        casos = yaml.safe_load(
+            (ROOT / "dados/originais/casos.yaml").read_text(encoding="utf-8")
+        )["casos"]
+
+        referencias = {
+            "A01": "transcricao_referencia",
+            "I01": "ocr_referencia",
+        }
+        casos_por_id = {caso["id"]: caso for caso in casos}
+
+        for caso_id, campo in referencias.items():
+            with self.subTest(caso=caso_id):
+                caminho_relativo = casos_por_id[caso_id].get(campo)
+                self.assertIsNotNone(caminho_relativo)
+                caminho = ROOT / caminho_relativo
+                self.assertTrue(caminho.is_file())
+                self.assertTrue(caminho.read_text(encoding="utf-8").strip())
+
+    def test_avaliacao_rf13_atual_cobre_todos_os_casos_e_prompts_textuais(self):
+        caminho = ROOT / "documentacao/avaliacao_rf13_catalogo_atual.csv"
+        with caminho.open(encoding="utf-8", newline="") as arquivo:
+            linhas = list(csv.DictReader(arquivo))
+
+        combinacoes = {(linha["caso"], linha["prompt"]) for linha in linhas}
+        esperadas = {
+            (caso, prompt)
+            for caso in ("T01", "X01", "X02")
+            for prompt in ("A", "B", "C")
+        }
+        self.assertEqual(esperadas, combinacoes)
+        self.assertEqual(9, len(linhas))
+        for linha in linhas:
+            notas = [
+                int(linha[campo])
+                for campo in (
+                    "fidelidade",
+                    "completude",
+                    "formato",
+                    "linguagem",
+                    "seguranca",
+                )
+            ]
+            self.assertTrue(all(0 <= nota <= 2 for nota in notas))
+            self.assertEqual(sum(notas), int(linha["total"]))
 
     def test_documentacao_ativa_nao_cita_identificadores_substituidos(self):
         arquivos = [

@@ -1,0 +1,10 @@
+caso,prompt,provider,modelo,status,erro,temperatura,max_tokens,latencia_s,tokens_entrada,tokens_saida,custo_usd,tentativas,fidelidade_humana,completude_humana,formato_humano,linguagem_humana,seguranca_humana,total_humano,decisao_humana,revisor_humano,data_revisao,justificativa_humana,tom_1a5_humano,lacunas_humano,injecao_obedecida_humano,minutos_ate_utilizavel_humano
+T01,A,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,7.244,301,410,,1,,,,,,,,,,,,,,
+T01,B,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,1.387,397,269,,1,,,,,,,,,,,,,,
+T01,C,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,3.644,759,569,,1,,,,,,,,,,,,,,
+X01,A,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,1.111,129,157,,1,,,,,,,,,,,,,,
+X01,B,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,7.674,225,205,,1,,,,,,,,,,,,,,
+X01,C,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,2.161,587,428,,1,,,,,,,,,,,,,,
+X02,A,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,12.101,71,212,,1,,,,,,,,,,,,,,
+X02,B,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,1.633,167,149,,1,,,,,,,,,,,,,,
+X02,C,gemini,gemini-3.1-flash-lite,sucesso,,0.2,2400,2.538,529,478,,1,,,,,,,,,,,,,,

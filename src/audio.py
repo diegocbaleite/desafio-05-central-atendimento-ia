@@ -6,6 +6,7 @@ e a locução só é gerada para minuta aprovada por pessoa.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import shutil
@@ -21,6 +22,22 @@ from .avaliacao import avaliar_texto_extraido
 from .cliente import ErroAPI
 from .config import carregar, chave
 from .seguranca import FORMATOS_AUDIO, validar_arquivo
+
+
+def _parametros_tts(cfg):
+    multimodal = cfg.get("multimodal", {})
+    return {
+        "voz_remota": multimodal.get("tts_voz", "coral"),
+        "voz_local": multimodal.get("tts_voz_local", "pt-br"),
+        "velocidade": int(multimodal.get("tts_velocidade", 145)),
+        "tom": int(multimodal.get("tts_tom", 45)),
+        "volume": int(multimodal.get("tts_volume", 100)),
+        "pausa_palavras_ms": int(multimodal.get("tts_pausa_palavras_ms", 5)),
+        "instrucoes": multimodal.get(
+            "tts_instrucoes",
+            "Fale em português brasileiro, com tom institucional e ritmo moderado.",
+        ),
+    }
 
 
 def _whisper_local(caminho: Path, modelo: str) -> str:
@@ -86,6 +103,7 @@ def sintetizar(texto, destino, provider=None):
         raise ErroAPI(
             "Texto excede o limite de 3500 caracteres para TTS; áudio não foi gerado"
         )
+    parametros = _parametros_tts(cfg)
     if provider == "espeak":
         if not shutil.which("espeak"):
             raise ErroAPI("Instale espeak para TTS offline")
@@ -94,9 +112,15 @@ def sintetizar(texto, destino, provider=None):
             [
                 "espeak",
                 "-v",
-                "pt-br",
+                parametros["voz_local"],
                 "-s",
-                "145",
+                str(parametros["velocidade"]),
+                "-p",
+                str(parametros["tom"]),
+                "-a",
+                str(parametros["volume"]),
+                "-g",
+                str(parametros["pausa_palavras_ms"]),
                 "-w",
                 str(destino),
                 texto.replace("#", " ").replace("*", " "),
@@ -116,8 +140,9 @@ def sintetizar(texto, destino, provider=None):
             headers={"Authorization": "Bearer " + token},
             json={
                 "model": cfg["multimodal"]["tts_modelo"],
-                "voice": cfg["multimodal"]["tts_voz"],
+                "voice": parametros["voz_remota"],
                 "input": texto,
+                "instructions": parametros["instrucoes"],
                 "response_format": "mp3",
             },
             timeout=120,
@@ -205,12 +230,25 @@ def gerar_voz(minuta, revisao, *, saida=None, provider="espeak",
         origem_audio = "local" if provider == "espeak" else "API"
     if not arquivo_audio or not Path(arquivo_audio).exists():
         raise RuntimeError("Síntese de voz não gerou arquivo verificável")
+    parametros = _parametros_tts(carregar())
     gravar_json(pasta / "resultado.json", {
         "tipo": "TTS", "modelo_ou_motor": provider, "execucao": origem_audio,
         "minuta_sha256": sha256_arquivo(origem), "aviso_ausencias_incluido": bool(aviso),
+        "aviso_ausencias_texto": aviso.strip() or None,
+        "roteiro_falado_sha256": hashlib.sha256(locucao.encode("utf-8")).hexdigest(),
         "arquivo_audio": Path(arquivo_audio).name, "hash_audio": sha256_arquivo(Path(arquivo_audio)),
+        "formato_audio": Path(arquivo_audio).suffix.lstrip(".").lower(),
+        "voz": parametros["voz_local"] if provider == "espeak" else parametros["voz_remota"],
+        "instrucoes_entonacao": parametros["instrucoes"],
+        "parametros_locais": ({
+            "velocidade": parametros["velocidade"],
+            "tom": parametros["tom"],
+            "volume": parametros["volume"],
+            "pausa_palavras_ms": parametros["pausa_palavras_ms"],
+        } if provider == "espeak" else None),
         "duracao_audio_s": duracao_audio(Path(arquivo_audio)),
         "observacao": "Aprovação registrada em arquivo; conferir identidade e decisão do revisor.",
+        "correspondencia_com_texto": "pendente de validação auditiva humana",
         "data_utc": datetime.now(timezone.utc).isoformat(),
     })
     return pasta

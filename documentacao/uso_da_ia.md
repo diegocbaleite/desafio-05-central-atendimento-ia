@@ -21,6 +21,7 @@
 9. Separar as saídas do fluxo padrão em `resultados/minutas/`, `resultados/logs/` e `resultados/imagens/`, mantendo o ID da execução para rastreabilidade.
 10. Fazer o comando isolado `arte` salvar imagens locais ou Cloudflare em `resultados/imagens/`, em vez de `resultados/multimodal/`.
 11. Separar também os comandos isolados: STT/TTS em `resultados/audios/` e OCR em `resultados/ocr/`, preservando as evidências históricas existentes.
+12. Completar o RF07 com voz, ritmo e instruções de entonação configuráveis, hash do roteiro falado e documentação de benefícios e limitações de acessibilidade.
 
 ## Sugestões e decisões
 | Sugestão | Registro | Justificativa |

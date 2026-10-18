@@ -61,7 +61,9 @@ O registro só pode ser preenchido após uma revisão humana efetiva. Para calcu
 ```bash
 python -m src.main voz caminho/minuta_aprovada.md --revisao caminho/revisao_real.json
 ```
-A voz local é em português brasileiro via eSpeak (WAV). Se houver “não localizado”, adiciona aviso antes da leitura. Confirmar ouvindo o áudio que a locução corresponde à minuta, sem acréscimos relevantes.
+A voz local é em português brasileiro via eSpeak (WAV), com velocidade, tom, volume e pausas configuráveis; provedores remotos recebem a voz e a instrução de entonação institucional definidas em `config/config.yaml`. Se houver “não localizado”, o sistema adiciona um aviso antes da leitura. `roteiro_falado.txt` e seu SHA-256 ficam preservados para a conferência, mas o critério de correspondência só é concluído depois de uma pessoa ouvir o áudio e compará-lo com a minuta aprovada.
+
+O áudio amplia o acesso para pessoas com baixa visão, dificuldade de leitura ou preferência por conteúdo falado. Limitações restantes: eSpeak possui voz robótica; nomes próprios, siglas e números podem ter pronúncia imperfeita; o recurso não substitui leitor de tela, Libras ou adaptação individual; indisponibilidade do motor/API e ausência de `ffprobe` podem impedir geração ou medição da duração.
 
 ### Peça visual
 ```bash

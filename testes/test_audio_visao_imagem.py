@@ -265,6 +265,53 @@ class TestControleHumano(unittest.TestCase):
             self.assertIn("Atenção:", roteiro)
             meta = json.loads((pasta / "resultado.json").read_text(encoding="utf-8"))
             self.assertEqual(meta["execucao"], "mock")
+            self.assertTrue(meta["aviso_ausencias_incluido"])
+            self.assertEqual(meta["formato_audio"], "wav")
+            self.assertEqual(
+                meta["roteiro_falado_sha256"],
+                hashlib.sha256(roteiro.encode("utf-8")).hexdigest(),
+            )
+
+    def test_tts_aplica_voz_e_entonacao_institucionais(self):
+        config = {
+            "multimodal": {
+                "tts_provider": "espeak",
+                "tts_modelo": "modelo-tts",
+                "tts_voz": "voz-remota",
+                "tts_voz_local": "pt-br",
+                "tts_velocidade": 145,
+                "tts_tom": 45,
+                "tts_volume": 100,
+                "tts_pausa_palavras_ms": 5,
+                "tts_instrucoes": "Tom institucional, claro e sem comentários adicionais.",
+            },
+            "provedores": {"openrouter": {"base_url": "https://api.example.test"}},
+        }
+        with tempfile.TemporaryDirectory() as temp:
+            destino = Path(temp) / "voz.wav"
+            with (
+                patch("src.audio.carregar", return_value=config),
+                patch("src.audio.shutil.which", return_value="espeak"),
+                patch("src.audio.subprocess.run") as executar,
+            ):
+                audio.sintetizar("Texto aprovado", destino, provider="espeak")
+            comando = executar.call_args.args[0]
+            self.assertEqual(comando[comando.index("-v") + 1], "pt-br")
+            self.assertEqual(comando[comando.index("-s") + 1], "145")
+            self.assertEqual(comando[comando.index("-p") + 1], "45")
+
+            resposta = Mock(ok=True, content=b"audio-remoto")
+            with (
+                patch("src.audio.carregar", return_value=config),
+                patch("src.audio.chave", return_value="token-ficticio"),
+                patch("src.audio.requests.post", return_value=resposta) as post,
+            ):
+                audio.sintetizar(
+                    "Texto aprovado", Path(temp) / "voz.mp3", provider="openrouter"
+                )
+            payload = post.call_args.kwargs["json"]
+            self.assertEqual(payload["voice"], "voz-remota")
+            self.assertEqual(payload["instructions"], config["multimodal"]["tts_instrucoes"])
 
     def test_tts_recusa_texto_longo_sem_gerar_audio(self):
         with tempfile.TemporaryDirectory() as temp, \

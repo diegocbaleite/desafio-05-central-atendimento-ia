@@ -146,6 +146,8 @@ O processo percorre validação da entrada, reconhecimento de texto/voz quando p
 
 Ao usar `--mock`, não há medição de desempenho de modelos generativos: a minuta é determinística; A01 lê a transcrição de referência e I01 lê a referência de OCR indicadas em `casos.yaml`. São textos conferidos e explicitamente rotulados, **não** saídas de STT/OCR executadas pelo mock. Para uma demonstração multimodal real, configure os provedores e use `python -m src.main audio|ocr|voz|arte` conforme `documentacao/parte3_guilherme.md`.
 
+No RF07, `voz` aceita somente uma minuta com aprovação humana válida e hash correspondente. A configuração define português brasileiro, ritmo moderado e tom institucional; o roteiro preservado permite comparar o conteúdo falado com a minuta. Se houver `não localizado`, um aviso é anteposto à locução. O recurso auxilia pessoas com baixa visão ou dificuldade de leitura, mas não substitui leitor de tela, interpretação em Libras nem revisão auditiva humana; eSpeak pode soar robótico e nomes próprios podem ser pronunciados incorretamente.
+
 # Testes automatizados
 
 ```bash

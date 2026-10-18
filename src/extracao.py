@@ -30,12 +30,14 @@ _MESES = {
 }
 CAMPOS = {
     "protocolo": (
-        r"(?:protocolo|processo)\s*(?:n[ºo.]*)?\s*(?:é|[:#-])?\s*"
-        r"(20\d{2}[.-]\s*\d{3}[-.\s]?\s*\d{3})"
+        r"(?:(?:protocolo|processo)\s*(?:n[ºo.]*)?\s*(?:é|[:#-])?"
+        r"|c[oó]digo\s*[:#-]?)\s*"
+        r"(20\d{2}\s*[.-]\s*\d{3}[-.\s]?\s*\d{3})"
     ),
     # (?-i:...) mantém o nome case-sensitive; [ \t] evita atravessar linhas.
     "solicitante": (
-        r"(?:nome|meu nome é)[ \t]*:?[ \t]*((?-i:"
+        r"(?:^[ \t]*nome[ \t]*:[ \t]*|meu nome é[ \t]*"
+        r"|nome[ \t]*:[ \t]*)((?-i:"
         + _NOME
         + r"(?:[ \t]+(?:(?:de|da|do|dos|das|e)[ \t]+)?"
         + _NOME
@@ -91,9 +93,10 @@ def _datas(texto):
 def _data_solicitacao(texto):
     """Prefere data rotulada; no fallback ignora datas de nascimento."""
     rotulo = re.search(
-        r"\bdata(?:\s+da\s+solicita[çc][ãa]o|\s+matr[ií]cula)?\s*:\s*",
+        r"\bdata(?:\s+da\s+solicita[çc][ãa]o|"
+        r"\s+(?:de\s+)?matr[ií]cula)?[ \t]*:[ \t]*",
         texto,
-        re.IGNORECASE,
+        re.IGNORECASE | re.MULTILINE,
     )
     datas = _datas(texto)
     if rotulo:
@@ -134,11 +137,15 @@ def extrair(texto, caso_id, origem, sha256, modalidade):
     pedidos = list(re.finditer(PEDIDO_LIVRE, texto, re.IGNORECASE))
     campos = {}
     for nome, padrao in CAMPOS.items():
-        m = re.search(padrao, texto, re.IGNORECASE)
+        m = re.search(
+            padrao,
+            texto,
+            re.IGNORECASE | (re.MULTILINE if nome == "solicitante" else 0),
+        )
         valor = _grupo(m)
         if nome == "protocolo" and valor:
             partes = re.fullmatch(
-                r"(20\d{2})([.-])\s*(\d{3})[-.\s]?\s*(\d{3})",
+                r"(20\d{2})\s*([.-])\s*(\d{3})[-.\s]?\s*(\d{3})",
                 valor,
                 re.IGNORECASE,
             )

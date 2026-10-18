@@ -136,6 +136,24 @@ class TestCasos(unittest.TestCase):
         x = extrair("Bom dia, meu protocolo é 2026-000142.", "X04", "x", "e" * 64, "audio")
         self.assertEqual(x["campos"]["protocolo"]["valor"], "2026-000142")
 
+    def test_formulario_i01_extrai_codigo_nome_e_data_matricula(self):
+        texto = (
+            "FICHA DE MATRÍCULA\n"
+            "CÓDIGO: 2026 - 000142\n"
+            "NOME: JOANA MARIA DE ALMEIDA SANTOS\n"
+            "DATA DE NASCIMENTO: 12/08/2008\n"
+            "DATA MATRÍCULA: 14/10/2026\n"
+        )
+        x = extrair(texto, "I01", "x", "4" * 64, "imagem")
+
+        self.assertEqual(x["campos"]["protocolo"]["valor"], "2026-000142")
+        self.assertEqual(
+            x["campos"]["solicitante"]["valor"], "JOANA MARIA DE ALMEIDA SANTOS"
+        )
+        self.assertEqual(x["campos"]["data_solicitacao"]["valor"], "14/10/2026")
+        self.assertIn("CÓDIGO: 2026 - 000142", x["campos"]["protocolo"]["evidencia"])
+        self.assertIn("DATA MATRÍCULA", x["campos"]["data_solicitacao"]["evidencia"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -138,6 +138,12 @@ def _conferir_campos_criticos(caso, ext, execucao, simulacao) -> _Conferencia | 
             "Valor conferido no original "
             "(Enter mantém; informe a correção ou 'não localizado'): "
         )
+        if not confirmado and extraido == AUSENTE:
+            print(
+                "  Campo não extraído pelo OCR/STT: digite o valor lido no original "
+                "ou 'não localizado' para confirmar a ausência."
+            )
+            confirmado = _ler_terminal("Valor conferido no original: ")
         if not confirmado:
             if extraido == AUSENTE:
                 registrar(

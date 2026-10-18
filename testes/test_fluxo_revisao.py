@@ -221,11 +221,23 @@ class TestConferenciaDeCamposCriticos(unittest.TestCase):
     def test_campo_ausente_exige_confirmacao_explicita(self):
         ext = copy.deepcopy(EXT)
         ext["campos"]["protocolo"]["valor"] = "não localizado"
-        with patch("builtins.input", side_effect=[""]):
+        with patch("builtins.input", side_effect=["", ""]):
             with self.assertRaisesRegex(ValueError, "confirme esse estado"):
                 main._conferir_campos_criticos(
                     self.amb.caso, ext, "execucao", simulacao=False
                 )
+
+    def test_campo_ausente_aceita_valor_na_segunda_pergunta(self):
+        ext = copy.deepcopy(EXT)
+        ext["campos"]["protocolo"]["valor"] = "não localizado"
+        entradas = ["", "2026-000142", "", ""] + ["Revisor Teste"]
+        with patch("builtins.input", side_effect=entradas):
+            conferencia = main._conferir_campos_criticos(
+                self.amb.caso, ext, "execucao", simulacao=False
+            )
+        self.assertEqual(
+            conferencia["campos"]["protocolo"]["valor_confirmado"], "2026-000142"
+        )
 
     def test_simulacao_fica_rotulada_e_nao_pede_confirmacao(self):
         resumo = self.amb.executar(

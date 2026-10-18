@@ -89,7 +89,7 @@ O agente pode fazer revisão técnica automatizada, mas não pode apresentá-la 
 
 ## Testes prioritários
 
-Verifique JSON válido com campos ausentes; extração de pedidos múltiplos, rótulos ausentes, datas por extenso, protocolos segmentados pelo STT e números decimais; preservação dos originais; tentativas de prompt injection; resposta vazia ou inválida; autenticação, limite e timeout; validação de arquivos; ausência de credenciais nos logs; bloqueio de minuta antes da conferência de áudio/OCR; invalidação da aprovação após alteração; e bloqueio de TTS sem aprovação válida.
+Verifique JSON válido com campos ausentes; extração do I01 com `CÓDIGO` como protocolo, `NOME` como solicitante e `DATA MATRÍCULA` como data da solicitação; extração de pedidos múltiplos, rótulos ausentes, datas por extenso, protocolos segmentados pelo STT e números decimais; preservação dos originais; tentativas de prompt injection; resposta vazia ou inválida; autenticação, limite e timeout; validação de arquivos; ausência de credenciais nos logs; bloqueio de minuta antes da conferência de áudio/OCR; invalidação da aprovação após alteração; e bloqueio de TTS sem aprovação válida.
 
 Use testes unitários para regras e falhas controladas, e testes de integração para os serviços efetivamente disponíveis. Registre separadamente os resultados simulados e reais.
 

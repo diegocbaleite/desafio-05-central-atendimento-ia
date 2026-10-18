@@ -71,9 +71,7 @@ python -m unittest discover -s testes -t .
 python -m src.main verificar
 python -m src.main --mock --caso T01
 python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
-python -m src.main experimento --mock
 python -m src.main experimento
-python -m src.main imagem
 python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider local
 python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq --autorizar-api   # áudio vai a provedor externo: só dados fictícios
@@ -83,7 +81,7 @@ python -m src.main arte --referencia dados/originais/brasao.png
 O comando sem argumentos (`python -m src.main`) processa os casos de `dados/originais/casos.yaml`; `audio`, `ocr`, `voz` e `arte` gravam evidências em `resultados/multimodal/<tipo>_<data>_<id>/` (texto bruto, metadados, hash e revisão pendente). O código de saída é **diferente de zero quando algum caso falha** (útil em automação). Ao final, o resumo JSON traz a **taxa de aprovação direta** com denominador explícito: só entram casos com decisão humana real; decisões simuladas (`--mock` ou `--decisoes`) ficam fora do cálculo.
 
 ### Revisão humana
-Sem `--decisoes`, a CLI pede, para cada minuta, a decisão (`aprovar`, `rejeitar`, `corrigir` ou `nova`), o **responsável** e a **justificativa**; nada é preenchido pelo código. A auditoria registra revisor, justificativa, data, versão e SHA-256 da minuta. `nova` gera outra versão (`minuta_v2.md`…), que precisa ser revisada de novo; uma aprovação vale somente para a versão aprovada (`minuta_aprovada.md` + `revisao.json`, no formato aceito por `python -m src.main voz`). Para casos de áudio e imagem, a CLI exige antes da minuta a **conferência de protocolo, data e solicitante com o original**. `--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana: são registradas como simuladas e não criam minuta aprovada nem acionam TTS. A opção `imagem --mock` força a composição local; sem `--mock`, o comando segue `multimodal.imagem_provider` (local por padrão, OpenAI somente se configurado).
+Sem `--decisoes`, a CLI pede, para cada minuta, a decisão (`aprovar`, `rejeitar`, `corrigir` ou `nova`), o **responsável** e a **justificativa**; nada é preenchido pelo código. A auditoria registra revisor, justificativa, data, versão e SHA-256 da minuta. `nova` gera outra versão (`minuta_v2.md`…), que precisa ser revisada de novo; uma aprovação vale somente para a versão aprovada (`minuta_aprovada.md` + `revisao.json`, no formato aceito por `python -m src.main voz`). Para casos de áudio e imagem, a CLI exige antes da minuta a **conferência de protocolo, data e solicitante com o original**. `--decisoes` reproduz **decisões fictícias e prefixadas**, não validação humana: são registradas como simuladas e não criam minuta aprovada nem acionam TTS. O comando `arte` produz a peça visual conforme `multimodal.imagem_provider`; o modo local com Pillow é composição programática, não geração de imagem por IA.
 
 ### Envio a provedores externos
 Nada sai da máquina por padrão. O áudio de entrada (voz é dado pessoal) só é enviado a um provedor de STT (Groq) com **`--autorizar-api`**, inclusive no fluxo principal (`python -m src.main --autorizar-api` quando `multimodal.stt_provider` for remoto); a voz da minuta e a peça visual por API também exigem `--autorizar-api`. OCR (Tesseract), Whisper local e eSpeak funcionam offline. Na geração da minuta com LLM real, apenas `assunto` e `pedido` seguem ao provedor, com CPF, e-mail e telefone substituídos por marcadores. Use somente dados fictícios.
@@ -159,10 +157,9 @@ Os nomes acima são uma proposta, **não** branches que já tenham sido criadas.
 # Checklist final de validação
 
 ```bash
-git status -sb
 python -m unittest discover -s testes -t .
 python -m src.main verificar
-python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
+python -m src.main --mock
 ```
 
 `dados/revisao/decisoes_demo.yaml` define as decisões simuladas por caso (valores em branco fazem a CLI pedir a decisão no terminal). Os casos de execução e seus gabaritos ficam em `dados/originais/casos.yaml` e `dados/gabaritos/`; entradas sintéticas auxiliares usadas somente nos testes ficam em `testes/fixtures/`.

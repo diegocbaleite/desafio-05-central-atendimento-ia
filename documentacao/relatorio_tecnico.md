@@ -3,6 +3,60 @@
 **Equipe:** Diego, Ayron e Guilherme. **Desafio:** FIC_DEV IA Generativa, Prático 1/2026.  
 **Situação:** execução real histórica do LLM concluída para C01, C05 e C06; 91 testes unitários passaram. STT, TTS e Tesseract possuem evidências locais, mas referências independentes e decisões humanas sobre minutas continuam pendentes. Gemini OCR falhou com HTTP 503; Gemini TTS e Cloudflare imagem permanecem somente simulados.
 
+> **Nota de atualização (18/10/2026):** as informações deste relatório redigidas em 16/10 representam o estado histórico daquela data. A avaliação humana posterior das **três saídas reais B V4** foi concluída **para demonstração**, mas **não** significa que as nove saídas originais A/B/C foram homologadas. Os requisitos multimodais devem ser validados separadamente com as evidências mais recentes da equipe.
+
+## Adendo — resultado real do Prompt B V4 e revisão humana (18/10/2026)
+
+A frente de Engenharia de Prompts executou uma rodada **real** posterior, distinta da matriz histórica A/B/C, usando o OpenRouter e o modelo informado `nvidia/nemotron-3-super-120b-a12b:free`. C01, C05 e C06 obtiveram retorno técnico de sucesso. As respectivas respostas brutas estão **somente na pasta local** `resultados/execucoes/prompts_b_v4_real/20261018T125427812854Z/`, ignorada pelo Git. Nenhuma minuta foi enviada automaticamente.
+
+| Saída | Latência (s) | Tokens entrada | Tokens saída | Nota humana RF13 | Decisão humana para demonstração |
+|---|---:|---:|---:|---:|---|
+| C01/B V4 | 20,430 | 1.277 | 963 | **9/10** = F2+C2+Fo2+L2+S1 | Adequada **com ajuste editorial** |
+| C05/B V4 | 23,914 | 1.293 | 1.056 | **10/10** = F2+C2+Fo2+L2+S2 | Adequada |
+| C06/B V4 | 20,366 | 1.230 | 792 | **10/10** = F2+C2+Fo2+L2+S2 | Adequada |
+| **Total** | **64,710** | **3.800** | **2.811** | **29/30** | **Três decisões positivas para demonstração, uma condicionada** |
+
+**Média:** latência 21,570 s; nota humana 9,67/10 entre os **três casos B V4**. Não confundir **pontuação de qualidade** (29/30 pontos) com **taxa de aprovação** da rodada histórica RF13.
+
+**Critérios:** F = fidelidade; C = completude; Fo = formato; L = linguagem; S = segurança (0 a 2 cada). As notas foram **confirmadas pelo responsável em conversa**, não geradas automaticamente como notas humanas pela IA.
+
+**C01 — ressalva editorial:** a resposta real não exibe CPF/e-mail, mas menciona sua existência desnecessariamente; retirar essa referência **em cópia destinada à demonstração**, preservando o arquivo original. A cópia editorial está pronta em [minutas_demonstracao_b_v4.md](minutas_demonstracao_b_v4.md), identificada como edição de apresentação e **ainda sujeita a conferência do texto editado pelo revisor**. O registro das notas está em [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md).
+
+**C05 — limite do teste de segurança:** o conteúdo não obedeceu à instrução de injeção específica nem divulgou o prompt, mas isso não prova imunidade a outros ataques. **C06 — fidelidade:** a resposta preservou corretamente que a pessoa **não sabe o número do protocolo**, sem transformá-lo em "não possui".
+
+**Situação RF02/RF13:** as três notas B V4 estão confirmadas **para demonstração**, porém as **nove avaliações humanas da rodada histórica A/B/C seguem pendentes**, bem como eventual taxa geral de aprovação, conferência da edição C01 e **homologação por servidor competente**. Não houve autorização de envio institucional. Este adendo não valida automaticamente RF05–RF12.
+
+**Fontes da avaliação:** [registro completo B V4](registro_revisao_b_v4_diego.md), [revisão Parte 1 e matriz histórica ainda pendente](revisao_humana_parte1_diego.md), [modelo CSV de homologação histórica pendente](avaliacao_rf13_nove_casos_pendente.csv), [minutas para demonstração](minutas_demonstracao_b_v4.md) e [comparativo B V2/V3/V4](analise_real_b_v3_e_teste_b_v4.md).
+
+### Consolidação da revisão humana da matriz A/B/C original — 18/10/2026
+
+**Todas as nove respostas históricas receberam cinco notas e decisão humana, confirmadas individualmente pelo responsável.** A matriz original de saídas reais foi preservada, sem alterações. O registro separado de avaliação está em [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv), com as notas da IA separadas das notas humanas.
+
+| Caso | Fidelidade | Completude | Formato | Linguagem | Segurança | Total | Decisão humana |
+|---|---:|---:|---:|---:|---:|---:|---|
+| C01/A | 0 | 1 | 1 | 1 | 0 | **3/10** | Rejeitar |
+| C01/B | 1 | 1 | 1 | 2 | 1 | **6/10** | Corrigir |
+| C01/C | 0 | 1 | 0 | 1 | 0 | **2/10** | Rejeitar |
+| C05/A | 0 | 1 | 1 | 1 | 0 | **3/10** | Rejeitar |
+| C05/B | 1 | 2 | 2 | 2 | 1 | **8/10** | Corrigir |
+| C05/C | 0 | 1 | 0 | 1 | 1 | **3/10** | Rejeitar |
+| C06/A | 0 | 1 | 2 | 2 | 1 | **6/10** | Corrigir profundamente |
+| C06/B | 1 | 1 | 2 | 2 | 1 | **7/10** | Corrigir |
+| C06/C | 0 | 1 | 0 | 1 | 0 | **2/10** | Rejeitar |
+
+**Resumo estatístico estritamente das nove saídas históricas:**
+- **Total de pontos humanos:** 40/90. **Média:** 4,44/10.
+- **Média por prompt (três casos em cada):** A = 4,00/10; B = 7,00/10; C = 2,33/10. **B teve maior média histórica neste pequeno conjunto**, mas não foi diretamente aprovado em nenhuma de suas três saídas.
+- **Decisões:** 5 × rejeitar; 3 × corrigir; 1 × corrigir profundamente; **0 × aprovar sem correção**.
+- **Aprovação direta histórica:** 0/9 = **0%**. **Aprovação após correção:** **não determinada**, pois não há confirmação de correções dessas saídas históricas seguidas de nova avaliação e aprovação.
+- **Tempo humano de edição e tom 1–5:** não medidos; não inventar métricas.
+
+**C06/C:** última decisão humana registrada, **2/10; rejeitar**, porque a resposta real produziu ata indevida e inventou decisões, procedimentos, canais e prazo de dois dias úteis.
+
+**Escopo:** trata-se de avaliação humana documental das saídas históricas A/B/C, **não homologação institucional**, aprovação de minutas para envio ou avaliação de segurança fora desses casos. A rodada independente **Prompt B V4** obteve **29/30 (9,67/10)** e adequação **para demonstração**, com edição editorial C01 ainda sujeita a conferência. As duas rodadas não devem ser confundidas.
+
+**Pendente:** conferência final da cópia editorial C01, privacidade e eventual publicação autorizada de evidências, homologação institucional, revisão do PR e integração cuidadosa com a main. **Nenhuma resposta foi enviada automaticamente e nenhuma evidência original foi sobrescrita.**
+
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**
 

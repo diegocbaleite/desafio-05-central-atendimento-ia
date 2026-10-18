@@ -2,10 +2,10 @@
 
 **Responsável pela frente:** Diego — Estudante 1  
 **Data da análise técnica:** 18/10/2026  
-**Status:** correção e parecer técnico prontos; **nove avaliações históricas A/B/C e notas RF13 ainda pendentes**. A confirmação humana **parcial** da rodada B V4 para demonstração está registrada separadamente (18/10/2026).  
+**Status:** correção e parecer técnico prontos; **as três avaliações humanas da rodada B V4 para demonstração estão registradas (29/30 pontos; média 9,67/10)**. Permanecem pendentes as **nove avaliações da rodada histórica A/B/C** e a homologação institucional.  
 **Cuidado:** esta revisão foi preparada com apoio de IA. Não constitui decisão, declaração ou assinatura de Diego, Ayron ou Guilherme.
 
-**Registro posterior — 18/10/2026:** o responsável confirmou ter conferido pessoalmente as **três saídas reais do Prompt B V4** e considerá-las adequadas **para demonstração**, com ajuste editorial pontual em C01. Em seguida atribuiu, pessoalmente, **C01/B V4 = 9/10 (fidelidade 2, completude 2, formato 2, linguagem 2, segurança 1)**. Consulte [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md). **C05/B V4 foi posteriormente confirmado com 10/10 (2, 2, 2, 2, 2). C06/B V4 ainda aguarda notas; as nove notas históricas A/B/C continuam vazias.** Isso não constitui homologação institucional.
+**Registro posterior — 18/10/2026:** o responsável conferiu e confirmou pessoalmente os cinco critérios de cada uma das **três saídas reais do Prompt B V4**: **C01 = 9/10 (2, 2, 2, 2, 1)**, **C05 = 10/10 (2, 2, 2, 2, 2)** e **C06 = 10/10 (2, 2, 2, 2, 2)**. As três foram consideradas adequadas **para demonstração**, **C01 com ajuste editorial** para retirar menção desnecessária à existência de CPF/e-mail. **Total 29/30; média 9,67/10**. Consulte [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md). **As nove notas históricas A/B/C continuam vazias**. Isso não constitui homologação institucional.
 
 ## 1. Base da análise e limites
 

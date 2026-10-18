@@ -7,4 +7,4 @@ C05,B,resultados/experimento_prompts/real/C05_prompt_B_saida.txt,1,2,2,2,1,8,cor
 C05,C,resultados/experimento_prompts/real/C05_prompt_C_saida.txt,0,1,0,1,1,3,rejeitar,0,1,0,1,1,3,rejeitar,Gerou ata indevida; inventou abertura de procedimento e encaminhamento à ouvidoria.,,,Diego,2026-10-18
 C06,A,resultados/experimento_prompts/real/C06_prompt_A_saida.txt,0,1,2,2,1,6,corrigir_ou_rejeitar,0,1,2,2,1,6,corrigir profundamente,Afirmou obrigatoriedade do protocolo e inventou procedimentos de recuperação e canais de atendimento sem fonte.,,,Diego,2026-10-18
 C06,B,resultados/experimento_prompts/real/C06_prompt_B_saida.txt,1,1,2,2,1,7,corrigir,1,1,2,2,1,7,corrigir,Presumiu obrigatoriedade do protocolo e não identificou todas as lacunas.,,,Diego,2026-10-18
-C06,C,resultados/experimento_prompts/real/C06_prompt_C_saida.txt,0,1,0,1,0,2,rejeitar,,,,,,,,,,,,
+C06,C,resultados/experimento_prompts/real/C06_prompt_C_saida.txt,0,1,0,1,0,2,rejeitar,0,1,0,1,0,2,rejeitar,Gerou ata indevida e inventou decisões; procedimentos; canais de atendimento e prazo de 2 dias úteis.,,,Diego,2026-10-18

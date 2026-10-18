@@ -2,10 +2,10 @@
 
 **Responsável pela frente:** Diego — Estudante 1  
 **Data da análise técnica:** 18/10/2026  
-**Status:** correção e parecer técnico prontos; **as três avaliações humanas da rodada B V4 para demonstração estão registradas (29/30 pontos; média 9,67/10)**. A rodada histórica A/B/C tem **8 de 9 avaliações humanas confirmadas (C01/A–C, C05/A–C e C06/A–B)**; somente C06/C permanece pendente, assim como a homologação institucional.  
+**Status:** correção e parecer técnico prontos; **as três avaliações humanas da rodada B V4 para demonstração estão registradas (29/30 pontos; média 9,67/10)**. A rodada histórica A/B/C tem **9 de 9 avaliações humanas históricas confirmadas (C01/A–C, C05/A–C e C06/A–C)**; resta a conferência editorial C01/B V4 e a revisão/homologação institucional para uso oficial.  
 **Cuidado:** esta revisão foi preparada com apoio de IA. Não constitui decisão, declaração ou assinatura de Diego, Ayron ou Guilherme.
 
-**Registro posterior — 18/10/2026:** o responsável conferiu e confirmou pessoalmente os cinco critérios de cada uma das **três saídas reais do Prompt B V4**: **C01 = 9/10 (2, 2, 2, 2, 1)**, **C05 = 10/10 (2, 2, 2, 2, 2)** e **C06 = 10/10 (2, 2, 2, 2, 2)**. As três foram consideradas adequadas **para demonstração**, **C01 com ajuste editorial** para retirar menção desnecessária à existência de CPF/e-mail. **Total 29/30; média 9,67/10**. Consulte [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md). **Na rodada histórica A/B/C, C01/A–C, C05/A–C e C06/A–B já foram confirmados; apenas C06/C permanece sem notas humanas**. Isso não constitui homologação institucional.
+**Registro posterior — 18/10/2026:** o responsável conferiu e confirmou pessoalmente os cinco critérios de cada uma das **três saídas reais do Prompt B V4**: **C01 = 9/10 (2, 2, 2, 2, 1)**, **C05 = 10/10 (2, 2, 2, 2, 2)** e **C06 = 10/10 (2, 2, 2, 2, 2)**. As três foram consideradas adequadas **para demonstração**, **C01 com ajuste editorial** para retirar menção desnecessária à existência de CPF/e-mail. **Total 29/30; média 9,67/10**. Consulte [registro_revisao_b_v4_diego.md](registro_revisao_b_v4_diego.md). **Na rodada histórica A/B/C, as nove decisões e os cinco critérios de cada saída já foram confirmados pelo responsável (40/90 pontos, média 4,44/10).** Isso não constitui homologação institucional.
 
 ## 1. Base da análise e limites
 
@@ -109,16 +109,35 @@ Ver os textos completos em [minutas_corrigidas_parte1.md](minutas_corrigidas_par
 
 **Justificativa informada pelo revisor:** a resposta pressupõe que o número do protocolo é obrigatório sem fonte institucional e não identifica todas as lacunas relevantes para o agendamento. A resposta original do OpenRouter permanece **inalterada**. O status corrigir indica necessidade de revisão, não aprovação da saída bruta.
 
-**Fonte do registro:** [planilha de avaliação humana histórica](avaliacao_rf13_nove_casos_pendente.csv). **Próximo caso a conferir:** C06/C da rodada original (ainda sem nota humana).
+### Decisão humana histórica confirmada — C06/C (18/10/2026)
+
+**Revisor:** Diego (confirmação pessoal em conversa). **Notas RF13:** fidelidade **0**, completude **1**, formato **0**, linguagem **1**, segurança **0**. **Total 2/10. Decisão: rejeitar** a saída histórica.
+
+**Justificativa informada pelo revisor:** o modelo gerou ata de reunião indevida e inventou decisões administrativas, procedimentos, canais de atendimento e prazo de **2 dias úteis**, sem fonte na solicitação. A saída original do OpenRouter **permanece intacta**.
+
+### Consolidação humana dos nove resultados históricos A/B/C (18/10/2026)
+
+| Prompt | C01 | C05 | C06 | Pontos | Média humana |
+|---|---:|---:|---:|---:|---:|
+| A | 3/10 | 3/10 | 6/10 | 12/30 | **4,00/10** |
+| B | 6/10 | 8/10 | 7/10 | 21/30 | **7,00/10** |
+| C | 2/10 | 3/10 | 2/10 | 7/30 | **2,33/10** |
+| **Total** | **11/30** | **14/30** | **15/30** | **40/90** | **4,44/10** |
+
+**Decisões humanas:** 5 rejeições, 3 indicações de corrigir e 1 indicação de corrigir profundamente; **nenhuma aprovação direta** das saídas históricas. **Prompt B apresenta maior média humana dentre A/B/C neste conjunto de três casos**, mas suas três respostas históricas ainda exigem correção e isso não prova desempenho geral superior.
+
+**Indicador de aprovação direta do histórico = 0 de 9 (0%).** Não confundir com a **rodada independente B V4**, cujas 3 saídas receberam adequação *para demonstração* (C01 com ajuste editorial), com média humana 9,67/10. **Aprovação após correção das respostas históricas:** não há reavaliação documentada; não registrar taxa de aprovação após correção como concluída.
+
+**Fonte do registro:** [planilha RF13 com as nove confirmações humanas](avaliacao_rf13_nove_casos_pendente.csv). **A avaliação humana A/B/C está completa**, mas os campos de tom (1–5) e minutos de correção não foram medidos; a conferência final de privacidade, a aprovação das cópias editoriais e a homologação institucional não são presumidas.
 
 ## 4. Registro humano: preencher após examinar as fontes
 
-**Nome do revisor:** _________________________________  
-**Data real da conferência:** ____/____/________  
+**Nome do revisor:** Diego (confirmações individuais C01/A–C, C05/A–C, C06/A–C em conversa).  
+**Data real da conferência:** 18/10/2026 (data das confirmações).  
 **Confirmação:** [ ] Li as três entradas originais e as nove saídas reais.  
 **Privacidade:** [ ] Verifiquei que as evidências usadas na avaliação são fictícias e não expõem credenciais.  
 
-A pessoa revisora deve atribuir **seus próprios cinco critérios**, total e decisão, podendo concordar ou divergir das sugestões da seção 2. **C01/A–C, C05/A–C e C06/A–B foram confirmados por Diego em 18/10/2026**; apenas C06/C permanece com os campos humanos vazios até a conferência pessoal. O revisor não informou nota de tom 1–5 nem minutos de correção de C01/A–C, C05/A–C e C06/A–B; esses campos ficam **não medidos**.
+A pessoa revisora deve atribuir **seus próprios cinco critérios**, total e decisão, podendo concordar ou divergir das sugestões da seção 2. **C01/A–C, C05/A–C e C06/A–C foram confirmados por Diego em 18/10/2026**. As nove linhas da matriz histórica agora têm pontuações e decisões humanas registradas. O revisor não informou nota de tom 1–5 nem minutos de correção das nove avaliações históricas; esses campos ficam **não medidos**.
 
 | Saída | F 0–2 | C 0–2 | Fo 0–2 | L 0–2 | S 0–2 | Total humano | Decisão humana (aprovar/corrigir/rejeitar) | Tom 1–5 | Minutos reais para ficar utilizável | Justificativa humana |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -130,7 +149,7 @@ A pessoa revisora deve atribuir **seus próprios cinco critérios**, total e dec
 | C05/C | 0 | 1 | 0 | 1 | 1 | **3/10** | **Rejeitar (Diego, 18/10/2026)** | não medido | não medido | Ata indevida; inventou abertura de procedimento e encaminhamento à ouvidoria |
 | C06/A | 0 | 1 | 2 | 2 | 1 | **6/10** | **Corrigir profundamente (Diego, 18/10/2026)** | não medido | não medido | Afirmou obrigatoriedade do protocolo e inventou recuperação e canais |
 | C06/B | 1 | 1 | 2 | 2 | 1 | **7/10** | **Corrigir (Diego, 18/10/2026)** | não medido | não medido | Presumiu obrigatoriedade de protocolo e omitiu lacunas relevantes |
-| C06/C | — | — | — | — | — | — | — | — | não medido | — |
+| C06/C | 0 | 1 | 0 | 1 | 0 | **2/10** | **Rejeitar (Diego, 18/10/2026)** | não medido | não medido | Ata indevida; decisões, procedimentos, canais e prazo de dois dias úteis inventados |
 
 **Prompt final escolhido pela pessoa:** [ ] A [ ] B [ ] C [ ] Nenhum sem correções  
 **Justificativa e eventuais divergências das sugestões da IA:** ___________________________________________
@@ -153,15 +172,15 @@ Conforme [protocolo RF13](https://github.com/diegocbaleite/desafio-05-central-at
 
 - Aprovação direta = aprovadas sem correção ÷ total de minutas avaliadas pela pessoa.
 - Aprovação após correção = (aprovadas diretamente + corrigidas que depois foram efetivamente aprovadas) ÷ total de minutas avaliadas pela pessoa.
-- **Quantidade com decisão humana registrada na rodada histórica:** **8 de 9** (C01/A, C01/C, C05/A e C05/C rejeitadas; C01/B, C05/B e C06/B para corrigir; C06/A para corrigir profundamente).
-- **Taxas reais:** não calculadas. Não substituir por 0% ou por uma taxa baseada em notas geradas por IA.
+- **Quantidade com decisão humana registrada na rodada histórica:** **9 de 9** (C01/A, C01/C, C05/A, C05/C e C06/C rejeitadas; C01/B, C05/B e C06/B para corrigir; C06/A para corrigir profundamente).
+- **Aprovação direta das nove saídas históricas:** **0/9 = 0%**, conforme as decisões humanas registradas (nenhuma foi aprovada sem correções). **Taxa incluindo correções:** não calculável no estado atual, pois não há comprovação de correções históricas reavaliadas e efetivamente aprovadas. **Média das notas humanas:** 40/90 pontos = **4,44/10**; por prompt A = **4,00/10**, B = **7,00/10**, C = **2,33/10**. As notas por si só não constituem aprovações.
 
 ## 6. Checklist de homologação humana (não marcar automaticamente)
 
 - [ ] Abri e li as nove saídas com as entradas pertinentes.
 - [ ] Conferi prazos, deferimentos, contatos, procedimentos e fatos não sustentados.
 - [ ] Analisei C05 sem tratar a detecção heurística como garantia.
-- [ ] Atribuí meus cinco critérios e minha decisão às nove saídas.
+- [x] Atribuí meus cinco critérios e minha decisão às nove saídas.
 - [ ] Confirmei ou alterei a recomendação pelo Prompt B e justifiquei.
 - [ ] Conferi as três minutas técnicas corrigidas.
 - [ ] Registrei tempos apenas quando medidos (ou "não medido").
@@ -172,5 +191,5 @@ Conforme [protocolo RF13](https://github.com/diegocbaleite/desafio-05-central-at
 **Parecer humano final:** [ ] Aprovado [ ] Aprovado com correções [ ] Reprovado [ ] Pendente  
 **Revisor/data/justificativa:** __________________________________________________________
 
-**Status desta entrega:** revisão e correção **técnicas** completas; **8 de 9 avaliações humanas históricas confirmadas**, 1 pendente. Homologação humana integral e institucional ainda pendentes.  
+**Status desta entrega:** revisão e correção **técnicas** completas; **9 de 9 avaliações humanas históricas confirmadas**, com decisões e justificativas no CSV. **Aprovação institucional, conferência editorial e eventual reavaliação de minutas corrigidas ainda pendentes.**  
 **Integração:** somente a branch feature/estudante-1-prompts-avaliacao-documentacao foi alterada; a main permanece separada. A branch está defasada em relação à main, portanto qualquer integração futura deve revisar conflitos e alterações históricas antes de abrir/mesclar PR.

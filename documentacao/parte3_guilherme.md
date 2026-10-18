@@ -9,8 +9,8 @@ Base: *Desafio Prático 1 — Central Inteligente de Atendimento e Comunicação
 |---|---|---|
 | RF06/STT | `audio` usa Whisper local opcional (`faster-whisper`) ou Groq conforme seleção/configuração | Preserva texto bruto, SHA-256, idioma, duração, modelo, relatório WER/CER contra **gabarito da mesma modalidade**; não declara STT real nos testes com mock. |
 | RF07/TTS | `voz` usa eSpeak offline ou provedor já implementado pelo projeto | Exige revisão humana documentada, nome/data/referência SHA-256; decisões de mock/YAML são recusadas. Adiciona aviso falado sobre “não localizado”. Não envia mensagem. |
-| RF08/OCR | `ocr` lê PNG/JPG/TIFF e PDF digitalizado usando `pdftoppm` + Tesseract local | Preserva original, OCR bruto, trechos com baixa confiança, data, SHA-256 e revisão pendente. Calcula CER/WER se existir transcrição de referência **prévia**. |
-| RF10/Imagem | `arte` usa `imagem.gerar()` | Pillow local continua disponível; `--provider cloudflare` seleciona `@cf/black-forest-labs/flux-1-schnell` via Workers AI. O plano gratuito inclui 10.000 neurons por dia; a API não reporta custo por imagem, portanto a proveniência registra `não localizado`. Exige nota de proveniência, mantém revisão visual pendente e nunca trata referência de brasão como autorização de uso oficial. |
+| RF08/OCR | `ocr` lê PNG/JPG/TIFF e PDF digitalizado usando `pdftoppm`; permite Tesseract local ou Gemini configurado | Preserva original, OCR bruto, trechos com baixa confiança, data, SHA-256 e revisão pendente. Calcula CER/WER se existir transcrição de referência **prévia**. A tentativa real com Gemini terminou em HTTP 503, sem resultado válido. |
+| RF10/Imagem | `arte` usa `imagem.gerar()` | Pillow local continua disponível; `--provider cloudflare` seleciona `@cf/black-forest-labs/flux-1-schnell` via Workers AI. O brasão configurado é incorporado à peça, com hash na proveniência, sem equivaler a autorização de uso oficial. A API não reporta custo por imagem, portanto a proveniência registra `não localizado`; a revisão visual permanece pendente. |
 | Testes | `testes/test_audio_visao_imagem.py` | Testes locais determinísticos, sem APIs e sem credenciais (a contagem atual vem de `python -m unittest discover -s testes -t .`). |
 
 ## Pré-requisitos Ubuntu
@@ -28,10 +28,11 @@ Para transcrever **localmente**, opcionalmente `pip install faster-whisper` (o p
 O OCR e os provedores locais permanecem na máquina. Com um provedor remoto selecionado/configurado, os arquivos necessários ao processamento são enviados a esse serviço.
 
 ### OCR local — PDF digitalizado do caso de matrícula
+A execução estritamente local deve informar o provedor explicitamente:
 ```bash
-python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --psm 6
+python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local --psm 6
 ```
-A saída fica em `resultados/multimodal/ocr_<id>/ocr_bruto.txt`, `resultado.json` e `PENDENTE_REVISAO.md`. Caso o OCR misture nomes e números manuscritos, não “corrigir” silenciosamente: conferir a imagem original e fornecer depois um arquivo `--revisado` manual.
+A saída fica em `resultados/multimodal/ocr_<id>/ocr_bruto.txt`, `resultado.json` e `PENDENTE_REVISAO.md`. Caso o OCR misture nomes e números manuscritos, não “corrigir” silenciosamente: conferir a imagem original e fornecer depois um arquivo `--revisado` manual. A configuração padrão atual seleciona Gemini; `python -m src.main ocr ... --provider gemini` envia cada página renderizada ao provedor. A tentativa real de 18/10/2026 terminou em HTTP 503 após três tentativas e não valida a qualidade do modelo.
 
 ### STT local (opcional, requer faster-whisper)
 ```bash
@@ -81,13 +82,13 @@ Cada execução cria uma pasta única em `resultados/multimodal/` com metadados 
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
-Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 75 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
+Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 87 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
 - [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.
 - [ ] Audio: STT real e transcrição bruta salvos; gabarito de áudio anterior; WER e trechos críticos revisados.
 - [ ] PDF: OCR bruto e correções humanas salvas separadamente; CER calculado contra referência da imagem; nome, protocolo e data confirmados no original.
-- [ ] Voz: aprovação REAL documentada, hash bate; ouvir o WAV e confirmar o conteúdo.
+- [ ] Voz: o WAV foi ouvido e conferido, mas ainda é necessário vincular a validação ao revisor identificado e ao arquivo de aprovação cujo hash corresponda à minuta.
 - [ ] Imagem: proveniência registra IA **apenas se de fato houve IA**; manter selo e conferir símbolos e textos.
 - [ ] Relatório técnico atualizado pela equipe com modelo/versão/custos/datas e limitações.
 - [ ] Nenhuma resposta enviada automaticamente ou publicada em serviços externos.

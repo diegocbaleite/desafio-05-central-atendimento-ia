@@ -14,6 +14,7 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from src import avaliacao, main
+from src.cliente import ErroAPI
 from src.minuta import redigir
 
 EXT = {
@@ -306,6 +307,10 @@ class TestCli(unittest.TestCase):
             patch.object(sys, "argv", ["main", *argv]),
             patch("src.main.registrar"),
             patch("src.main.nova_execucao", return_value="exec"),
+            patch(
+                "src.main.gerar_visual",
+                return_value=Path("resultados/imagens/arte_teste"),
+            ),
             redirect_stdout(saida),
         ):
             return main.main(), saida.getvalue()
@@ -321,6 +326,10 @@ class TestCli(unittest.TestCase):
             codigo = main._comando_midia(args)
         self.assertEqual(codigo, 0)
         self.assertEqual(gerar.call_args.kwargs["provider"], "local")
+        self.assertEqual(
+            gerar.call_args.kwargs["referencia"],
+            main.ROOT / "dados" / "originais" / "brasao.png",
+        )
 
     def test_codigo_de_saida_1_quando_algum_caso_falha(self):
         caso = {"id": "T99", "arquivo": "x", "modalidade": "texto"}
@@ -344,6 +353,47 @@ class TestCli(unittest.TestCase):
         self.assertEqual(codigo, 0)
         self.assertIsNone(taxa["taxa_aprovacao_direta"])
         self.assertEqual(taxa["excluidas_simuladas"], 1)
+
+    def test_fluxo_padrao_gera_imagem_institucional_em_resultados_imagens(self):
+        saida = StringIO()
+        with (
+            patch.object(sys, "argv", ["main"]),
+            patch("src.main.carregar_casos", return_value=[]),
+            patch("src.main.nova_execucao", return_value="exec"),
+            patch("src.main.registrar"),
+            patch(
+                "src.main.gerar_visual",
+                return_value=Path("resultados/imagens/arte_teste"),
+            ) as gerar,
+            redirect_stdout(saida),
+        ):
+            codigo = main.main()
+        self.assertEqual(codigo, 0)
+        self.assertEqual(
+            gerar.call_args.kwargs["saida"], main.ROOT / "resultados" / "imagens"
+        )
+        self.assertEqual(gerar.call_args.kwargs["provider"], "local")
+        self.assertEqual(
+            json.loads(saida.getvalue())["imagem_institucional"],
+            str(Path("resultados/imagens/arte_teste")),
+        )
+
+    def test_falha_da_imagem_institucional_retorna_codigo_1(self):
+        saida = StringIO()
+        with (
+            patch.object(sys, "argv", ["main"]),
+            patch("src.main.carregar_casos", return_value=[]),
+            patch("src.main.nova_execucao", return_value="exec"),
+            patch("src.main.registrar"),
+            patch("src.main.gerar_visual", side_effect=ErroAPI("indisponível")),
+            redirect_stdout(saida),
+        ):
+            codigo = main.main()
+        texto = saida.getvalue()
+        resumo = json.loads(texto[texto.index("{") :])
+        self.assertEqual(codigo, 1)
+        self.assertEqual(resumo["imagem_institucional"], "não localizado")
+        self.assertEqual(resumo["falhas"][0]["caso"], "IMAGEM_INSTITUCIONAL")
 
     def test_verificar_mostra_versoes_e_ferramentas_sem_aviso(self):
         with warnings.catch_warnings():

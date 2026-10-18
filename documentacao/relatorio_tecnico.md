@@ -1,7 +1,7 @@
-# Relatório técnico — resultados parciais e evidências (16/10/2026)
+# Relatório técnico — resultados parciais, histórico e evidências (atualizado em 18/10/2026)
 
 **Equipe:** Diego, Ayron e Guilherme. **Desafio:** FIC_DEV IA Generativa, Prático 1/2026.  
-**Situação:** execução real de LLM concluída para C01, C05 e C06; revisão humana e validações multimodais ainda pendentes.
+**Situação:** execução real histórica do LLM concluída para C01, C05 e C06; 87 testes unitários passaram. STT, TTS e Tesseract possuem evidências locais, mas referências independentes e decisões humanas sobre minutas continuam pendentes. Gemini OCR falhou com HTTP 503 e Cloudflare imagem permanece somente simulado.
 
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**
@@ -10,12 +10,12 @@ Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e c
 | Etapa | Provedor/modelo | Execução e configuração | Estado |
 |---|---|---|---|
 | LLM | OpenRouter / `nvidia/nemotron-3-super-120b-a12b:free` | 16/10/2026; temperatura 0,2; `max_tokens=2400`; `timeout_s=45` conforme configuração informada | **9/9 linhas de sucesso** na matriz rastreada; avaliação humana pendente |
-| STT | Groq / `whisper-large-v3-turbo` | API prevista, português | **Sem evidência de transcrição real**; C02 em mock utiliza referência fictícia |
-| TTS | eSpeak, português | geração local após aprovação | **Não comprovado em execução validada** |
-| OCR | Tesseract local, idioma `por` | imagem C03 gerada para teste | OCR executado no pipeline mock; **CER ainda não medida** |
-| Imagem por IA | Provedor/modelo **não localizado** | prompt em `prompts/imagem_orientacao.md` | **Geração com IA não demonstrada**; composição programática não deve ser rotulada como imagem gerada por IA |
+| STT | faster-whisper local; Groq / `whisper-large-v3-turbo` configurado | português | Execução local preservada; referência foi derivada da primeira saída e não sustenta WER independente. Nova execução real Groq não comprovada nesta revisão |
+| TTS | eSpeak, português | execução local registrada | WAV e validação auditiva existem; falta vincular revisor identificado e arquivo de aprovação correspondente ao hash da minuta |
+| OCR | Tesseract local; Gemini / `gemini-3.8-flash` configurado | PDF I01 | Tesseract executado com baixa qualidade no manuscrito; Gemini retornou HTTP 503 após três tentativas; CER independente pendente |
+| Imagem por IA | Cloudflare / `@cf/black-forest-labs/flux-1-schnell` | integração configurável | Testada somente com simulação; nenhuma imagem real foi gerada nem revisada. A composição programática não deve ser rotulada como IA |
 
-## Resultados — engenharia de prompts (RF02)
+## Resultados históricos — engenharia de prompts (RF02)
 Comparação de A (zero-shot), B (Persona, Contexto, Tarefa, Formato, Critérios) e C (construído com metaprompt). Foram enviados **três casos, C01/C05/C06, a cada prompt**, com mesmo identificador de modelo e temperatura. A geração prévia do prompt C ocorreu separadamente e não está incluída na matriz de nove chamadas.
 
 | Prompt | Sucessos | Tempo médio | Tokens de entrada (total) | Tokens de saída (total) | Nota técnica preliminar* |
@@ -36,14 +36,16 @@ Comparação de A (zero-shot), B (Persona, Contexto, Tarefa, Formato, Critérios
 
 **Conclusão provisória:** o **Prompt B** é a melhor base para uma minuta após ajustes e revisão humana: menor latência média, menor total de tokens de saída e melhor qualidade preliminar em todos os casos. **Nenhuma saída deve ser enviada automaticamente.** A e C demonstraram falhas de fidelidade e formato; B também gerou fatos administrativos sem suporte. É necessário preservar os prompts A/B/C originais e salvar eventuais revisões em versões novas.
 
-**Evidências locais informadas:** `resultados/experimento_prompts/real/matriz.csv`, `C01_prompt_{A,B,C}_saida.txt`, `C05_prompt_{A,B,C}_saida.txt`, `C06_prompt_{A,B,C}_saida.txt` e `prompt_C_utilizado.md`. **Esses arquivos locais não foram incluídos automaticamente neste commit**; a equipe deve verificar privacidade, conferir o conteúdo e anexar evidências selecionadas.
+**Evidências locais rastreadas:** `resultados/experimento_prompts/real/matriz.csv`, `C01_prompt_{A,B,C}_saida.txt`, `C05_prompt_{A,B,C}_saida.txt`, `C06_prompt_{A,B,C}_saida.txt` e `prompt_C_utilizado.md`. A equipe ainda deve revisar privacidade e preencher as colunas humanas. A matriz é anterior ao esquema atual de `src/experimento.py` e não contém `max_tokens`, custo e tentativas.
 
 ## Extração, casos multimodais e revisão (RF05–RF13)
+
+Os itens C01–C06 abaixo descrevem a rodada histórica. Os casos atuais do pipeline são T01, A01, I01, X01 e X02; resultados históricos não substituem a avaliação dos casos atuais.
 - **C01/C06:** extração e lacunas demonstradas em execução mock; C06 apresentou `não localizado` para protocolo, data e solicitante. JSON e hash de cada caso devem acompanhar o pacote.
 - **C02 (áudio):** gerado arquivo de voz sintética com ruído de referência (~15 dB SNR, conforme saída local); em mock utiliza transcrição textual fictícia, **não comprova STT real**. Medir WER bruto/revisado e verificar campos críticos.
 - **C03 (OCR):** formulário fictício PNG gerado; execução do pipeline mock concluiu sem exceção, mas **CER bruto/revisado não calculado**. Conferir nome, data e protocolo contra original.
 - **C04 (timbre):** arquivo fictício gerado; validação visual institucional e evidência de proveniência **pendentes**.
-- **RF10 (imagem gerada por IA):** modelo, geração real, nota de proveniência e revisão humana **pendentes**.
+- **RF10 (imagem gerada por IA):** Cloudflare/FLUX está configurado e testado com simulação; geração real, nota de proveniência resultante e revisão humana **pendentes**.
 - **RF13:** avaliações acima são **propostas de análise assistida por IA**. As colunas `*_humano` da matriz precisam ser preenchidas após revisão efetiva. Sem avaliação real, taxa de aprovação humana direta ou com correção = **não calculada**.
 - **Segurança:** C05 e C03 testam entradas maliciosas; detector identificou alerta no pipeline mock. Nas respostas A/C ocorreram invenções de ações e prazos — alerta de injeção não basta para assegurar fidelidade.
 
@@ -57,11 +59,11 @@ Comparação de A (zero-shot), B (Persona, Contexto, Tarefa, Formato, Critérios
 O código não deve publicar credenciais nem dados pessoais reais, e deve preservar arquivos de origem. O fluxo com LLM exige conferência humana de nomes, protocolos, prazos, encaminhamentos e ausência de invenções. Heurísticas de prompt injection não oferecem garantia completa. Ver `lgpd.md`.
 
 ## Pendências para encerrar a entrega
-1. Revisão humana documentada de C01/C05/C06 (por Diego, Ayron e Guilherme), com correções e decisão por saída.
-2. Anexar a matriz e nove saídas reais **após conferência de dados pessoais e segredos**.
-3. Medir WER do C02 e CER do C03, registrar versões e evidências.
-4. Demonstrar síntese de voz após aprovação e imagem gerada por IA com proveniência, se exigida.
-5. Validar o timbre institucional fictício, concluir checklist de LGPD e repetir testes no ambiente de entrega.
+1. Preencher a avaliação humana da rodada A/B/C e confirmar ou alterar a seleção provisória do Prompt B.
+2. Registrar, nos casos atuais, pelo menos uma minuta aprovada e outra rejeitada/corrigida por pessoa identificada; calcular a taxa de aprovação.
+3. Produzir referências independentes para A01/I01, recalcular WER/CER e conferir campos críticos diretamente nos originais.
+4. Vincular a validação auditiva TTS ao revisor e ao registro de aprovação/hash; gerar e revisar uma peça visual real por IA.
+5. Validar o timbre institucional fictício, concluir o checklist LGPD, atualizar custos como medidos ou `não localizado` e repetir os testes em máquina limpa.
 
 > **Nota de integridade:** resultados quantitativos acima são provenientes do terminal compartilhado pelo estudante e das saídas textuais fornecidas na conversa; não representam auditoria independente do provedor. O relatório é **parcial**, e as notas permanecem provisórias até a validação humana.
 
@@ -74,7 +76,7 @@ Foram apresentados os textos dos prompts C V2 para C01, C05 e C06. A avaliação
 
 ## Atualização técnica posterior à auditoria (18/10/2026)
 
-Esta atualização descreve alterações de implementação; não representa novas chamadas reais a provedores nem avaliação humana:
+Esta atualização descreve principalmente alterações de implementação. Houve uma tentativa real de OCR com Gemini, encerrada com HTTP 503 após as retentativas; portanto, ela não produziu saída válida nem avaliação humana:
 
 - A conferência de protocolo, data e solicitante em casos de áudio/imagem agora coleta confirmação ou correção de cada valor. A extração bruta é preservada; a versão revisada e a conferência ficam em arquivos separados.
 - No pipeline, texto bruto de STT/OCR, provedor/modelo, parâmetros e duração de processamento ficam vinculados ao mesmo caso e ID de execução. A referência histórica de áudio/OCR continua sem validação independente e não sustenta WER/CER conclusivos.

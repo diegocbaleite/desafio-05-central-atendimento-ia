@@ -23,54 +23,96 @@ from .seguranca import FORMATOS_IMAGEM, validar_arquivo
 
 LIMITE_PROMPT_CLOUDFLARE = 2048
 FONTE_DEJAVU = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONTES_LOCAIS = (FONTE_DEJAVU, "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf")
+FONTES_LOCAIS = (
+    FONTE_DEJAVU,
+    "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+    "C:/Windows/Fonts/segoeui.ttf",
+    "C:/Windows/Fonts/arial.ttf",
+)
 
 
-def imagem_local(destino):
+def _fonte(tamanho):
+    from PIL import ImageFont
+
+    for caminho in FONTES_LOCAIS:
+        if Path(caminho).exists():
+            return ImageFont.truetype(caminho, tamanho)
+    return ImageFont.load_default()
+
+
+def _incorporar_referencia(imagem, referencia):
+    """Insere uma cópia redimensionada da referência, preservando o original."""
+    from PIL import Image
+
+    origem = validar_arquivo(referencia, FORMATOS_IMAGEM, 20)
+    with Image.open(origem) as arquivo:
+        brasao = arquivo.convert("RGBA")
+    limite = (
+        max(1, int(imagem.width * 0.28)),
+        max(1, int(imagem.height * 0.24)),
+    )
+    brasao.thumbnail(limite, Image.Resampling.LANCZOS)
+    posicao = ((imagem.width - brasao.width) // 2, max(10, int(imagem.height * 0.04)))
+    imagem.paste(brasao, posicao, brasao)
+    return origem
+
+
+def _dados_referencia(origem):
+    if origem is None:
+        return None
+    return {
+        "arquivo": origem.name,
+        "sha256": sha256_arquivo(origem),
+        "incorporada_na_arte": True,
+    }
+
+
+def imagem_local(destino, referencia=None):
     """Arte por PILLOW = COMPOSIÇÃO PROGRAMÁTICA, não IA generativa."""
-    from PIL import Image, ImageDraw, ImageFont
-
-    def fonte(n):
-        for p in FONTES_LOCAIS:
-            if Path(p).exists():
-                return ImageFont.truetype(p, n)
-        return ImageFont.load_default()
+    from PIL import Image, ImageDraw
 
     im = Image.new("RGB", (960, 1440), "white")
     d = ImageDraw.Draw(im)
     d.rectangle((55, 55, 905, 1360), outline="#214562", width=9)
-    d.text((90, 110), "ATENDIMENTO AO CIDADÃO", font=fonte(37), fill="#214562")
-    d.text((90, 290), "• Documentos e protocolos", font=fonte(28), fill="#214562")
-    d.text((90, 385), "• Conferência de informações", font=fonte(28), fill="#214562")
-    d.text((90, 480), "• Revisão por servidor", font=fonte(28), fill="#214562")
-    d.text((90, 720), "Nenhuma resposta é enviada", font=fonte(28), fill="#214562")
-    d.text((90, 768), "automaticamente.", font=fonte(28), fill="#214562")
+    origem = _incorporar_referencia(im, referencia) if referencia else None
+    deslocamento = 300 if origem else 0
+    d.text(
+        (90, 110 + deslocamento),
+        "ATENDIMENTO AO CIDADÃO",
+        font=_fonte(37),
+        fill="#214562",
+    )
+    d.text((90, 290 + deslocamento), "• Documentos e protocolos", font=_fonte(28), fill="#214562")
+    d.text((90, 385 + deslocamento), "• Conferência de informações", font=_fonte(28), fill="#214562")
+    d.text((90, 480 + deslocamento), "• Revisão por servidor", font=_fonte(28), fill="#214562")
+    d.text((90, 820), "Nenhuma resposta é enviada", font=_fonte(28), fill="#214562")
+    d.text((90, 868), "automaticamente.", font=_fonte(28), fill="#214562")
     d.rectangle((80, 1170, 880, 1320), fill="#214562")
-    d.text((100, 1195), "COMPOSIÇÃO DIGITAL FICTÍCIA", font=fonte(26), fill="white")
-    d.text((100, 1250), "PROGRAMÁTICA — SEM IA", font=fonte(25), fill="white")
+    d.text((100, 1195), "COMPOSIÇÃO DIGITAL FICTÍCIA", font=_fonte(26), fill="white")
+    d.text((100, 1250), "PROGRAMÁTICA — SEM IA", font=_fonte(25), fill="white")
     destino = Path(destino)
     destino.parent.mkdir(parents=True, exist_ok=True)
     im.save(destino)
-    gravar_json(
-        destino.parent / (destino.stem + ".proveniencia.json"),
-        {
-            "metodo": "composicao_programatica",
-            "por_ia": False,
-            "ferramenta": "Pillow",
-            "data": dt.datetime.now(dt.UTC).isoformat(),
-            "aviso": "Ilustração fictícia, sem IA generativa",
-        },
-    )
+    proveniencia = {
+        "metodo": "composicao_programatica",
+        "por_ia": False,
+        "ferramenta": "Pillow",
+        "data": dt.datetime.now(dt.UTC).isoformat(),
+        "aviso": "Ilustração fictícia, sem IA generativa",
+    }
+    if origem:
+        proveniencia["referencia_visual"] = _dados_referencia(origem)
+    gravar_json(destino.parent / (destino.stem + ".proveniencia.json"), proveniencia)
     return str(destino)
 
 
-def gerar(destino=None, *, provider=None):
+def gerar(destino=None, *, provider=None, referencia=None):
     """Gera arte local ou usa explicitamente um provedor de imagem configurado."""
     cfg = carregar()
     provider = provider or cfg["multimodal"]["imagem_provider"]
     caminho = Path(destino or ROOT / "resultados" / "peca_visual.png")
     if provider == "local":
-        return imagem_local(caminho)
+        return imagem_local(caminho, referencia=referencia)
     if provider != "cloudflare":
         raise ErroAPI("Provedor de imagem inválido")
     item = cfg["provedores"]["cloudflare"]
@@ -114,29 +156,24 @@ def gerar(destino=None, *, provider=None):
         img = base64.b64decode(codificado, validate=True)
     except (ValueError, TypeError) as e:
         raise ErroAPI("Imagem retornada em formato inesperado") from e
-    from PIL import Image, ImageDraw, ImageFont
+    from PIL import Image, ImageDraw
 
     try:
         with Image.open(io.BytesIO(img)) as original:
             im = original.convert("RGB")
     except (OSError, ValueError) as e:
         raise ErroAPI("Gerador retornou dados que não são uma imagem válida") from e
+    origem = _incorporar_referencia(im, referencia) if referencia else None
     d = ImageDraw.Draw(im)
     w, h = im.size
     d.rectangle((0, h - 115, w, h), fill="#122d47")
-    f = (
-        ImageFont.truetype(FONTE_DEJAVU, 27)
-        if Path(FONTE_DEJAVU).exists()
-        else ImageFont.load_default()
-    )
+    f = _fonte(27)
     d.text(
         (25, h - 85), "Imagem gerada por IA — ilustração fictícia", font=f, fill="white"
     )
     caminho.parent.mkdir(parents=True, exist_ok=True)
     im.save(caminho)
-    gravar_json(
-        caminho.parent / (caminho.stem + ".proveniencia.json"),
-        {
+    proveniencia = {
             "metodo": "geracao_api",
             "por_ia": True,
             "provider": "cloudflare",
@@ -151,8 +188,10 @@ def gerar(destino=None, *, provider=None):
             "arquivo": str(caminho),
             "operador": "não localizado",
             "status_revisao": "pendente de validação humana",
-        },
-    )
+        }
+    if origem:
+        proveniencia["referencia_visual"] = _dados_referencia(origem)
+    gravar_json(caminho.parent / (caminho.stem + ".proveniencia.json"), proveniencia)
     return str(caminho)
 
 
@@ -161,11 +200,12 @@ def gerar_visual(*, saida=None, referencia=None, gerador_teste=None, provider=No
     pasta = nova_saida(saida, "arte")
     caminho = pasta / "orientacao.png"
     try:
-        produzido = (
-            gerador_teste(caminho)
-            if gerador_teste
-            else gerar(caminho, provider=provider)
-        )
+        if gerador_teste:
+            produzido = gerador_teste(caminho)
+        elif referencia:
+            produzido = gerar(caminho, provider=provider, referencia=referencia)
+        else:
+            produzido = gerar(caminho, provider=provider)
     except ErroAPI:
         if not any(pasta.iterdir()):
             pasta.rmdir()
@@ -189,9 +229,7 @@ def gerar_visual(*, saida=None, referencia=None, gerador_teste=None, provider=No
         "aviso": "Material de demonstração; não constitui comunicação oficial.",
         "data_utc": dt.datetime.now(dt.UTC).isoformat(),
     }
-    if referencia:
-        origem = validar_arquivo(referencia, FORMATOS_IMAGEM, 20)
-        info["referencia_visual"] = {"arquivo": origem.name, "sha256": sha256_arquivo(origem),
-                                    "incorporada_na_arte": False}
+    if dados.get("referencia_visual"):
+        info["referencia_visual"] = dados["referencia_visual"]
     gravar_json(pasta / "revisao_visual.json", info)
     return pasta

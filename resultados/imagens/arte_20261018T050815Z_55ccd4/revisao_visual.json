@@ -1,0 +1,21 @@
+{
+  "tipo": "PECA_VISUAL",
+  "arquivo": "orientacao.png",
+  "sha256": "4fdcf3efa4882573bf265831a8b66f548eadde50591ba388c4715eef75d9aef4",
+  "por_ia": false,
+  "metodo": "composicao_programatica",
+  "provider": "não localizado",
+  "modelo": "não localizado",
+  "custo_usd": "não localizado",
+  "tokens_entrada": "não localizado",
+  "tokens_saida": "não localizado",
+  "revisao_humana": "pendente",
+  "uso_oficial": false,
+  "aviso": "Material de demonstração; não constitui comunicação oficial.",
+  "data_utc": "2026-10-18T05:08:16.066174+00:00",
+  "referencia_visual": {
+    "arquivo": "brasao.png",
+    "sha256": "ccb82e8c921b2999b4c52b0466b09f6dbdeff24f7425c23d7b9371d3a13ed50a",
+    "incorporada_na_arte": true
+  }
+}

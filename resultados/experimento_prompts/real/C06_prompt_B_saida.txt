@@ -1,6 +1,0 @@
-Prezado(a) Senhor(a),
-
-Recebemos a solicitação de agendamento de atendimento, porém não foi informado o número do protocolo necessário para a identificação do pedido.
-
-Pendências: Número do protocolo não localizado.  
-Fontes: Conteúdo externo fornecido pelo usuário.

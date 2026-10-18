@@ -15,7 +15,7 @@ Checklist de entrega:
 - [x] Arquivos de teste usam personagens inventados.
 - [x] `.env` não é versionado; tokens nunca são exibidos intencionalmente.
 - [x] A chamada de estruturação ao OpenRouter minimiza CPF, e-mail e telefone; não envia esses campos como evidência.
-- [x] OCR é local (Tesseract); os provedores remotos são chamados conforme a configuração. O STT padrão está configurado como Groq e envia o áudio original; configure `local` para não enviar áudio a esse provedor.
+- [x] OCR local por Tesseract continua disponível, mas o provedor padrão atual é Gemini e recebe a página inteira renderizada; use `--provider local` ou configure `ocr_provider: local` para não enviar o formulário. O STT padrão é Groq e recebe o áudio original; configure `local` para não enviá-lo.
 - [x] OCR local é alternativa de processamento soberano.
 - [x] Não existe envio automático de respostas a cidadãos; chamadas a serviços de IA seguem o provedor selecionado ou configurado.
 - [x] TTS e imagem usam provedores configuráveis; a configuração atual mantém esses serviços locais.
@@ -25,6 +25,6 @@ Checklist de entrega:
 - [ ] Inspecionar logs/prints antes de publicar.
 - [ ] Confirmar se nenhuma gravação contém voz real de pessoa sem autorização.
 
-Os artefatos de execução (texto extraído, transcrição, OCR) ficam em diretórios locais para preservar evidências. A transcrição remota (Groq) envia o áudio original ao provedor, portanto **não deve receber conteúdo real ou confidencial**. Confirme que os dados são fictícios antes de executar fluxos com provedores remotos. Para um cenário real, use OCR/STT local, defina retenção e acesso às transcrições e conclua uma avaliação de privacidade e segurança antes de habilitar provedores remotos.
+Os artefatos de execução (texto extraído, transcrição, OCR) ficam em diretórios locais para preservar evidências. Groq recebe o áudio original e Gemini recebe páginas renderizadas do documento quando esses provedores estão selecionados; portanto **não devem receber conteúdo real ou confidencial**. Confirme que os dados são fictícios antes de executar fluxos remotos. Para um cenário real, use OCR/STT local, defina retenção e acesso às transcrições e conclua uma avaliação de privacidade e segurança antes de habilitar provedores externos.
 
 Bases para avaliação interna: finalidade, adequação, necessidade, transparência, segurança, prevenção, prestação de contas (art. 6º da LGPD), governança e transparência de decisões; para transferências internacionais reais é necessária análise adicional (art. 33). Não equiparar pseudonimização a anonimização.

@@ -549,6 +549,14 @@ def _verificar(cfg):
 COMANDOS_MIDIA = ("audio", "ocr", "voz", "arte")
 
 
+def _referencia_institucional(cfg):
+    valor = cfg.get("projeto", {}).get("timbre")
+    if not valor:
+        return None
+    caminho = Path(valor)
+    return caminho if caminho.is_absolute() else ROOT / caminho
+
+
 def _comando_midia(a):
     """STT, OCR, voz e arte: gravam evidências em resultados/ e nunca enviam respostas."""
     try:
@@ -583,8 +591,9 @@ def _comando_midia(a):
                 provider=a.provider or "espeak",
             )
         else:
+            cfg = carregar()
             pasta = gerar_visual(
-                referencia=a.referencia,
+                referencia=a.referencia or _referencia_institucional(cfg),
                 provider="local" if a.mock else a.provider,
             )
     except (ValueError, RuntimeError, OSError, ErroAPI) as exc:
@@ -633,7 +642,7 @@ def main():
     )
     p.add_argument("--revisao", help="voz: JSON da aprovação humana da minuta")
     p.add_argument(
-        "--referencia", help="arte: imagem de referência (não é incorporada)"
+        "--referencia", help="arte: imagem institucional incorporada à peça"
     )
     a = p.parse_args()
     cfg = carregar()
@@ -643,11 +652,16 @@ def main():
     if a.comando in COMANDOS_MIDIA:
         return _comando_midia(a)
     if a.comando == "imagem":
+        referencia = a.referencia or _referencia_institucional(cfg)
         if a.mock:
-            caminho = imagem_local(ROOT / "resultados/peca_visual.png")
+            caminho = imagem_local(
+                ROOT / "resultados/peca_visual.png", referencia=referencia
+            )
         else:
             caminho = gerar(
-                ROOT / "resultados/peca_visual.png", provider=a.provider
+                ROOT / "resultados/peca_visual.png",
+                provider=a.provider,
+                referencia=referencia,
             )
         print(caminho)
         return 0
@@ -704,12 +718,53 @@ def main():
                 f"Falha no caso {caso['id']}: {type(exc).__name__}: "
                 f"{_mensagem_erro(exc)}"
             )
+    imagem_institucional = None
+    provider_imagem = (
+        "local" if a.mock else cfg["multimodal"].get("imagem_provider", "local")
+    )
+    try:
+        imagem_institucional = gerar_visual(
+            saida=ROOT / "resultados" / "imagens",
+            provider=provider_imagem,
+            referencia=_referencia_institucional(cfg),
+        )
+        registrar(
+            execucao,
+            "IMAGEM_INSTITUCIONAL",
+            "imagem_institucional_gerada",
+            pasta=str(imagem_institucional),
+            provider=provider_imagem,
+            revisao_humana="pendente",
+        )
+    except (ErroAPI, ValueError, RuntimeError, OSError) as exc:
+        falha = {
+            "caso": "IMAGEM_INSTITUCIONAL",
+            "erro": type(exc).__name__,
+            "detalhe": _mensagem_erro(exc),
+        }
+        registrar(
+            execucao,
+            "IMAGEM_INSTITUCIONAL",
+            "falha_imagem_institucional",
+            erro=falha["erro"],
+            detalhe=falha["detalhe"],
+        )
+        falhas.append(falha)
+        print(
+            "Falha na imagem institucional: "
+            f"{type(exc).__name__}: {_mensagem_erro(exc)}"
+        )
     print(
         json.dumps(
             {
                 "execucao": execucao,
                 "casos": resumo,
                 "taxa_aprovacao": taxa_aprovacao(resumo),
+                "imagem_institucional": (
+                    str(imagem_institucional)
+                    if imagem_institucional is not None
+                    else "não localizado"
+                ),
                 "falhas": falhas,
             },
             ensure_ascii=False,

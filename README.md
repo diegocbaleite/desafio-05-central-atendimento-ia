@@ -21,12 +21,12 @@ A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
 ## Estado verificável
 | Componente | Status |
 |---|---|
-| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **75 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
+| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **87 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
 | T01/A01/I01: material fornecido (texto, áudio, PDF digitalizado) com gabaritos prévios | Incluídos em `dados/originais/` e `dados/gabaritos/`; conferência humana dos gabaritos pendente |
 | X01/X02: entradas sintéticas de injeção e de campos ausentes | Em `testes/fixtures/` (listadas em `casos.yaml`) |
 | A01: áudio e STT | STT local (faster-whisper) e Groq implementados em `src/audio.py`; o pipeline guarda a transcrição bruta e metadados no mesmo caso da execução; **WER/CER de referência derivada do próprio modelo não é avaliação independente** |
 | I01: PDF digitalizado e OCR | Tesseract local disponível; visão Gemini configurável foi implementada para o preenchimento manuscrito, mantendo transcrição bruta e conferência humana obrigatória. A tentativa real de 18/10/2026 falhou com HTTP 503 e segue pendente; `--mock` lê uma referência fictícia explicitamente rotulada e não representa OCR/modelo real |
-| Imagem institucional (timbre/GOV.MT) | `dados/originais/brasao.png` é citado na minuta; **compatibilidade com documentos GOV.MT não validada oficialmente** |
+| Imagem institucional (timbre/GOV.MT) | `dados/originais/brasao.png` é citado na minuta e incorporado à peça visual; **compatibilidade com documentos GOV.MT não validada oficialmente** |
 | Experimento A/B/C com modelo real | Matriz local registra **9/9 respostas**; **avaliação humana e custo por chamada pendentes** |
 | Peça visual RF10 | Integração Cloudflare Workers AI / `@cf/black-forest-labs/flux-1-schnell` implementada e testada só com simulação; a cota grátis do Workers AI é de 10.000 neurons por dia; **nenhuma imagem real foi gerada ainda** |
 | Decisão humana | CLI interativa exige **responsável e justificativa**, registra hash/versão da minuta e permite nova geração; decisões em YAML são **simulação**, não assinatura de servidor |
@@ -82,7 +82,7 @@ python -m src.main voz resultados/execucoes/<id>/<caso>/minuta_aprovada.md --rev
 python -m src.main arte --referencia dados/originais/brasao.png
 python -m src.main arte --provider cloudflare # FLUX.1 schnell; consome a cota diária gratuita do Workers AI
 ```
-O comando sem argumentos (`python -m src.main`) processa os casos de `dados/originais/casos.yaml`; `audio`, `ocr`, `voz` e `arte` gravam evidências em `resultados/multimodal/<tipo>_<data>_<id>/` (texto bruto, metadados, hash e revisão pendente). No pipeline principal, STT/OCR brutos e seus metadados também ficam em `resultados/execucoes/<id>/<caso>/`, vinculados à mesma execução. O código de saída é **diferente de zero quando algum caso falha** (útil em automação). Ao final, o resumo JSON traz a **taxa de aprovação direta** com denominador explícito: só entram casos com decisão humana real; decisões simuladas (`--mock` ou `--decisoes`) ficam fora do cálculo.
+O comando sem argumentos (`python -m src.main`) processa os casos de `dados/originais/casos.yaml` e, ao fim do ciclo, cria uma peça institucional em `resultados/imagens/arte_<data>_<id>/`, incorporando o `projeto.timbre` configurado (`dados/originais/brasao.png`) sem alterar o original. A pasta inclui proveniência com o hash do brasão e revisão visual pendente. O `--mock` força composição local identificada como programática; fora do mock é usado `multimodal.imagem_provider` de `config/config.yaml`. Os comandos `audio`, `ocr`, `voz` e `arte` gravam evidências em `resultados/multimodal/<tipo>_<data>_<id>/` (texto bruto, metadados, hash e revisão pendente). No pipeline principal, STT/OCR brutos e seus metadados também ficam em `resultados/execucoes/<id>/<caso>/`, vinculados à mesma execução. O código de saída é **diferente de zero quando algum caso ou a geração da peça falha** (útil em automação). Ao final, o resumo JSON informa o caminho da imagem e traz a **taxa de aprovação direta** com denominador explícito: só entram casos com decisão humana real; decisões simuladas (`--mock` ou `--decisoes`) ficam fora do cálculo.
 
 ### Extração antes da minuta
 Os campos são extraídos localmente por regras explícitas em `src/extracao.py`; o LLM **não** extrai nem corrige esses campos. Ele recebe apenas `assunto` e `pedido` para redigir o corpo, depois que a extração é validada e salva em `extracao.json`. No formulário I01, `CÓDIGO` é usado como protocolo, `NOME` como solicitante e `DATA MATRÍCULA` como data da solicitação; o extrator só preenche esses campos se o OCR conseguir ler os rótulos e valores, e a conferência humana no original continua obrigatória. Para texto sem rótulos, o extrator tenta identificar o assunto nos pedidos reconhecidos e reúne pedidos introduzidos por “solicito”, “peço” ou “quero pedir”. O protocolo falado aceita separadores adicionais entre dígitos e números decimais como `1.200` não encerram o pedido. Datas ditas por extenso em português são normalizadas, mas continuam sujeitas à conferência: uma data sem rótulo tem confiança média e datas de nascimento não são tratadas como data da solicitação. Antes de avaliar a minuta, confira o `extracao.json`; para exercitar o fluxo sem chamar APIs, use `python -m src.main --mock --caso T01`.
@@ -144,7 +144,7 @@ Consulte `documentacao/plano_projeto.md`, `lgpd.md`, `protocolo_avaliacao.md`, `
 
 O processo percorre validação da entrada, reconhecimento de texto/voz quando pertinente, extração com evidências, classificação, minuta de resposta, conferência, aprovação ou rejeição, geração de acessibilidade e auditoria. **Nenhuma etapa envia a minuta ao cidadão.**
 
-Ao usar `--mock`, não há medição de desempenho de modelos generativos: a minuta é determinística e, para o áudio A01, é lida a transcrição de referência indicada em `casos.yaml` (texto conferido por pessoa, **não** transcrição do modelo); o OCR de PDF/imagem continua sendo real e local. Para uma demonstração multimodal real, configure as credenciais e use `python -m src.main audio|ocr|voz|arte` conforme `documentacao/parte3_guilherme.md`.
+Ao usar `--mock`, não há medição de desempenho de modelos generativos: a minuta é determinística; A01 lê a transcrição de referência e I01 lê a referência de OCR indicadas em `casos.yaml`. São textos conferidos e explicitamente rotulados, **não** saídas de STT/OCR executadas pelo mock. Para uma demonstração multimodal real, configure os provedores e use `python -m src.main audio|ocr|voz|arte` conforme `documentacao/parte3_guilherme.md`.
 
 # Testes automatizados
 
@@ -152,7 +152,20 @@ Ao usar `--mock`, não há medição de desempenho de modelos generativos: a min
 python -m unittest discover -s testes -t .
 ```
 
-O projeto inclui testes básicos, verificações de segurança e testes de insumos fictícios. **A aprovação do conjunto completo precisa ser confirmada no ambiente local ou no GitHub Actions**; a existência dos testes não prova que todos passaram.
+Em 18/10/2026, **87 testes unitários passaram** no Windows com Python 3.14.6. Eles cobrem regras, integrações simuladas e falhas controladas; não comprovam disponibilidade, custo ou qualidade de provedores externos.
+
+## Validação manual opcional com serviços reais
+
+Os comandos abaixo consomem rede e podem consumir cota. Execute somente com dados fictícios e credenciais autorizadas; registre sucesso ou falha sem transformar mock em evidência real:
+
+```bash
+python -m src.main experimento
+python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
+python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider gemini
+python -m src.main arte --provider cloudflare --referencia dados/originais/brasao.png
+```
+
+O OCR Gemini retornou HTTP 503 após três tentativas em 18/10/2026. A integração permanece implementada, mas sua validação real está pendente. O comando de OCR local é `python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local`.
 
 # Controle de versão
 

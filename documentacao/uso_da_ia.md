@@ -5,7 +5,8 @@
 ## Ferramentas e modelos
 - ChatGPT (OpenAI), assistente de programação/documentação — modelo disponibilizado na conversa: **GPT-6**.
 - Assistente de codificação integrado ao VS Code (Copilot SDK), usado em 17/10/2026 para auditoria, ajustes de código, testes e documentação — **versão/modelo não exposta ao assistente; preencher se a equipe souber**.
-- Modelos usados no fluxo com API: **[preencher após execuções reais]**.
+- Modelo com evidência de chamadas reais no experimento A/B/C: OpenRouter / `nvidia/nemotron-3-super-120b-a12b:free`.
+- Multimodal: STT local com faster-whisper registrado; Groq / `whisper-large-v3-turbo` está configurado, sem nova execução real comprovada nesta revisão. Gemini / `gemini-3.8-flash` está configurado para OCR, mas a tentativa de 18/10/2026 falhou com HTTP 503. Cloudflare / `@cf/black-forest-labs/flux-1-schnell` foi testado apenas com simulação.
 - Resultados `mock` não são resultados de modelo generativo real.
 
 ## Solicitações relevantes feitas à IA
@@ -14,14 +15,16 @@
 3. Criar repositório atualizado e identificar equipe como Diego, Ayron e Guilherme.
 4. Auditar o projeto contra o PDF do desafio (17/10/2026) e executar o sistema para testar; relatório em `auditorias/`.
 5. Ler o PDF do desafio e as diretrizes do agente e ajustar o projeto (17/10/2026): revisão humana com responsável/justificativa/hash/versão, conferência de campos críticos, bloqueio de envio remoto sem autorização, gabaritos e casos para o material fornecido, matriz de requisitos.
-6. Diagnosticar o OCR manuscrito de I01 e ajudar a implementar visão Gemini configurável (18/10/2026), preservando Tesseract local, texto bruto, rastreabilidade e revisão humana obrigatória; 85 testes automatizados passaram, mas usam simulação para a API.
+6. Diagnosticar o OCR manuscrito de I01 e ajudar a implementar visão Gemini configurável (18/10/2026), preservando Tesseract local, texto bruto, rastreabilidade e revisão humana obrigatória; os testes automatizados usam simulação para a API. A tentativa real com `gemini-3.8-flash` terminou em HTTP 503 após três tentativas, portanto sua validação permanece pendente.
+7. Integrar a criação da peça institucional ao fim de `python -m src.main`, salvando evidências em `resultados/imagens/`, sem confundir composição local com imagem gerada por IA.
+8. Incorporar `dados/originais/brasao.png` à peça institucional, preservando o original e registrando seu hash e uso na proveniência.
 
 ## Sugestões e decisões
 | Sugestão | Registro | Justificativa |
 |---|---|---|
 | CLI Python em vez de interface web | Proposta; conferir pela equipe | Escopo reproduzível em 12h |
 | Cliente HTTP OpenAI-compatible | Proposta; conferir pela equipe | Menor acoplamento de provedor |
-| OCR local em vez de subir imagem | Proposta; conferir pela equipe | Privacidade e custo |
+| Manter Tesseract local como alternativa ao OCR remoto | Implementado; o padrão atual usa Gemini e deve ser escolhido conscientemente | Privacidade e custo; o modo local evita enviar as páginas do documento ao provedor |
 | Decisão humana antes de TTS | Proposta; conferir pela equipe | Evitar disseminar minuta não aprovada |
 | Imagem local sem IA como se fosse IA | **Rejeitada** | Origem do material deve ser declarada corretamente |
 | Provedores externos multimodais | Decisão atual: chamadas ocorrem conforme provedor configurado ou selecionado; o STT padrão é Groq e envia o áudio original. O comando `arquivos` e `extracao_llm.py` foram removidos por decisão da equipe (17/10/2026). | Reduzir etapas de execução; usar somente conteúdo fictício em serviços externos |
@@ -37,6 +40,8 @@
 - [ ] Registrar outros defeitos encontrados e correções realizadas em execução real.
 - [ ] Conferir que nenhum arquivo de origem/gabarito foi alterado para coincidir artificialmente com saída.
 - [ ] Preencher ambiente de validação, métricas e responsáveis.
+- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada para 87 testes.
+- [x] 18/10/2026: fluxo padrão passou a criar a peça institucional ao final em `resultados/imagens/`; sucesso e falha cobertos por testes.
 
 ## Validação do código e do conteúdo gerado
 `python -m unittest discover -s testes -t .` e execução de `python -m src.main --mock` com decisões simuladas (sem APIs). Validação por serviço real e por pessoa: ver `documentacao/matriz_requisitos.md`.

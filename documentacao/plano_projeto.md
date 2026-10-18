@@ -8,7 +8,7 @@ flowchart TD
  B --> C{Modalidade}
  C -->|texto| D[Texto preservado]
  C -->|áudio| E[STT + bruto/revisado + WER]
- C -->|imagem| F[OCR local + bruto/revisado + CER]
+ C -->|imagem| F[OCR local ou visão configurada + bruto/revisado + CER]
  D --> G[Extrair campos com evidência + JSON Schema]
  E --> G
  F --> G

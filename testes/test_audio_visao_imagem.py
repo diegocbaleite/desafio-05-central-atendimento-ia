@@ -408,13 +408,24 @@ class TestControleHumano(unittest.TestCase):
             self.assertEqual(list(destino.iterdir()), [])
 
     def test_imagem_local_grava_proveniencia_sem_ia(self):
+        from PIL import Image
+
         with tempfile.TemporaryDirectory() as d:
             destino = Path(d) / "peca.png"
-            imagem.imagem_local(destino)
+            referencia = Path(d) / "brasao.png"
+            Image.new("RGB", (40, 40), "red").save(referencia)
+            imagem.imagem_local(destino, referencia=referencia)
             nota = json.loads((Path(d) / "peca.proveniencia.json").read_text(encoding="utf-8"))
             self.assertTrue(destino.exists())
             self.assertFalse(nota["por_ia"])
             self.assertEqual(nota["metodo"], "composicao_programatica")
+            self.assertTrue(nota["referencia_visual"]["incorporada_na_arte"])
+            self.assertEqual(
+                nota["referencia_visual"]["sha256"],
+                hashlib.sha256(referencia.read_bytes()).hexdigest(),
+            )
+            with Image.open(destino) as peca:
+                self.assertEqual(peca.getpixel((480, 77)), (255, 0, 0))
 
 
 if __name__ == "__main__":

@@ -30,12 +30,14 @@ A frente de Engenharia de Prompts executou uma rodada **real** posterior, distin
 
 ### Andamento da revisão humana da matriz A/B/C original — 18/10/2026
 
-**Confirmadas 3 de 9 respostas históricas** pelo responsável:
-- **C01/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar**, devido a prazo, gratuidade e procedimentos inventados.
-- **C01/B:** F1 C1 Fo1 L2 S1 = **6/10**, **corrigir**, devido a registro administrativo não comprovado, destinatário incorreto e lacunas omitidas.
-- **C01/C:** F0 C1 Fo0 L1 S0 = **2/10**, **rejeitar**, devido a ata indevida, deferimento, prazo e procedimentos inventados.
+**Confirmadas 4 de 9 respostas históricas** pelo responsável:
 
-**C05/A–C e C06/A–C permanecem pendentes de avaliação humana.** As respostas originais foram preservadas. O documento [avaliacao_rf13_nove_casos_pendente.csv](avaliacao_rf13_nove_casos_pendente.csv) registra notas humanas separadas das notas sugeridas da IA. Homologação RF13 integral ainda pendente.
+- **C01/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar** por prazo, gratuidade e procedimentos inventados.
+- **C01/B:** F1 C1 Fo1 L2 S1 = **6/10**, **corrigir** por alegação de registro não comprovado, destinatário incorreto e lacunas omitidas.
+- **C01/C:** F0 C1 Fo0 L1 S0 = **2/10**, **rejeitar** por ata indevida, deferimento e prazo inventados.
+- **C05/A:** F0 C1 Fo1 L1 S0 = **3/10**, **rejeitar** por registro e análise fictícios da reclamação, prazo e canais institucionais inventados.
+
+**C05/B–C e C06/A–C permanecem pendentes de avaliação humana.** As saídas originais do OpenRouter não foram alteradas. A [planilha RF13 histórica](avaliacao_rf13_nove_casos_pendente.csv) preserva separadas as notas sugeridas da IA e as notas humanas confirmadas. A homologação final RF13 segue pendente.
 
 ## Arquitetura
 Python CLI → entrada fictícia preservada → texto/STT/OCR → extração e classificação JSON com evidências e SHA-256 → minimização → geração de minuta com prompt seguro → revisão humana (aprovar, rejeitar ou corrigir) → recursos de acessibilidade e comunicação visual → auditoria. Detalhes em `plano_projeto.md`. **O protótipo não envia respostas automaticamente.**

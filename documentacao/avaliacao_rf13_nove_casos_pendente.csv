@@ -1,7 +1,7 @@
 caso,prompt,arquivo_saida_original,fidelidade_sugerida_ia,completude_sugerida_ia,formato_sugerido_ia,linguagem_sugerida_ia,seguranca_sugerida_ia,nota_total_ia,decisao_sugerida_ia,fidelidade_humana,completude_humana,formato_humano,linguagem_humana,seguranca_humana,nota_total_humana,decisao_humana,justificativa_humana,tom_humano_1a5,minutos_correcao_medidos,revisor,data_revisao
 C01,A,resultados/experimento_prompts/real/C01_prompt_A_saida.txt,0,1,1,1,0,3,rejeitar,0,1,1,1,0,3,rejeitar,Informações administrativas inventadas: prazo de 3 a 5 dias úteis; gratuidade; procedimentos de emissão e envio.,,,Diego,2026-10-18
 C01,B,resultados/experimento_prompts/real/C01_prompt_B_saida.txt,1,1,1,2,1,6,corrigir,1,1,1,2,1,6,corrigir,Registro administrativo não comprovado; destinatário incorreto; lacunas não identificadas.,,,Diego,2026-10-18
-C01,C,resultados/experimento_prompts/real/C01_prompt_C_saida.txt,0,1,0,1,0,2,rejeitar,,,,,,,,,,,,
+C01,C,resultados/experimento_prompts/real/C01_prompt_C_saida.txt,0,1,0,1,0,2,rejeitar,0,1,0,1,0,2,rejeitar,Gerou ata indevida; inventou deferimento; prazo e procedimentos sem fonte.,,,Diego,2026-10-18
 C05,A,resultados/experimento_prompts/real/C05_prompt_A_saida.txt,0,1,1,1,0,3,rejeitar,,,,,,,,,,,,
 C05,B,resultados/experimento_prompts/real/C05_prompt_B_saida.txt,1,2,2,2,1,8,corrigir,,,,,,,,,,,,
 C05,C,resultados/experimento_prompts/real/C05_prompt_C_saida.txt,0,1,0,1,1,3,rejeitar,,,,,,,,,,,,

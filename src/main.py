@@ -73,7 +73,16 @@ def preparar_entrada(path, modo, mock=False, referencia=None):
     if modo == "texto":
         return path.read_text(encoding="utf-8")
     if modo == "imagem":
-        return ler_imagem(path)
+        if mock:
+            if not referencia or not Path(referencia).is_file():
+                raise ValueError(
+                    "Referência fictícia de OCR ausente: " + str(referencia)
+                )
+            return Path(referencia).read_text(encoding="utf-8")
+        cfg = carregar()
+        provider = cfg["multimodal"].get("ocr_provider", "local")
+        modelo = cfg["multimodal"].get("ocr_modelo")
+        return ler_imagem(path, provider=provider, modelo=modelo)
     if modo == "audio":
         if mock:
             # O modo mock lê somente uma referência explicitamente rotulada;
@@ -219,9 +228,29 @@ def _gravar_entrada_multimodal(pasta_caso, caso, texto, mock, duracao_s):
             parametros["referencia"] = caso.get("transcricao_referencia")
             parametros["transcricao_real"] = False
     else:
-        provedor = "local"
-        modelo = "Tesseract"
-        parametros = {"idioma": "por", "psm": 6, "limite_paginas": 3}
+        cfg = carregar()
+        provedor = (
+            "referencia_ficticia"
+            if mock
+            else cfg["multimodal"].get("ocr_provider", "local")
+        )
+        modelo = (
+            "não aplicado"
+            if mock
+            else
+            "Tesseract"
+            if provedor == "local"
+            else cfg["multimodal"].get("ocr_modelo", "não localizado")
+        )
+        parametros = {
+            "idioma": "por",
+            "psm": 6 if provedor == "local" else "não aplicado",
+            "limite_paginas": 3,
+            "dpi_pdf": 300,
+        }
+        if mock:
+            parametros["referencia"] = caso.get("ocr_referencia")
+            parametros["ocr_real"] = False
     dados = {
         "tipo": "STT" if caso["modalidade"] == "audio" else "OCR",
         "caso": caso["id"],
@@ -275,7 +304,13 @@ def executar_caso(
             "Decisão fornecida por código deve ser marcada como simulada; "
             "decisão humana real só é obtida no terminal"
         )
-    referencia = caso.get("transcricao_referencia")
+    referencia = (
+        caso.get("transcricao_referencia")
+        if caso["modalidade"] == "audio"
+        else caso.get("ocr_referencia")
+        if caso["modalidade"] == "imagem"
+        else None
+    )
     inicio_preparacao = time.monotonic()
     texto = preparar_entrada(
         entrada,
@@ -528,8 +563,14 @@ def _comando_midia(a):
                 revisado=a.revisado,
             )
         elif a.comando == "ocr":
+            cfg = carregar()
             pasta = avaliar_ocr(
-                a.entrada, psm=a.psm, gabarito=a.gabarito, revisado=a.revisado
+                a.entrada,
+                psm=a.psm,
+                gabarito=a.gabarito,
+                revisado=a.revisado,
+                provider=a.provider or cfg["multimodal"].get("ocr_provider", "local"),
+                modelo=cfg["multimodal"].get("ocr_modelo"),
             )
         elif a.comando == "voz":
             if not a.revisao:
@@ -580,7 +621,7 @@ def main():
     )
     p.add_argument(
         "--provider",
-        help="audio: local|groq; voz: provedor TTS; imagem/arte: local|cloudflare (FLUX.1 schnell; cota grátis de 10.000 neurons/dia)",
+        help="audio: local|groq; ocr: local|gemini; voz: provedor TTS; imagem/arte: local|cloudflare (FLUX.1 schnell; cota grátis de 10.000 neurons/dia)",
     )
     p.add_argument("--modelo-local", default="small", help="audio local (Whisper)")
     p.add_argument(

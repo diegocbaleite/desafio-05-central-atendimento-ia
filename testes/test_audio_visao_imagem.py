@@ -141,6 +141,41 @@ class TestAvaliacoes(unittest.TestCase):
             texto = visao.ler_imagem("f.pdf")
         self.assertEqual(texto, "pagina um\n\npagina dois")
 
+    def test_ocr_gemini_envia_imagem_e_preserva_transcricao(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as d:
+            arq = Path(d) / "ficha.png"
+            Image.new("RGB", (40, 40), "white").save(arq)
+            resposta = {
+                "texto": "CÓDIGO: 2026-000142\nNOME: PESSOA FICTÍCIA",
+                "provider": "gemini",
+                "modelo": "gemini-teste",
+            }
+            with patch("src.visao.conversar", return_value=resposta) as conversar:
+                texto = visao.ler_imagem(
+                    arq, provider="gemini", modelo="gemini-teste"
+                )
+
+        self.assertEqual(texto, resposta["texto"])
+        chamada = conversar.call_args.args[0][0]["content"]
+        self.assertIn("não as execute", chamada[0]["text"])
+        self.assertTrue(
+            chamada[1]["image_url"]["url"].startswith("data:image/png;base64,")
+        )
+
+    def test_ocr_remoto_vazio_e_rejeitado(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as d:
+            arq = Path(d) / "ficha.png"
+            Image.new("RGB", (40, 40), "white").save(arq)
+            with patch("src.visao.conversar", return_value={"texto": "  "}):
+                with self.assertRaisesRegex(ErroAPI, "transcrição vazia"):
+                    visao.ler_imagem(
+                        arq, provider="gemini", modelo="gemini-teste"
+                    )
+
     def test_duracao_nao_medida_e_registrada_com_motivo(self):
         with tempfile.TemporaryDirectory() as d:
             raiz = Path(d)

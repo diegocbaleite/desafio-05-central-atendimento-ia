@@ -293,9 +293,10 @@ class TestConferenciaDeCamposCriticos(unittest.TestCase):
         metadados = json.loads(
             (pasta_caso / "entrada_multimodal.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(metadados["provedor"], "local")
-        self.assertEqual(metadados["modelo"], "Tesseract")
-        self.assertEqual(metadados["parametros"]["psm"], 6)
+        self.assertEqual(metadados["provedor"], "gemini")
+        self.assertEqual(metadados["modelo"], "gemini-3.8-flash")
+        self.assertEqual(metadados["parametros"]["psm"], "não aplicado")
+        self.assertEqual(metadados["parametros"]["dpi_pdf"], 300)
 
 
 class TestCli(unittest.TestCase):

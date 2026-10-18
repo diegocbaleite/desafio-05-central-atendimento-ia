@@ -9,6 +9,10 @@ casos:
     modalidade: audio
     arquivo: dados/originais/entrada_audio.mp3
     transcricao_referencia: resultados/multimodal/referencias/referencia_audio_conferida.txt
-  - {id: I01, modalidade: imagem, arquivo: dados/originais/entrada_pdf-imagem.pdf}
+  - id: I01
+    modalidade: imagem
+    arquivo: dados/originais/entrada_pdf-imagem.pdf
+    # Usada somente com --mock; é texto conferido, não saída do Tesseract/modelo.
+    ocr_referencia: resultados/multimodal/referencias/referencia_ocr_conferida.txt
   - {id: X01, modalidade: texto, arquivo: testes/fixtures/injecao.txt}
   - {id: X02, modalidade: texto, arquivo: testes/fixtures/lacunas.txt}

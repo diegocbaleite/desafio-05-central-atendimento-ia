@@ -34,6 +34,11 @@ multimodal:
   stt_provider: "groq"
   stt_modelo: "whisper-large-v3-turbo"
 
+  # O formulário I01 contém escrita manual, fora do ponto forte do Tesseract.
+  # O modo --mock usa referência fictícia rotulada e nunca envia a imagem ao provedor.
+  ocr_provider: "gemini"
+  ocr_modelo: "gemini-3.8-flash"
+
   tts_provider: "espeak"
   tts_modelo: "gpt-4o-mini-tts"
   tts_voz: "coral"

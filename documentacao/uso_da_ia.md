@@ -14,6 +14,7 @@
 3. Criar repositório atualizado e identificar equipe como Diego, Ayron e Guilherme.
 4. Auditar o projeto contra o PDF do desafio (17/10/2026) e executar o sistema para testar; relatório em `auditorias/`.
 5. Ler o PDF do desafio e as diretrizes do agente e ajustar o projeto (17/10/2026): revisão humana com responsável/justificativa/hash/versão, conferência de campos críticos, bloqueio de envio remoto sem autorização, gabaritos e casos para o material fornecido, matriz de requisitos.
+6. Diagnosticar o OCR manuscrito de I01 e ajudar a implementar visão Gemini configurável (18/10/2026), preservando Tesseract local, texto bruto, rastreabilidade e revisão humana obrigatória; 85 testes automatizados passaram, mas usam simulação para a API.
 
 ## Sugestões e decisões
 | Sugestão | Registro | Justificativa |

@@ -15,16 +15,16 @@ Checklist de entrega:
 - [x] Arquivos de teste usam personagens inventados.
 - [x] `.env` não é versionado; tokens nunca são exibidos intencionalmente.
 - [x] A chamada de estruturação ao OpenRouter minimiza CPF, e-mail e telefone; não envia esses campos como evidência.
-- [x] A leitura remota de PDF/áudio está documentada como transferência do arquivo original ao Gemini; a demonstração deve usar apenas arquivos fictícios.
+- [x] OCR local (Tesseract) e STT local (Whisper) são as rotas padrão; leitura remota de áudio exige autorização explícita e dados fictícios.
 - [x] OCR local é alternativa de processamento soberano.
 - [x] Não existe envio automático.
-- [x] O comando `python -m src.main arquivos` exige `--autorizar-api`; sem a opção nada é enviado a provedores externos.
+- [x] Áudio de entrada só vai a provedor externo com `--autorizar-api` (inclusive no fluxo principal); sem a opção nada é enviado.
 - [ ] Confirmar por escrito que todo o material de `dados/originais/` (texto, áudio, PDF) é fictício; os arquivos contêm nome, CPF, RG, e-mail e nome da mãe, que seriam dados pessoais em um cenário real.
 - [ ] Confirmar tratamento e retenção contratual do provedor selecionado.
 - [ ] Definir regra de retenção/descarte se houver implantação futura.
 - [ ] Inspecionar logs/prints antes de publicar.
 - [ ] Confirmar se nenhuma gravação contém voz real de pessoa sem autorização.
 
-O comando `python -m src.main arquivos --autorizar-api` mantém o texto extraído no diretório local ignorado pelo Git para preservar evidências. A etapa de leitura de PDF/áudio envia os bytes originais ao Gemini, portanto **não deve receber conteúdo real ou confidencial**. Para um cenário real, use OCR/STT local, defina retenção e acesso às transcrições e conclua uma avaliação de privacidade e segurança antes de habilitar provedores remotos.
+Os artefatos de execução (texto extraído, transcrição, OCR) ficam em diretórios locais para preservar evidências. A transcrição remota (Groq) envia o áudio original ao provedor, portanto **não deve receber conteúdo real ou confidencial**. Para um cenário real, use OCR/STT local, defina retenção e acesso às transcrições e conclua uma avaliação de privacidade e segurança antes de habilitar provedores remotos.
 
 Bases para avaliação interna: finalidade, adequação, necessidade, transparência, segurança, prevenção, prestação de contas (art. 6º da LGPD), governança e transparência de decisões; para transferências internacionais reais é necessária análise adicional (art. 33). Não equiparar pseudonimização a anonimização.

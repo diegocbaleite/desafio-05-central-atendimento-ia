@@ -23,7 +23,9 @@
 | OCR local em vez de subir imagem | Proposta; conferir pela equipe | Privacidade e custo |
 | Decisão humana antes de TTS | Proposta; conferir pela equipe | Evitar disseminar minuta não aprovada |
 | Imagem local sem IA como se fosse IA | **Rejeitada** | Origem do material deve ser declarada corretamente |
-| `arquivos` exigir `--autorizar-api` | Aceita nesta rodada; conferir pela equipe | Evitar envio acidental de PDF/áudio a provedores externos |
+| `arquivos` exigir `--autorizar-api` | Aceita e depois substituída: o comando `arquivos` e `extracao_llm.py` foram removidos por decisão da equipe (17/10/2026); a trava `--autorizar-api` ficou no STT remoto, voz e arte | Evitar envio acidental de áudio/PDF a provedores externos |
+| Fundir `multimodal.py`, `guilherme_multimodal.py` e `arte_ia.py` em `audio.py`, `visao.py` e `imagem.py`; WER/CER só em `avaliacao.py`; CLI único em `src.main` | Aprovada pela equipe (17/10/2026) | Eliminar STT/TTS/OCR/Levenshtein duplicados e seguir a estrutura sugerida no PDF |
+| Apagar `scripts/*`, `LEIA_PRIMEIRO.txt` e `prompts/sistema_extracao.md` | Aprovada pela equipe (17/10/2026) | Obsoletos: apontavam para pastas e módulos que não existem mais, ou só eram lidos pela extração por LLM removida |
 | Manter só o material fornecido em `dados/` e mover injeção/lacunas para `testes/fixtures/` | Decisão da equipe (resposta registrada na conversa) | Respeita o commit que removeu os casos sintéticos e preserva cobertura de RF03/RF05 |
 | Aprovação exige responsável e justificativa digitados no terminal | Aceita; conferir pela equipe | RF11/RF13 e diretriz de não preencher decisão humana por conta própria |
 

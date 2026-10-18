@@ -29,12 +29,6 @@ provedores:
     base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
     env_chave: "GEMINI_API_KEY"
 
-extracao_llm:
-  pasta_entrada: "dados/originais"
-  gemini_modelo: "gemini-3.8-flash"
-  estruturacao_provider: "openrouter"
-  estruturacao_modelo: "nvidia/nemotron-3-super-120b-a12b:free"
-
 multimodal:
   stt_provider: "groq"
   stt_modelo: "whisper-large-v3-turbo"

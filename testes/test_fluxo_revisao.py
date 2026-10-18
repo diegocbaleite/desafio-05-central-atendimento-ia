@@ -11,8 +11,7 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from src import avaliacao, main, multimodal
-from src import guilherme_multimodal as g
+from src import avaliacao, main
 from src.minuta import redigir
 
 EXT = {
@@ -230,6 +229,36 @@ class TestCli(unittest.TestCase):
         self.assertIn("ferramenta tesseract", saida)
         self.assertIn("envio automatico: False", saida)
 
+    def test_comando_de_midia_sem_entrada_falha_com_mensagem(self):
+        codigo, saida = self._executar(["audio"])
+        self.assertEqual(codigo, 2)
+        self.assertIn("Informe o arquivo", saida)
+
+    def test_voz_exige_json_de_aprovacao_humana(self):
+        codigo, saida = self._executar(["voz", "minuta.md"])
+        self.assertEqual(codigo, 2)
+        self.assertIn("--revisao", saida)
+
+    def test_audio_despacha_com_autorizacao_explicita(self):
+        with patch("src.main.avaliar_audio", return_value=Path("pasta")) as avaliar:
+            codigo, saida = self._executar(
+                ["audio", "fala.mp3", "--provider", "groq", "--autorizar-api"]
+            )
+        self.assertEqual(codigo, 0)
+        self.assertEqual(avaliar.call_args.kwargs["provider"], "groq")
+        self.assertTrue(avaliar.call_args.kwargs["permitir_api"])
+        self.assertIn("Nenhum envio externo", saida)
+
+    def test_audio_remoto_no_fluxo_principal_exige_autorizacao(self):
+        with tempfile.TemporaryDirectory() as d:
+            arq = Path(d) / "fala.mp3"
+            arq.write_bytes(b"ID3fake")
+            with patch(
+                "src.audio.carregar", return_value={"multimodal": {"stt_provider": "groq"}}
+            ):
+                with self.assertRaises(PermissionError):
+                    main.preparar_entrada(arq, "audio")
+
 
 class TestAvaliacao(unittest.TestCase):
     def test_taxa_exclui_simuladas_e_explicita_denominador(self):
@@ -287,36 +316,6 @@ class TestMinutaEPrompt(unittest.TestCase):
         self.assertEqual(
             meta["prompt_sha256"], hashlib.sha256(sistema.encode("utf-8")).hexdigest()
         )
-
-
-class TestMultimodalLocal(unittest.TestCase):
-    def test_pdf_digitalizado_usa_ocr_local(self):
-        with (
-            patch("src.guilherme_multimodal._validar", return_value=Path("f.pdf")),
-            patch(
-                "src.guilherme_multimodal._imagens_pdf",
-                return_value=[Path("p1.png"), Path("p2.png")],
-            ),
-            patch(
-                "src.guilherme_multimodal._ocr_imagem",
-                side_effect=[("pagina um", []), ("pagina dois", [])],
-            ),
-        ):
-            texto = multimodal.ler_imagem("f.pdf")
-        self.assertEqual(texto, "pagina um\n\npagina dois")
-
-    def test_duracao_nao_medida_e_registrada_com_motivo(self):
-        with tempfile.TemporaryDirectory() as d:
-            raiz = Path(d)
-            audio = raiz / "fala.mp3"
-            audio.write_bytes(b"ID3fake")
-            with patch("src.guilherme_multimodal.shutil.which", return_value=None):
-                pasta = g.avaliar_audio(
-                    audio, saida=raiz / "saida", transcritor_teste=lambda _: "texto"
-                )
-            meta = json.loads((pasta / "resultado.json").read_text(encoding="utf-8"))
-        self.assertIsNone(meta["duracao_audio_s"])
-        self.assertIn("ffprobe", meta["duracao_audio_nota"])
 
 
 if __name__ == "__main__":

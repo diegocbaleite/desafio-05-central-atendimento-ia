@@ -8,7 +8,7 @@ casos:
   - id: A01
     modalidade: audio
     arquivo: dados/originais/entrada_audio.mp3
-    transcricao_referencia: resultados/guilherme/referencias/referencia_audio_conferida.txt
+    transcricao_referencia: resultados/multimodal/referencias/referencia_audio_conferida.txt
   - {id: I01, modalidade: imagem, arquivo: dados/originais/entrada_pdf-imagem.pdf}
   - {id: X01, modalidade: texto, arquivo: testes/fixtures/injecao.txt}
   - {id: X02, modalidade: texto, arquivo: testes/fixtures/lacunas.txt}

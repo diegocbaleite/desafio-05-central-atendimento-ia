@@ -6,5 +6,5 @@
   "data_solicitacao": "14/10/2026",
   "alerta_injecao": false,
   "decisao_esperada": "corrigir se campos críticos divergirem do áudio original; nunca aprovar sem conferência humana",
-  "origem_gabarito": "Protocolo e data ditos no áudio conforme resultados/guilherme/referencias/referencia_audio_conferida.txt (conferida por pessoa); a data é falada por extenso e deve ser normalizada. Conferência independente pendente."
+  "origem_gabarito": "Protocolo e data ditos no áudio conforme resultados/multimodal/referencias/referencia_audio_conferida.txt (conferida por pessoa); a data é falada por extenso e deve ser normalizada. Conferência independente pendente."
 }

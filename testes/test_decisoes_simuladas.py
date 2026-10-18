@@ -117,13 +117,13 @@ class TestDecisoesSimuladas(unittest.TestCase):
 
 
 class TestComandoImagem(unittest.TestCase):
-    @patch("src.arte_ia.gerar", return_value="imagem-gerada.png")
+    @patch("src.main.gerar", return_value="imagem-gerada.png")
     def test_usa_provedor_configurado_sem_mock(self, gerar):
         with patch.object(sys, "argv", ["main", "imagem"]), redirect_stdout(StringIO()):
             main.main()
         gerar.assert_called_once()
 
-    @patch("src.arte_ia.gerar")
+    @patch("src.main.gerar")
     @patch("src.main.imagem_local", return_value="imagem-local.png")
     def test_mock_forca_composicao_local(self, imagem_local, gerar):
         with (
@@ -133,30 +133,6 @@ class TestComandoImagem(unittest.TestCase):
             main.main()
         imagem_local.assert_called_once()
         gerar.assert_not_called()
-
-
-class TestComandoArquivos(unittest.TestCase):
-    @patch("src.extracao_llm.extrair_pasta", return_value={})
-    def test_anuncia_fluxo_de_extracao(self, extrair_pasta):
-        saida = StringIO()
-        with (
-            patch.object(sys, "argv", ["main", "arquivos", "--autorizar-api"]),
-            redirect_stdout(saida),
-        ):
-            main.main()
-
-        self.assertIn("extração multimodal de arquivos", saida.getvalue())
-        self.assertTrue(callable(extrair_pasta.call_args.kwargs["progresso"]))
-
-    @patch("src.extracao_llm.extrair_pasta")
-    def test_bloqueia_envio_remoto_sem_autorizacao(self, extrair_pasta):
-        saida = StringIO()
-        with patch.object(sys, "argv", ["main", "arquivos"]), redirect_stdout(saida):
-            codigo = main.main()
-
-        self.assertEqual(codigo, 2)
-        self.assertIn("--autorizar-api", saida.getvalue())
-        extrair_pasta.assert_not_called()
 
 
 if __name__ == "__main__":

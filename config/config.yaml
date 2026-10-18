@@ -1,7 +1,6 @@
 projeto:
   nome: "Central Inteligente de Atendimento e Comunicação Institucional"
   orgao: "Secretaria Fictícia de Serviços ao Cidadão"
-  # Símbolo fornecido pela equipe; compatibilidade GOV.MT não validada oficialmente.
   timbre: "dados/originais/brasao.png"
   casos: "dados/originais/casos.yaml"
 
@@ -43,7 +42,7 @@ multimodal:
   tts_modelo: "gpt-4o-mini-tts"
   tts_voz: "coral"
 
-  imagem_provider: "local"
+  imagem_provider: "cloudflare"
   imagem_modelo: "@cf/black-forest-labs/flux-1-schnell"
 
 seguranca:

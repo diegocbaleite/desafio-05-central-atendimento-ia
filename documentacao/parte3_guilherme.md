@@ -32,7 +32,7 @@ A execução estritamente local deve informar o provedor explicitamente:
 ```bash
 python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider local --psm 6
 ```
-A saída fica em `resultados/multimodal/ocr_<id>/ocr_bruto.txt`, `resultado.json` e `PENDENTE_REVISAO.md`. Caso o OCR misture nomes e números manuscritos, não “corrigir” silenciosamente: conferir a imagem original e fornecer depois um arquivo `--revisado` manual. A configuração padrão atual seleciona Gemini; `python -m src.main ocr ... --provider gemini` envia cada página renderizada ao provedor. A tentativa real de 18/10/2026 terminou em HTTP 503 após três tentativas e não valida a qualidade do modelo.
+A saída fica em `resultados/ocr/ocr_<id>/ocr_bruto.txt`, `resultado.json` e `PENDENTE_REVISAO.md`. Caso o OCR misture nomes e números manuscritos, não “corrigir” silenciosamente: conferir a imagem original e fornecer depois um arquivo `--revisado` manual. A configuração padrão atual seleciona Gemini; `python -m src.main ocr ... --provider gemini` envia cada página renderizada ao provedor. A tentativa real de 18/10/2026 terminou em HTTP 503 após três tentativas e não valida a qualidade do modelo.
 
 ### STT local (opcional, requer faster-whisper)
 ```bash
@@ -75,14 +75,14 @@ O catálogo oficial do Workers AI documenta o FLUX.1 schnell como texto-para-ima
 
 ## Onde ficam resultados e auditoria
 
-Cada execução cria uma pasta única em `resultados/multimodal/` com metadados (`resultado.json` ou `revisao_visual.json`). Os arquivos originais não são modificados. O relatório não deve sair da máquina com nomes, CPF, RG, áudio de voz ou outro dado pessoal real. Inclua `resultados/multimodal/` em `.gitignore` se usar esses comandos no repositório.
+STT e TTS criam pastas únicas em `resultados/audios/`, OCR em `resultados/ocr/` e o comando `arte` em `resultados/imagens/`, sempre com data e identificador. Os arquivos originais não são modificados. O relatório não deve sair da máquina com nomes, CPF, RG, áudio de voz ou outro dado pessoal real. As pastas de execução devem permanecer ignoradas pelo Git quando contiverem dados não revisados.
 
 ## Testes
 ```bash
 python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
-Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais executados depois pela equipe estão em `resultados/multimodal/` (ver `documentacao/matriz_requisitos.md`). A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 88 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
+Na elaboração original, 13 testes novos passaram com *stubs* e foi feita uma execução local real de OCR do PDF fornecido (Tesseract português), que evidenciou reconhecimento imperfeito de campos manuscritos e trechos com baixa confiança. **Atualização:** o código foi reorganizado em `src/audio.py`, `src/visao.py` e `src/imagem.py`; STT/TTS locais históricos estão em `resultados/multimodal/`, enquanto novas execuções usam `resultados/audios/`. A integração Cloudflare tem testes simulados; a geração real e a homologação humana seguem pendentes. A suíte completa tem 89 testes aprovados em 18/10/2026 no Windows; repetir no repositório de entrega Ubuntu e anexar evidências após conferir privacidade.
 
 ## Checklist de aceite — validação humana obrigatória
 - [ ] Confirmar que os arquivos enviados a serviços externos contêm somente dados fictícios.

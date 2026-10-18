@@ -328,6 +328,9 @@ class TestCli(unittest.TestCase):
         self.assertEqual(codigo, 0)
         self.assertEqual(gerar.call_args.kwargs["provider"], "local")
         self.assertEqual(
+            gerar.call_args.kwargs["saida"], main.ROOT / "resultados" / "imagens"
+        )
+        self.assertEqual(
             gerar.call_args.kwargs["referencia"],
             main.ROOT / "dados" / "originais" / "brasao.png",
         )
@@ -359,6 +362,13 @@ class TestCli(unittest.TestCase):
         saida = StringIO()
         with (
             patch.object(sys, "argv", ["main"]),
+            patch(
+                "src.main.carregar",
+                return_value={
+                    "multimodal": {"imagem_provider": "local"},
+                    "projeto": {"timbre": "dados/originais/brasao.png"},
+                },
+            ),
             patch("src.main.carregar_casos", return_value=[]),
             patch("src.main.nova_execucao", return_value="exec"),
             patch("src.main.registrar"),
@@ -422,7 +432,43 @@ class TestCli(unittest.TestCase):
             )
         self.assertEqual(codigo, 0)
         self.assertEqual(avaliar.call_args.kwargs["provider"], "groq")
+        self.assertEqual(
+            avaliar.call_args.kwargs["saida"], main.ROOT / "resultados" / "audios"
+        )
         self.assertIn("Nenhum envio externo", saida)
+
+    def test_ocr_e_voz_usam_diretorios_especificos(self):
+        ocr_args = SimpleNamespace(
+            comando="ocr",
+            entrada="formulario.png",
+            psm=6,
+            gabarito=None,
+            revisado=None,
+            provider="local",
+        )
+        voz_args = SimpleNamespace(
+            comando="voz",
+            entrada="minuta.md",
+            revisao="revisao.json",
+            provider="espeak",
+        )
+        with (
+            patch(
+                "src.main.carregar",
+                return_value={"multimodal": {"ocr_modelo": "modelo-teste"}},
+            ),
+            patch("src.main.avaliar_ocr", return_value=Path("ocr")) as avaliar,
+            patch("src.main.gerar_voz", return_value=Path("voz")) as gerar,
+            patch("builtins.print"),
+        ):
+            self.assertEqual(main._comando_midia(ocr_args), 0)
+            self.assertEqual(main._comando_midia(voz_args), 0)
+        self.assertEqual(
+            avaliar.call_args.kwargs["saida"], main.ROOT / "resultados" / "ocr"
+        )
+        self.assertEqual(
+            gerar.call_args.kwargs["saida"], main.ROOT / "resultados" / "audios"
+        )
 
     def test_fluxo_principal_encaminha_audio_ao_provedor_configurado(self):
         with tempfile.TemporaryDirectory() as d:

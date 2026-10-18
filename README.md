@@ -21,7 +21,7 @@ A distribuição é sugerida: **todos devem compreender o projeto inteiro**.
 ## Estado verificável
 | Componente | Status |
 |---|---|
-| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **88 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
+| Esqueleto Python, API configurável, testes, extração, JSON Schema, rastreabilidade | Implementado; **89 testes unitários passaram** em 18/10/2026 (Windows, Python 3.14.6) |
 | T01/A01/I01: material fornecido (texto, áudio, PDF digitalizado) com gabaritos prévios | Incluídos em `dados/originais/` e `dados/gabaritos/`; conferência humana dos gabaritos pendente |
 | X01/X02: entradas sintéticas de injeção e de campos ausentes | Em `testes/fixtures/` (listadas em `casos.yaml`) |
 | A01: áudio e STT | STT local (faster-whisper) e Groq implementados em `src/audio.py`; o pipeline guarda a transcrição bruta e metadados no mesmo caso da execução; **WER/CER de referência derivada do próprio modelo não é avaliação independente** |
@@ -82,7 +82,7 @@ python -m src.main voz resultados/minutas/<id>/<caso>/minuta_aprovada.md --revis
 python -m src.main arte --referencia dados/originais/brasao.png
 python -m src.main arte --provider cloudflare # FLUX.1 schnell; consome a cota diária gratuita do Workers AI
 ```
-O comando sem argumentos (`python -m src.main`) usa o mesmo ID para separar as saídas: extrações e evidências de entrada em `resultados/execucoes/<id>/<caso>/`, minutas versionadas e revisões em `resultados/minutas/<id>/<caso>/`, auditoria JSONL em `resultados/logs/<id>/auditoria.jsonl` e a peça institucional em `resultados/imagens/arte_<data>_<id>/`. A imagem incorpora o `projeto.timbre` configurado (`dados/originais/brasao.png`) sem alterar o original e inclui proveniência com o hash do brasão e revisão visual pendente. O `--mock` força composição local identificada como programática; fora do mock é usado `multimodal.imagem_provider` de `config/config.yaml`. Os comandos isolados `audio`, `ocr`, `voz` e `arte` continuam gravando evidências em `resultados/multimodal/<tipo>_<data>_<id>/`. O código de saída é **diferente de zero quando algum caso ou a geração da peça falha**. Ao final, o resumo JSON informa os caminhos das minutas e da imagem e traz a taxa de aprovação direta; decisões simuladas ficam fora do cálculo.
+O comando sem argumentos (`python -m src.main`) usa o mesmo ID para separar as saídas: extrações e evidências de entrada em `resultados/execucoes/<id>/<caso>/`, minutas versionadas e revisões em `resultados/minutas/<id>/<caso>/`, auditoria JSONL em `resultados/logs/<id>/auditoria.jsonl` e a peça institucional em `resultados/imagens/arte_<data>_<id>/`. A imagem incorpora o `projeto.timbre` configurado (`dados/originais/brasao.png`) sem alterar o original e inclui proveniência com o hash do brasão e revisão visual pendente. O `--mock` força composição local identificada como programática; fora do mock é usado `multimodal.imagem_provider` de `config/config.yaml`. Nos comandos isolados, `audio` e `voz` gravam em `resultados/audios/`, `ocr` em `resultados/ocr/` e `arte` — local ou Cloudflare — em `resultados/imagens/`. O código de saída é **diferente de zero quando algum caso ou a geração da peça falha**. Ao final, o resumo JSON informa os caminhos das minutas e da imagem e traz a taxa de aprovação direta; decisões simuladas ficam fora do cálculo.
 
 ### Extração antes da minuta
 Os campos são extraídos localmente por regras explícitas em `src/extracao.py`; o LLM **não** extrai nem corrige esses campos. Ele recebe apenas `assunto` e `pedido` para redigir o corpo, depois que a extração é validada e salva em `extracao.json`. No formulário I01, `CÓDIGO` é usado como protocolo, `NOME` como solicitante e `DATA MATRÍCULA` como data da solicitação; o extrator só preenche esses campos se o OCR conseguir ler os rótulos e valores, e a conferência humana no original continua obrigatória. Para texto sem rótulos, o extrator tenta identificar o assunto nos pedidos reconhecidos e reúne pedidos introduzidos por “solicito”, “peço” ou “quero pedir”. O protocolo falado aceita separadores adicionais entre dígitos e números decimais como `1.200` não encerram o pedido. Datas ditas por extenso em português são normalizadas, mas continuam sujeitas à conferência: uma data sem rótulo tem confiança média e datas de nascimento não são tratadas como data da solicitação. Antes de avaliar a minuta, confira o `extracao.json`; para exercitar o fluxo sem chamar APIs, use `python -m src.main --mock --caso T01`.
@@ -125,7 +125,7 @@ testes/           testes automatizados; fixtures/ guarda entradas sintéticas de
 resultados/       saídas de execução (não versionar dados/segredos reais)
 documentacao/     arquitetura, LGPD, avaliação, 12 horas, relatório, uso de IA, matriz de requisitos
 ```
-Equivalência com a estrutura sugerida no enunciado: `config.json` → `config/config.yaml`; `llm_client.py` → `src/cliente.py`; `prompts.py` → `prompts/*.md`; `audio.py`/`vision.py` → `src/audio.py` e `src/visao.py`; `image_generation.py` → `src/imagem.py`; `audit.py` → `src/auditoria.py`. No fluxo padrão, extrações ficam em `resultados/execucoes/`, minutas em `resultados/minutas/`, logs em `resultados/logs/` e imagens em `resultados/imagens/`; comandos multimodais isolados usam `resultados/multimodal/`.
+Equivalência com a estrutura sugerida no enunciado: `config.json` → `config/config.yaml`; `llm_client.py` → `src/cliente.py`; `prompts.py` → `prompts/*.md`; `audio.py`/`vision.py` → `src/audio.py` e `src/visao.py`; `image_generation.py` → `src/imagem.py`; `audit.py` → `src/auditoria.py`. Extrações ficam em `resultados/execucoes/`, minutas em `resultados/minutas/`, logs em `resultados/logs/`, STT/TTS em `resultados/audios/`, OCR em `resultados/ocr/` e imagens em `resultados/imagens/`.
 
 # Segurança, custos e limitações
 - A entrada externa é dado **não confiável**. A detecção de injeção por expressões regulares não é completa.
@@ -152,7 +152,7 @@ Ao usar `--mock`, não há medição de desempenho de modelos generativos: a min
 python -m unittest discover -s testes -t .
 ```
 
-Em 18/10/2026, **88 testes unitários passaram** no Windows com Python 3.14.6. Eles cobrem regras, integrações simuladas e falhas controladas; não comprovam disponibilidade, custo ou qualidade de provedores externos.
+Em 18/10/2026, **89 testes unitários passaram** no Windows com Python 3.14.6. Eles cobrem regras, integrações simuladas e falhas controladas; não comprovam disponibilidade, custo ou qualidade de provedores externos.
 
 ## Validação manual opcional com serviços reais
 

@@ -19,6 +19,8 @@
 7. Integrar a criação da peça institucional ao fim de `python -m src.main`, salvando evidências em `resultados/imagens/`, sem confundir composição local com imagem gerada por IA.
 8. Incorporar `dados/originais/brasao.png` à peça institucional, preservando o original e registrando seu hash e uso na proveniência.
 9. Separar as saídas do fluxo padrão em `resultados/minutas/`, `resultados/logs/` e `resultados/imagens/`, mantendo o ID da execução para rastreabilidade.
+10. Fazer o comando isolado `arte` salvar imagens locais ou Cloudflare em `resultados/imagens/`, em vez de `resultados/multimodal/`.
+11. Separar também os comandos isolados: STT/TTS em `resultados/audios/` e OCR em `resultados/ocr/`, preservando as evidências históricas existentes.
 
 ## Sugestões e decisões
 | Sugestão | Registro | Justificativa |
@@ -41,7 +43,7 @@
 - [ ] Registrar outros defeitos encontrados e correções realizadas em execução real.
 - [ ] Conferir que nenhum arquivo de origem/gabarito foi alterado para coincidir artificialmente com saída.
 - [ ] Preencher ambiente de validação, métricas e responsáveis.
-- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 88 testes.
+- [x] 18/10/2026: documentação corrigida para distinguir OCR local, OCR Gemini configurado, referência de mock e tentativa real HTTP 503; contagem atualizada posteriormente para 89 testes.
 - [x] 18/10/2026: fluxo padrão passou a criar a peça institucional ao final em `resultados/imagens/`; sucesso e falha cobertos por testes.
 
 ## Validação do código e do conteúdo gerado

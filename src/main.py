@@ -568,6 +568,7 @@ def _comando_midia(a):
         if a.comando == "audio":
             pasta = avaliar_audio(
                 a.entrada,
+                saida=ROOT / "resultados" / "audios",
                 provider=a.provider or "local",
                 modelo_local=a.modelo_local,
                 gabarito=a.gabarito,
@@ -577,6 +578,7 @@ def _comando_midia(a):
             cfg = carregar()
             pasta = avaliar_ocr(
                 a.entrada,
+                saida=ROOT / "resultados" / "ocr",
                 psm=a.psm,
                 gabarito=a.gabarito,
                 revisado=a.revisado,
@@ -591,11 +593,13 @@ def _comando_midia(a):
             pasta = gerar_voz(
                 a.entrada,
                 a.revisao,
+                saida=ROOT / "resultados" / "audios",
                 provider=a.provider or "espeak",
             )
         else:
             cfg = carregar()
             pasta = gerar_visual(
+                saida=ROOT / "resultados" / "imagens",
                 referencia=a.referencia or _referencia_institucional(cfg),
                 provider="local" if a.mock else a.provider,
             )

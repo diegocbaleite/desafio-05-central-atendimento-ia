@@ -1,7 +1,7 @@
 # Matriz de requisitos RF01–RF13
 
 Estados usados (um não implica os demais): **P** planejado · **I** implementado · **S** testado com simulação (testes unitários/`--mock`) · **R** validado com serviço real · **H** validado por pessoa.
-As colunas R e H só citam evidência existente no repositório; o que consta apenas como relato da equipe está identificado. Última verificação automática: 88 testes unitários aprovados em 18/10/2026 (Windows, Python 3.14.6); decisões humanas sobre as minutas e validação em máquina limpa não foram realizadas.
+As colunas R e H só citam evidência existente no repositório; o que consta apenas como relato da equipe está identificado. Última verificação automática: 89 testes unitários aprovados em 18/10/2026 (Windows, Python 3.14.6); decisões humanas sobre as minutas e validação em máquina limpa não foram realizadas.
 
 | RF | Arquivos responsáveis | Testes | I | S | R | H | Pendência / ação concreta |
 |---|---|---|:-:|:-:|:-:|:-:|---|

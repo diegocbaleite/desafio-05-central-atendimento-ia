@@ -1,0 +1,11 @@
+# Parâmetros de avaliação fixados ANTES da primeira execução (RF17/RF18/RF19).
+versao: "1.0"
+embedding_modelo: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+top_k: 4
+chunking:
+  A: {unidade: palavras, tamanho: 120, sobreposicao: 30}
+  B: {unidade: palavras, tamanho: 50, sobreposicao: 10}
+abstencao:
+  limiar_similaridade_cosseno: 0.35
+  cobertura_minima_ponderada: 0.5
+criterio_escolha_chunking: "maior acerto de recuperação nas 5 perguntas; em empate, a configuração que preserva mais contexto (trechos maiores) sem misturar seções."

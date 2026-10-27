@@ -1,0 +1,17 @@
+SECRETARIA FICTÍCIA DE SERVIÇOS AO CIDADÃO — DOCUMENTO FICTÍCIO PARA FINS DIDÁTICOS
+Documento: DOC-04
+Título: Norma de Agendamento do Atendimento Presencial
+Versão: 1.0
+Vigência: a partir de 01/03/2026
+
+Seção 1 — Antecedência do agendamento
+O atendimento presencial deve ser agendado com antecedência mínima de 2 dias úteis, pelo portal de serviços fictício ou pela central telefônica fictícia.
+
+Seção 2 — Horário do atendimento
+O atendimento presencial agendado ocorre de segunda a sexta-feira, das 8h às 17h, exceto feriados.
+=== PÁGINA ===
+Seção 3 — Remarcação e cancelamento
+O agendamento pode ser remarcado ou cancelado até 24 horas antes do horário marcado. A ausência sem cancelamento impede novo agendamento por 7 dias corridos.
+
+Seção 4 — Documentos no dia do atendimento
+No dia do atendimento, o cidadão deve apresentar documento oficial com foto e, quando houver, o número de protocolo.

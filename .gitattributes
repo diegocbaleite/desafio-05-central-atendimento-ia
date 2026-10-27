@@ -1,0 +1,10 @@
+# Binários nunca sofrem conversão de fim de linha (hash e integridade preservados).
+*.pdf binary
+*.png binary
+*.jpg binary
+*.mp3 binary
+*.wav binary
+# Acervo e gabaritos com LF fixo: o SHA-256 dos documentos é igual em Windows e Linux.
+dados/acervo/** text eol=lf
+dados/gabaritos/desafio6/** text eol=lf
+dados/acervo/*.pdf binary

@@ -1,0 +1,14 @@
+SECRETARIA FICTÍCIA DE SERVIÇOS AO CIDADÃO — DOCUMENTO FICTÍCIO PARA FINS DIDÁTICOS
+Documento: DOC-06
+Título: Política de Privacidade e Retenção de Dados do Atendimento
+Versão: 1.0
+Vigência: a partir de 01/03/2026
+
+Seção 1 — Dados coletados
+O atendimento coleta apenas os dados necessários para identificar e responder a solicitação: nome, número de protocolo, meio de contato e conteúdo do pedido.
+
+Seção 2 — Retenção dos registros
+Os registros de solicitações são mantidos por 5 anos após o encerramento do atendimento e, depois desse período, são eliminados de forma segura.
+
+Seção 3 — Direitos do titular
+O cidadão pode solicitar acesso, correção ou eliminação de seus dados pessoais por meio do formulário de privacidade fictício.

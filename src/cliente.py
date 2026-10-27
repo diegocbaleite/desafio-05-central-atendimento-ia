@@ -27,13 +27,22 @@ def _erro_provedor(data: Any) -> str:
     return "Campos de resposta inesperados: " + chaves
 
 
-def _payload(mensagens: list[dict[str, Any]], modelo: str, conf: dict) -> dict:
-    return {
+def _payload(
+    mensagens: list[dict[str, Any]],
+    modelo: str,
+    conf: dict,
+    response_format: dict | None = None,
+) -> dict:
+    payload = {
         "model": modelo,
         "messages": mensagens,
         "temperature": conf["temperatura"],
         "max_tokens": conf["max_tokens"],
     }
+    if response_format:
+        # Saída restrita por esquema (OpenAI-compatible); o resultado é revalidado localmente.
+        payload["response_format"] = response_format
+    return payload
 
 
 def _espera_retentativa(resposta, tentativa: int) -> float:
@@ -50,11 +59,21 @@ def conversar(
     mensagens: list[dict[str, Any]],
     modelo: str | None = None,
     provider: str | None = None,
+    orcamento=None,
+    response_format: dict | None = None,
+    parametros: dict | None = None,
 ) -> dict[str, Any]:
+    """Uma chamada de chat com no máximo `llm.max_repeticoes` repetições transitórias.
+
+    `orcamento` (src.orcamento.Orcamento) é consultado antes de CADA requisição HTTP;
+    `parametros` sobrescreve temperatura/max_tokens do perfil de geração.
+    """
     cfg = carregar()
-    conf = cfg["llm"]
+    conf = dict(cfg["llm"])
+    conf.update({k: v for k, v in (parametros or {}).items() if v is not None})
     provider = provider or conf["provider"]
     modelo = modelo or conf["modelo"]
+    tentativas_max = 1 + int(conf.get("max_repeticoes", 1))
     if provider == "mock":
         return {
             "texto": "MINUTA SIMULADA: revisar informações e confirmar dados disponíveis.",
@@ -78,12 +97,14 @@ def conversar(
     inicio = time.monotonic()
     ultimo_erro = None
     espera = 0.0
-    for tentativa in range(3):
+    for tentativa in range(tentativas_max):
+        if orcamento is not None:
+            orcamento.reservar(f"{provider}:{modelo}:tentativa{tentativa + 1}")
         try:
             resposta = requests.post(
                 perfil["base_url"].rstrip("/") + "/chat/completions",
                 headers={"Authorization": "Bearer " + token},
-                json=_payload(mensagens, modelo, conf),
+                json=_payload(mensagens, modelo, conf, response_format),
                 timeout=conf["timeout_s"],
             )
         except (requests.Timeout, requests.ConnectionError) as exc:
@@ -122,17 +143,22 @@ def conversar(
                 ):
                     ultimo_erro = "Provedor: " + _erro_provedor(dados)
                     espera = min(20, 2**tentativa)
-                    if tentativa < 2:
+                    if tentativa < tentativas_max - 1:
                         time.sleep(espera)
                         continue
                     break
-                return _interpretar_sucesso(
+                resultado = _interpretar_sucesso(
                     dados, provider, modelo, conf, inicio, tentativa
                 )
-        if tentativa < 2:
+                if orcamento is not None:
+                    orcamento.consumir_tokens(
+                        resultado["tokens_entrada"], resultado["tokens_saida"]
+                    )
+                return resultado
+        if tentativa < tentativas_max - 1:
             time.sleep(espera)
     raise ErroAPI(
-        "Provedor temporariamente indisponível após 3 tentativas: "
+        f"Provedor temporariamente indisponível após {tentativas_max} tentativas: "
         + str(ultimo_erro)
     )
 

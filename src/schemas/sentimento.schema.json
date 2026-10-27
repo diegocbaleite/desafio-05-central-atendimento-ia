@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sentimento.v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "polaridade", "justificativa", "requer_revisao", "confianca_declarada"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "polaridade": {"enum": ["positiva", "negativa", "neutra", "indeterminada"]},
+    "justificativa": {"type": "string", "minLength": 3, "maxLength": 240},
+    "requer_revisao": {"type": "boolean"},
+    "confianca_declarada": {"enum": ["baixa", "media", "alta"]}
+  }
+}

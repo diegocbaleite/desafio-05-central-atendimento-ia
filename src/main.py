@@ -1,4 +1,5 @@
-"""CLI: python -m src.main verificar | processar | experimento | imagem | audio | ocr | voz | arte."""
+"""CLI: python -m src.main verificar | processar | experimento | imagem | audio | ocr | voz | arte
+| indexar | status-indice | consultar | solicitacao | excluir-documento | sentimentos | avaliar."""
 
 import argparse
 import copy
@@ -37,6 +38,10 @@ BIBLIOTECAS = (
     "python-dotenv",
     "pillow",
     "pytesseract",
+    "pypdf",
+    "fastembed",
+    "chromadb",
+    "streamlit",
 )
 FERRAMENTAS = ("tesseract", "pdftoppm", "espeak", "ffprobe")
 
@@ -684,10 +689,12 @@ def _comando_midia(a):
 
 def main():
     p = argparse.ArgumentParser()
+    from .cli_d6 import COMANDOS_D6
+
     p.add_argument(
         "comando",
         nargs="?",
-        choices=["verificar", "processar", "experimento", "imagem", *COMANDOS_MIDIA],
+        choices=["verificar", "processar", "experimento", "imagem", *COMANDOS_MIDIA, *COMANDOS_D6],
         default="processar",
     )
     p.add_argument(
@@ -722,11 +729,26 @@ def main():
     p.add_argument(
         "--referencia", help="arte: imagem institucional incorporada à peça"
     )
+    # Desafio 6 (RF14–RF24)
+    p.add_argument("--gerador", help="perfil de geração (config geracao.perfis): principal|extrativo_local|simulado")
+    p.add_argument("--chunking", help="configuração de chunking: A|B (padrão: config)")
+    p.add_argument("--top-k", type=int, dest="top_k", help="consultar: quantidade de trechos")
+    p.add_argument("--doc", help="excluir-documento/indexar: ID do documento (ex.: DOC-06)")
+    p.add_argument("--recriar", action="store_true", help="indexar: apaga e recria (exigido ao trocar embedding)")
+    p.add_argument("--modalidade", default="texto", choices=["texto", "audio", "imagem"],
+                   help="solicitacao: origem do texto (transcrição/OCR já revisados entram como audio/imagem)")
+    p.add_argument("--caso-id", dest="caso_id", help="solicitacao: identificador do caso")
+    p.add_argument("--publicar-evidencias", action="store_true",
+                   help="avaliar: copia evidências sanitizadas para documentacao/desafio6/evidencias")
     a = p.parse_args()
     cfg = carregar()
     if a.comando == "verificar":
         _verificar(cfg)
         return 0
+    if a.comando in COMANDOS_D6:
+        from .cli_d6 import executar
+
+        return executar(a)
     if a.comando in COMANDOS_MIDIA:
         return _comando_midia(a)
     if a.comando == "imagem":

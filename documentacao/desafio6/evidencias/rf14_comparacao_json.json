@@ -1,0 +1,126 @@
+{
+  "caso_base": "S03 (testes/fixtures/completa.txt)",
+  "variantes": [
+    {
+      "variante": "valida",
+      "json_sintatico_valido": true,
+      "esquema_valido": true,
+      "regras_validas": true,
+      "minuta_permitida": true,
+      "tipos_de_erro": [],
+      "erros": []
+    },
+    {
+      "variante": "chave_extra",
+      "json_sintatico_valido": true,
+      "esquema_valido": false,
+      "regras_validas": false,
+      "minuta_permitida": false,
+      "tipos_de_erro": [
+        "chave_extra"
+      ],
+      "erros": [
+        "chave_extra: (raiz): chave(s) não prevista(s): prioridade"
+      ]
+    },
+    {
+      "variante": "tipo_incorreto",
+      "json_sintatico_valido": true,
+      "esquema_valido": false,
+      "regras_validas": false,
+      "minuta_permitida": false,
+      "tipos_de_erro": [
+        "tipo_incorreto"
+      ],
+      "erros": [
+        "tipo_incorreto: requer_revisao: 'sim' is not of type 'boolean'"
+      ]
+    },
+    {
+      "variante": "campo_obrigatorio_ausente",
+      "json_sintatico_valido": true,
+      "esquema_valido": false,
+      "regras_validas": false,
+      "minuta_permitida": false,
+      "tipos_de_erro": [
+        "campo_obrigatorio_ausente"
+      ],
+      "erros": [
+        "campo_obrigatorio_ausente: (raiz): campo obrigatório ausente: categoria"
+      ]
+    },
+    {
+      "variante": "T01_tipo_incorreto_e_ausente",
+      "json_sintatico_valido": true,
+      "esquema_valido": false,
+      "regras_validas": false,
+      "minuta_permitida": false,
+      "tipos_de_erro": [
+        "campo_obrigatorio_ausente",
+        "tipo_incorreto"
+      ],
+      "erros": [
+        "campo_obrigatorio_ausente: (raiz): campo obrigatório ausente: solicitante",
+        "tipo_incorreto: data: 20261002 is not of type 'string', 'null'"
+      ]
+    },
+    {
+      "variante": "T02_data_impossivel",
+      "json_sintatico_valido": true,
+      "esquema_valido": true,
+      "regras_validas": false,
+      "minuta_permitida": false,
+      "tipos_de_erro": [
+        "dado_sem_suporte",
+        "data_impossivel"
+      ],
+      "erros": [
+        "data_impossivel: data: data inexistente no calendário: 31/02/2026",
+        "dado_sem_suporte: data: data não aparece na entrada original"
+      ]
+    },
+    {
+      "variante": "T02_dado_sem_suporte",
+      "json_sintatico_valido": true,
+      "esquema_valido": true,
+      "regras_validas": false,
+      "minuta_permitida": false,
+      "tipos_de_erro": [
+        "dado_sem_suporte"
+      ],
+      "erros": [
+        "dado_sem_suporte: protocolo: protocolo não aparece na entrada original",
+        "dado_sem_suporte: solicitante: nome não aparece na entrada original"
+      ]
+    }
+  ],
+  "llm_simulado_invalido_duas_vezes": {
+    "natureza": "SIMULADO (respostas fixas; não é modelo real)",
+    "valido": false,
+    "tentativas": 2,
+    "chamadas_no_orcamento": 2,
+    "erros_por_tentativa": [
+      [
+        "campo_obrigatorio_ausente: (raiz): campo obrigatório ausente: solicitante",
+        "tipo_incorreto: data: 20261002 is not of type 'string', 'null'"
+      ],
+      [
+        "chave_extra: (raiz): chave(s) não prevista(s): prioridade"
+      ]
+    ]
+  },
+  "llm_simulado_corrigido_na_segunda": {
+    "natureza": "SIMULADO",
+    "valido": true,
+    "tentativas": 2,
+    "chamadas_no_orcamento": 2
+  },
+  "fluxo_T02_data_impossivel": {
+    "decisao": "bloquear",
+    "minuta_gerada": false,
+    "motivos": [
+      "estrutura ou dados inválidos: minuta bloqueada",
+      "data_impossivel: data: data inexistente no calendário: 31/02/2026"
+    ]
+  }
+}

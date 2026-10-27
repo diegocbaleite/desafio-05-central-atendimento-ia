@@ -1,0 +1,189 @@
+{
+  "metodo": "regras léxicas locais (não-LLM)",
+  "resultados": [
+    {
+      "id": "AV01",
+      "polaridade": "positiva",
+      "justificativa": "termos favoráveis: bem atendid, paciencia, resolveu",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV02",
+      "polaridade": "positiva",
+      "justificativa": "termos favoráveis: rapido, educad, obrigad",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV03",
+      "polaridade": "positiva",
+      "justificativa": "termos favoráveis: gostei, eficiente, facil",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV04",
+      "polaridade": "negativa",
+      "justificativa": "termos desfavoráveis: pessimo, esperei, fila",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV05",
+      "polaridade": "negativa",
+      "justificativa": "termos desfavoráveis: nao recebi, nenhuma resposta, descaso",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV06",
+      "polaridade": "negativa",
+      "justificativa": "termos desfavoráveis: grosseir, sem solucao, continua sem",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV07",
+      "polaridade": "neutra",
+      "justificativa": "relato factual sem juízo de valor",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV08",
+      "polaridade": "neutra",
+      "justificativa": "relato factual sem juízo de valor",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV09",
+      "polaridade": "neutra",
+      "justificativa": "relato factual sem juízo de valor",
+      "requer_revisao": false,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV10",
+      "polaridade": "indeterminada",
+      "justificativa": "mista: elogio (educad) e crítica (caiu)",
+      "requer_revisao": true,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV11",
+      "polaridade": "indeterminada",
+      "justificativa": "ironia provável: elogio acompanhado de fato negativo",
+      "requer_revisao": true,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    },
+    {
+      "id": "AV12",
+      "polaridade": "indeterminada",
+      "justificativa": "falta de contexto: depende de conversa anterior",
+      "requer_revisao": true,
+      "metodo": "regras_lexicas_v1",
+      "confianca_declarada": null,
+      "observacao_confianca": "não se aplica: classificador por regras não estima confiança"
+    }
+  ],
+  "agregado": {
+    "total": 12,
+    "ids_duplicados_removidos": [],
+    "filtros": {},
+    "por_polaridade": {
+      "positiva": {
+        "numerador": 3,
+        "denominador": 12,
+        "valor": 0.25,
+        "texto": "3/12 (25,0%)"
+      },
+      "negativa": {
+        "numerador": 3,
+        "denominador": 12,
+        "valor": 0.25,
+        "texto": "3/12 (25,0%)"
+      },
+      "neutra": {
+        "numerador": 3,
+        "denominador": 12,
+        "valor": 0.25,
+        "texto": "3/12 (25,0%)"
+      },
+      "indeterminada": {
+        "numerador": 3,
+        "denominador": 12,
+        "valor": 0.25,
+        "texto": "3/12 (25,0%)"
+      }
+    },
+    "requer_revisao": {
+      "numerador": 3,
+      "denominador": 12,
+      "valor": 0.25,
+      "texto": "3/12 (25,0%)"
+    },
+    "acuracia": {
+      "numerador": 12,
+      "denominador": 12,
+      "valor": 1.0,
+      "texto": "12/12 (100,0%)"
+    },
+    "matriz_confusao": {
+      "positiva": {
+        "positiva": 3,
+        "negativa": 0,
+        "neutra": 0,
+        "indeterminada": 0
+      },
+      "negativa": {
+        "positiva": 0,
+        "negativa": 3,
+        "neutra": 0,
+        "indeterminada": 0
+      },
+      "neutra": {
+        "positiva": 0,
+        "negativa": 0,
+        "neutra": 3,
+        "indeterminada": 0
+      },
+      "indeterminada": {
+        "positiva": 0,
+        "negativa": 0,
+        "neutra": 0,
+        "indeterminada": 3
+      }
+    },
+    "incertos_sinalizados": {
+      "numerador": 3,
+      "denominador": 3,
+      "valor": 1.0,
+      "texto": "3/3 (100,0%)"
+    },
+    "erros": []
+  }
+}

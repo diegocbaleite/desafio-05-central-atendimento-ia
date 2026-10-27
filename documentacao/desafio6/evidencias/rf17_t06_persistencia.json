@@ -1,0 +1,123 @@
+{
+  "primeira_indexacao": {
+    "adicionados": [
+      "DOC-01",
+      "DOC-02",
+      "DOC-03",
+      "DOC-04",
+      "DOC-05",
+      "DOC-06",
+      "DOC-07"
+    ],
+    "atualizados": [],
+    "sem_alteracao": [],
+    "ignorados_excluidos": [],
+    "trechos_antes": 0,
+    "trechos_depois": 25,
+    "colecao": "acervo_A"
+  },
+  "novo_processo": {
+    "antes": 25,
+    "depois": 25,
+    "sem_alteracao": [
+      "DOC-01",
+      "DOC-02",
+      "DOC-03",
+      "DOC-04",
+      "DOC-05",
+      "DOC-06",
+      "DOC-07"
+    ],
+    "top": [
+      [
+        "DOC-01:v1.2:A:p0:s2:c0",
+        0.693
+      ],
+      [
+        "DOC-01:v1.2:A:p0:s3:c0",
+        0.5695
+      ]
+    ]
+  },
+  "troca_de_modelo_exige_reindexacao": "modelo de embedding mudou (sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 -> modelo-trocado-para-teste)",
+  "manifesto": {
+    "documentos": {
+      "DOC-01": {
+        "versao": "1.2",
+        "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+        "arquivo": "dados/acervo/DOC-01_manual_matricula.txt",
+        "sha256": "49d49afe66e66caa2503571fcb9461b10b3d2d2f36dc4dc3498bbbaa0ce58561",
+        "trechos": 5,
+        "suspeitos": 0,
+        "indexado_em": "2026-10-27T19:45:29.617902+00:00"
+      },
+      "DOC-02": {
+        "versao": "2.0",
+        "titulo": "Perguntas Frequentes da Secretaria Escolar",
+        "arquivo": "dados/acervo/DOC-02_faq_secretaria_escolar.pdf",
+        "sha256": "768ac25059febc47c58654fb9c90650c204c7d6771c1b545b27ee0ad7d6b9e1a",
+        "trechos": 4,
+        "suspeitos": 0,
+        "indexado_em": "2026-10-27T19:45:29.783738+00:00"
+      },
+      "DOC-03": {
+        "versao": "3.1",
+        "titulo": "Guia de Atendimento ao Cidadão — Protocolo e Manifestações",
+        "arquivo": "dados/acervo/DOC-03_guia_protocolo_manifestacoes.txt",
+        "sha256": "95b02ca2ce21042b7db5081540758e8c5ff434a34f9192fa5b7a654a3f3057f3",
+        "trechos": 4,
+        "suspeitos": 0,
+        "indexado_em": "2026-10-27T19:45:29.922296+00:00"
+      },
+      "DOC-04": {
+        "versao": "1.0",
+        "titulo": "Norma de Agendamento do Atendimento Presencial",
+        "arquivo": "dados/acervo/DOC-04_norma_agendamento.pdf",
+        "sha256": "f9e931de4a8fc4041a713afaf6504fbbf6aa7a6eee371b8e741ee591bc1377e4",
+        "trechos": 4,
+        "suspeitos": 0,
+        "indexado_em": "2026-10-27T19:45:30.045677+00:00"
+      },
+      "DOC-05": {
+        "versao": "1.0",
+        "titulo": "Circular nº 07/2026 — Prazos de Resposta",
+        "arquivo": "dados/acervo/DOC-05_circular_prazos_resposta.pdf",
+        "sha256": "f1f87a95b2432c88f22d2463bc3b0ea76cd385c7e4ecea3a35d763b5170c6e49",
+        "trechos": 3,
+        "suspeitos": 0,
+        "indexado_em": "2026-10-27T19:45:30.143488+00:00"
+      },
+      "DOC-06": {
+        "versao": "1.0",
+        "titulo": "Política de Privacidade e Retenção de Dados do Atendimento",
+        "arquivo": "dados/acervo/DOC-06_politica_privacidade_retencao.txt",
+        "sha256": "8eafe62f17892417e65b630159868298b74dc63cb7f35706813f44d24fe7cbea",
+        "trechos": 3,
+        "suspeitos": 0,
+        "indexado_em": "2026-10-27T19:45:30.246792+00:00"
+      },
+      "DOC-07": {
+        "versao": "1.0",
+        "titulo": "Comunicado Interno — Atendimento em Ponto Facultativo",
+        "arquivo": "dados/acervo/DOC-07_comunicado_ponto_facultativo.txt",
+        "sha256": "a1f84dd300b45b4db81898185ec19334e06914667deeb414962ef72a14286338",
+        "trechos": 2,
+        "suspeitos": 1,
+        "indexado_em": "2026-10-27T19:45:30.333905+00:00"
+      }
+    },
+    "excluidos": {},
+    "historico_exclusoes": [],
+    "embedding_modelo": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "dimensao": 384,
+    "versao_indice": "1",
+    "config_chunking": "A",
+    "chunking": {
+      "unidade": "palavras",
+      "tamanho": 120,
+      "sobreposicao": 30
+    },
+    "criado_em": "2026-10-27T19:45:30.333948+00:00",
+    "atualizado_em": "2026-10-27T19:45:34.426620+00:00"
+  }
+}

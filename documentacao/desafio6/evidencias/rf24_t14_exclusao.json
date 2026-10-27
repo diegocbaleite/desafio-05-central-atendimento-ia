@@ -1,0 +1,70 @@
+{
+  "antes": [
+    "DOC-06:v1.0:A:p0:s2:c0",
+    "DOC-02:v2.0:A:p1:s1:c0",
+    "DOC-05:v1.0:A:p1:s1:c0",
+    "DOC-01:v1.2:A:p0:s3:c0"
+  ],
+  "relatorio_exclusao": {
+    "doc_id": "DOC-06",
+    "indices": [
+      {
+        "doc_id": "DOC-06",
+        "em": "2026-10-27T19:45:38.907462+00:00",
+        "trechos_removidos": 3,
+        "motivo": "demonstração T14",
+        "trechos_restantes": 0,
+        "colecao": "acervo_A"
+      }
+    ],
+    "derivados_removidos": [
+      "consulta_retencao.json"
+    ],
+    "minutas_afetadas": [],
+    "catalogo_enviados": {
+      "no_catalogo_enviados": false,
+      "arquivo_removido": false
+    }
+  },
+  "depois": [
+    "DOC-02:v2.0:A:p1:s1:c0",
+    "DOC-05:v1.0:A:p1:s1:c0",
+    "DOC-01:v1.2:A:p0:s3:c0",
+    "DOC-03:v3.1:A:p0:s3:c0"
+  ],
+  "reindexacao_apos_exclusao": {
+    "ignorados_excluidos": [
+      "DOC-06"
+    ],
+    "trechos": 22
+  },
+  "status": {
+    "estado": "ok",
+    "motivo": null,
+    "colecao": "acervo_A",
+    "embedding_modelo": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "dimensao": 384,
+    "versao_indice": "1",
+    "chunking": {
+      "unidade": "palavras",
+      "tamanho": 120,
+      "sobreposicao": 30
+    },
+    "trechos": 22,
+    "documentos_indexados": [
+      "DOC-01",
+      "DOC-02",
+      "DOC-03",
+      "DOC-04",
+      "DOC-05",
+      "DOC-07"
+    ],
+    "nao_indexados": [],
+    "desatualizados": [],
+    "orfaos": [],
+    "excluidos": [
+      "DOC-06"
+    ],
+    "atualizado_em": "2026-10-27T19:45:38.945437+00:00"
+  }
+}

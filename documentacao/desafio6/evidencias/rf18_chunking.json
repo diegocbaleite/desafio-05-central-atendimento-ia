@@ -1,0 +1,274 @@
+{
+  "top_k": 4,
+  "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "unidade": "palavras",
+  "configuracoes": {
+    "A": {
+      "unidade": "palavras",
+      "tamanho": 120,
+      "sobreposicao": 30,
+      "trechos": 25,
+      "media_palavras_por_trecho": 28.1,
+      "acerto_recuperacao": {
+        "numerador": 5,
+        "denominador": 5,
+        "valor": 1.0,
+        "texto": "5/5 (100,0%)"
+      },
+      "falhas": [],
+      "por_pergunta": [
+        {
+          "id": "P01",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-01:v1.2:A:p0:s2:c0",
+              "similaridade": 0.693
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+              "similaridade": 0.5695
+            },
+            {
+              "chunk_id": "DOC-04:v1.0:A:p2:s4:c0",
+              "similaridade": 0.5268
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:A:p0:s5:c0",
+              "similaridade": 0.5196
+            }
+          ]
+        },
+        {
+          "id": "P02",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+              "similaridade": 0.7399
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+              "similaridade": 0.5487
+            },
+            {
+              "chunk_id": "DOC-05:v1.0:A:p1:s3:c0",
+              "similaridade": 0.5119
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+              "similaridade": 0.5076
+            }
+          ]
+        },
+        {
+          "id": "P03",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-04:v1.0:A:p1:s1:c0",
+              "similaridade": 0.695
+            },
+            {
+              "chunk_id": "DOC-07:v1.0:A:p0:s1:c0",
+              "similaridade": 0.5564
+            },
+            {
+              "chunk_id": "DOC-04:v1.0:A:p1:s2:c0",
+              "similaridade": 0.5247
+            },
+            {
+              "chunk_id": "DOC-03:v3.1:A:p0:s2:c0",
+              "similaridade": 0.5146
+            }
+          ]
+        },
+        {
+          "id": "P04",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-01:v1.2:A:p0:s4:c0",
+              "similaridade": 0.7334
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+              "similaridade": 0.6273
+            },
+            {
+              "chunk_id": "DOC-04:v1.0:A:p2:s3:c0",
+              "similaridade": 0.5354
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+              "similaridade": 0.4561
+            }
+          ]
+        },
+        {
+          "id": "P05",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-03:v3.1:A:p0:s2:c0",
+              "similaridade": 0.4243
+            },
+            {
+              "chunk_id": "DOC-06:v1.0:A:p0:s1:c0",
+              "similaridade": 0.4229
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+              "similaridade": 0.404
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+              "similaridade": 0.3829
+            }
+          ]
+        }
+      ]
+    },
+    "B": {
+      "unidade": "palavras",
+      "tamanho": 50,
+      "sobreposicao": 10,
+      "trechos": 26,
+      "media_palavras_por_trecho": 27.4,
+      "acerto_recuperacao": {
+        "numerador": 5,
+        "denominador": 5,
+        "valor": 1.0,
+        "texto": "5/5 (100,0%)"
+      },
+      "falhas": [],
+      "por_pergunta": [
+        {
+          "id": "P01",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-01:v1.2:B:p0:s2:c0",
+              "similaridade": 0.744
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:B:p0:s2:c1",
+              "similaridade": 0.6287
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:B:p0:s3:c0",
+              "similaridade": 0.5695
+            },
+            {
+              "chunk_id": "DOC-04:v1.0:B:p2:s4:c0",
+              "similaridade": 0.5268
+            }
+          ]
+        },
+        {
+          "id": "P02",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-02:v2.0:B:p1:s1:c0",
+              "similaridade": 0.7399
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:B:p0:s3:c0",
+              "similaridade": 0.5487
+            },
+            {
+              "chunk_id": "DOC-05:v1.0:B:p1:s3:c0",
+              "similaridade": 0.5119
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:B:p1:s2:c0",
+              "similaridade": 0.5076
+            }
+          ]
+        },
+        {
+          "id": "P03",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-04:v1.0:B:p1:s1:c0",
+              "similaridade": 0.695
+            },
+            {
+              "chunk_id": "DOC-07:v1.0:B:p0:s1:c0",
+              "similaridade": 0.5564
+            },
+            {
+              "chunk_id": "DOC-04:v1.0:B:p1:s2:c0",
+              "similaridade": 0.5247
+            },
+            {
+              "chunk_id": "DOC-03:v3.1:B:p0:s2:c0",
+              "similaridade": 0.5146
+            }
+          ]
+        },
+        {
+          "id": "P04",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-01:v1.2:B:p0:s4:c0",
+              "similaridade": 0.7334
+            },
+            {
+              "chunk_id": "DOC-01:v1.2:B:p0:s3:c0",
+              "similaridade": 0.6273
+            },
+            {
+              "chunk_id": "DOC-04:v1.0:B:p2:s3:c0",
+              "similaridade": 0.5354
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:B:p1:s2:c0",
+              "similaridade": 0.4561
+            }
+          ]
+        },
+        {
+          "id": "P05",
+          "acerto": true,
+          "posicao_primeiro_acerto": 1,
+          "top_k": [
+            {
+              "chunk_id": "DOC-03:v3.1:B:p0:s2:c0",
+              "similaridade": 0.4243
+            },
+            {
+              "chunk_id": "DOC-06:v1.0:B:p0:s1:c0",
+              "similaridade": 0.4229
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:B:p1:s1:c0",
+              "similaridade": 0.404
+            },
+            {
+              "chunk_id": "DOC-02:v2.0:B:p1:s2:c0",
+              "similaridade": 0.3829
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "escolhida": {
+    "configuracao": "A",
+    "motivo": "empate no acerto; critério prévio de desempate: A preserva mais contexto (trechos maiores) sem cruzar seções",
+    "configurada_em_config_yaml": "A"
+  }
+}

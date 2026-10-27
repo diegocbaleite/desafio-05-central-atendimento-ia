@@ -1,0 +1,36 @@
+{
+  "fluxo_desafio6": [
+    {
+      "caso": "T01",
+      "modalidade": "texto",
+      "decisao_entrada": "permitir",
+      "minuta_gerada": true,
+      "status_rag": "fundamentada",
+      "estado_revisao": "revisar",
+      "campos": {
+        "protocolo": "2026-000142",
+        "data": "14/10/2026",
+        "solicitante": "Marcos Vinícius de Almeida Santos"
+      }
+    },
+    {
+      "caso": "A01",
+      "modalidade": "audio",
+      "decisao_entrada": "revisar",
+      "minuta_gerada": true,
+      "status_rag": "fundamentada",
+      "estado_revisao": "revisar",
+      "campos": {
+        "protocolo": "2026-000142",
+        "data": "14/10/2026",
+        "solicitante": "Marcos Vinícius de Almeida Santos"
+      }
+    }
+  ],
+  "cli_desafio01": {
+    "comando": "python -m src.main --mock --caso T01 --caso A01 --decisoes dados/revisao/decisoes_demo.yaml",
+    "codigo_saida": 0,
+    "falhas_reportadas": false
+  },
+  "observacao": "A01 usa a transcrição STT preservada do Desafio 01; não houve nova transcrição (sem chave Groq)"
+}

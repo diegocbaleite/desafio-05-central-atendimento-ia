@@ -1,0 +1,550 @@
+{
+  "metodo": "regras locais + resumo extrativo (não-LLM)",
+  "metricas": {
+    "acuracia_categoria": {
+      "numerador": 6,
+      "denominador": 6,
+      "valor": 1.0,
+      "texto": "6/6 (100,0%)"
+    },
+    "campos_criticos_corretos": {
+      "numerador": 18,
+      "denominador": 18,
+      "valor": 1.0,
+      "texto": "18/18 (100,0%)"
+    },
+    "campos_ausentes_corretos": {
+      "numerador": 6,
+      "denominador": 6,
+      "valor": 1.0,
+      "texto": "6/6 (100,0%)"
+    },
+    "entidades_recall": {
+      "numerador": 20,
+      "denominador": 20,
+      "valor": 1.0,
+      "texto": "20/20 (100,0%)"
+    },
+    "entidades_incorretas": 0,
+    "fatos_essenciais_presentes": {
+      "numerador": 17,
+      "denominador": 17,
+      "valor": 1.0,
+      "texto": "17/17 (100,0%)"
+    },
+    "resumos_com_fato_sem_suporte": 0,
+    "resumos_dentro_de_100_palavras": {
+      "numerador": 6,
+      "denominador": 6,
+      "valor": 1.0,
+      "texto": "6/6 (100,0%)"
+    },
+    "decisao_correta": {
+      "numerador": 6,
+      "denominador": 6,
+      "valor": 1.0,
+      "texto": "6/6 (100,0%)"
+    }
+  },
+  "solicitacoes": [
+    {
+      "id": "S01",
+      "categoria_esperada": "efetivacao_matricula",
+      "categoria_obtida": "efetivacao_matricula",
+      "categoria_ok": true,
+      "campos": {
+        "protocolo": {
+          "esperado": "2026-000142",
+          "obtido": "2026-000142",
+          "ok": true
+        },
+        "data": {
+          "esperado": "14/10/2026",
+          "obtido": "14/10/2026",
+          "ok": true
+        },
+        "solicitante": {
+          "esperado": "Marcos Vinícius de Almeida Santos",
+          "obtido": "Marcos Vinícius de Almeida Santos",
+          "ok": true
+        }
+      },
+      "campos_ausentes_ok": true,
+      "entidades": {
+        "pessoa": {
+          "corretas": [
+            "lucia helena de almeida santos",
+            "marcos vinicius de almeida santos"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "orgao": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "local": {
+          "corretas": [
+            "cuiaba"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "data": {
+          "corretas": [
+            "01/02/2027",
+            "12/08/2008",
+            "14/10/2026"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "protocolo": {
+          "corretas": [
+            "2026-000142"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        }
+      },
+      "entidades_corretas": 7,
+      "entidades_esperadas": 7,
+      "entidades_incorretas": 0,
+      "fatos": [
+        {
+          "fato": "pede efetivação da matrícula",
+          "presente": true
+        },
+        {
+          "fato": "curso Técnico em Enfermagem",
+          "presente": true
+        },
+        {
+          "fato": "pergunta quais documentos faltam",
+          "presente": true
+        },
+        {
+          "fato": "protocolo 2026-000142",
+          "presente": true
+        }
+      ],
+      "fatos_omitidos": [],
+      "fatos_sem_suporte": [],
+      "resumo_palavras": 52,
+      "resumo_dentro_limite": true,
+      "decisao_esperada": "permitir",
+      "decisao_obtida": "permitir",
+      "decisao_ok": true,
+      "resumo": "Solicitante: Marcos Vinícius de Almeida Santos. Protocolo: 2026-000142. Data: 14/10/2026. Assunto: efetivação da minha matrícula no curso Técnico em Enfermagem. Pedido: solicito a efetivação da minha matrícula no curso Técnico em Enfermagem, eixo tecnológico Saúde, com carga horária de 1200 horas, turno noturno; Peço que me informem quais documentos ainda preciso apresentar.",
+      "status_rag_minuta": "fundamentada",
+      "metodo_resumo": "extrativo_local"
+    },
+    {
+      "id": "S02",
+      "categoria_esperada": "efetivacao_matricula",
+      "categoria_obtida": "efetivacao_matricula",
+      "categoria_ok": true,
+      "campos": {
+        "protocolo": {
+          "esperado": "2026-000142",
+          "obtido": "2026-000142",
+          "ok": true
+        },
+        "data": {
+          "esperado": "14/10/2026",
+          "obtido": "14/10/2026",
+          "ok": true
+        },
+        "solicitante": {
+          "esperado": "Marcos Vinícius de Almeida Santos",
+          "obtido": "Marcos Vinícius de Almeida Santos",
+          "ok": true
+        }
+      },
+      "campos_ausentes_ok": true,
+      "entidades": {
+        "pessoa": {
+          "corretas": [
+            "lucia helena de almeida santos",
+            "marcos vinicius de almeida santos"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "orgao": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "local": {
+          "corretas": [
+            "cuiaba"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "data": {
+          "corretas": [
+            "12/08/2008",
+            "14/10/2026"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "protocolo": {
+          "corretas": [
+            "2026-000142"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        }
+      },
+      "entidades_corretas": 6,
+      "entidades_esperadas": 6,
+      "entidades_incorretas": 0,
+      "fatos": [
+        {
+          "fato": "pede efetivação da matrícula",
+          "presente": true
+        },
+        {
+          "fato": "pergunta quais documentos faltam",
+          "presente": true
+        },
+        {
+          "fato": "protocolo 2026-000142",
+          "presente": true
+        }
+      ],
+      "fatos_omitidos": [],
+      "fatos_sem_suporte": [],
+      "resumo_palavras": 63,
+      "resumo_dentro_limite": true,
+      "decisao_esperada": "revisar",
+      "decisao_obtida": "revisar",
+      "decisao_ok": true,
+      "resumo": "Solicitante: Marcos Vinícius de Almeida Santos. Protocolo: 2026-000142. Data: 14/10/2026. Assunto: efetivação da minha matrícula no curso Técnico em Infirmagem do Eixo Tecnológico de Saúde. Pedido: quero pedir a efetivação da minha matrícula no curso Técnico em Infirmagem do Eixo Tecnológico de Saúde, com carga horária de 1200 horas no turno, no turno; Peço que informe em quais os documentos ainda preciso apresentar.",
+      "status_rag_minuta": "fundamentada",
+      "metodo_resumo": "extrativo_local"
+    },
+    {
+      "id": "S03",
+      "categoria_esperada": "segunda_via_documento",
+      "categoria_obtida": "segunda_via_documento",
+      "categoria_ok": true,
+      "campos": {
+        "protocolo": {
+          "esperado": "2026.000123",
+          "obtido": "2026.000123",
+          "ok": true
+        },
+        "data": {
+          "esperado": "02/10/2026",
+          "obtido": "02/10/2026",
+          "ok": true
+        },
+        "solicitante": {
+          "esperado": "Maria Fictícia Albuquerque",
+          "obtido": "Maria Fictícia Albuquerque",
+          "ok": true
+        }
+      },
+      "campos_ausentes_ok": true,
+      "entidades": {
+        "pessoa": {
+          "corretas": [
+            "maria ficticia albuquerque"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "orgao": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "local": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "data": {
+          "corretas": [
+            "02/10/2026"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "protocolo": {
+          "corretas": [
+            "2026.000123"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        }
+      },
+      "entidades_corretas": 3,
+      "entidades_esperadas": 3,
+      "entidades_incorretas": 0,
+      "fatos": [
+        {
+          "fato": "segunda via",
+          "presente": true
+        },
+        {
+          "fato": "certidão",
+          "presente": true
+        },
+        {
+          "fato": "protocolo 2026.000123",
+          "presente": true
+        }
+      ],
+      "fatos_omitidos": [],
+      "fatos_sem_suporte": [],
+      "resumo_palavras": 19,
+      "resumo_dentro_limite": true,
+      "decisao_esperada": "permitir",
+      "decisao_obtida": "permitir",
+      "decisao_ok": true,
+      "resumo": "Solicitante: Maria Fictícia Albuquerque. Protocolo: 2026.000123. Data: 02/10/2026. Assunto: segunda via de certidão. Pedido: Solicito segunda via da certidão.",
+      "status_rag_minuta": "fundamentada",
+      "metodo_resumo": "extrativo_local"
+    },
+    {
+      "id": "S04",
+      "categoria_esperada": "andamento_processo",
+      "categoria_obtida": "andamento_processo",
+      "categoria_ok": true,
+      "campos": {
+        "protocolo": {
+          "esperado": "2026-000377",
+          "obtido": "2026-000377",
+          "ok": true
+        },
+        "data": {
+          "esperado": "20/10/2026",
+          "obtido": "20/10/2026",
+          "ok": true
+        },
+        "solicitante": {
+          "esperado": "Joana Exemplo Ferreira",
+          "obtido": "Joana Exemplo Ferreira",
+          "ok": true
+        }
+      },
+      "campos_ausentes_ok": true,
+      "entidades": {
+        "pessoa": {
+          "corretas": [
+            "joana exemplo ferreira"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "orgao": {
+          "corretas": [
+            "escola tecnica estadual de cuiaba"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "local": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "data": {
+          "corretas": [
+            "20/10/2026"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "protocolo": {
+          "corretas": [
+            "2026-000377"
+          ],
+          "omitidas": [],
+          "incorretas": []
+        }
+      },
+      "entidades_corretas": 4,
+      "entidades_esperadas": 4,
+      "entidades_incorretas": 0,
+      "fatos": [
+        {
+          "fato": "consulta de andamento",
+          "presente": true
+        },
+        {
+          "fato": "transferência de turno",
+          "presente": true
+        },
+        {
+          "fato": "protocolo 2026-000377",
+          "presente": true
+        }
+      ],
+      "fatos_omitidos": [],
+      "fatos_sem_suporte": [],
+      "resumo_palavras": 43,
+      "resumo_dentro_limite": true,
+      "decisao_esperada": "permitir",
+      "decisao_obtida": "permitir",
+      "decisao_ok": true,
+      "resumo": "Solicitante: Joana Exemplo Ferreira. Protocolo: 2026-000377. Data: 20/10/2026. Assunto: andamento de pedido de transferência de turno. Pedido: Solicito informações sobre o andamento do meu pedido de transferência de turno, protocolado na Escola Técnica Estadual de Cuiabá. Gostaria de saber como acompanhar a solicitação.",
+      "status_rag_minuta": "sem_evidencia_suficiente",
+      "metodo_resumo": "extrativo_local"
+    },
+    {
+      "id": "S05",
+      "categoria_esperada": "agendamento",
+      "categoria_obtida": "agendamento",
+      "categoria_ok": true,
+      "campos": {
+        "protocolo": {
+          "esperado": null,
+          "obtido": null,
+          "ok": true
+        },
+        "data": {
+          "esperado": null,
+          "obtido": null,
+          "ok": true
+        },
+        "solicitante": {
+          "esperado": null,
+          "obtido": null,
+          "ok": true
+        }
+      },
+      "campos_ausentes_ok": true,
+      "entidades": {
+        "pessoa": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "orgao": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "local": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "data": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "protocolo": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        }
+      },
+      "entidades_corretas": 0,
+      "entidades_esperadas": 0,
+      "entidades_incorretas": 0,
+      "fatos": [
+        {
+          "fato": "quer agendar atendimento",
+          "presente": true
+        },
+        {
+          "fato": "não sabe o número do protocolo",
+          "presente": true
+        }
+      ],
+      "fatos_omitidos": [],
+      "fatos_sem_suporte": [],
+      "resumo_palavras": 23,
+      "resumo_dentro_limite": true,
+      "decisao_esperada": "revisar",
+      "decisao_obtida": "revisar",
+      "decisao_ok": true,
+      "resumo": "Solicitante: não localizado. Protocolo: não localizado. Data: não localizado. Assunto: agendamento. Pedido: Quero agendar um atendimento, mas não sei o número do protocolo.",
+      "status_rag_minuta": "sem_evidencia_suficiente",
+      "metodo_resumo": "extrativo_local"
+    },
+    {
+      "id": "S06",
+      "categoria_esperada": "revisao",
+      "categoria_obtida": "revisao",
+      "categoria_ok": true,
+      "campos": {
+        "protocolo": {
+          "esperado": null,
+          "obtido": null,
+          "ok": true
+        },
+        "data": {
+          "esperado": null,
+          "obtido": null,
+          "ok": true
+        },
+        "solicitante": {
+          "esperado": null,
+          "obtido": null,
+          "ok": true
+        }
+      },
+      "campos_ausentes_ok": true,
+      "entidades": {
+        "pessoa": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "orgao": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "local": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "data": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        },
+        "protocolo": {
+          "corretas": [],
+          "omitidas": [],
+          "incorretas": []
+        }
+      },
+      "entidades_corretas": 0,
+      "entidades_esperadas": 0,
+      "entidades_incorretas": 0,
+      "fatos": [
+        {
+          "fato": "problema com documento não especificado",
+          "presente": true
+        },
+        {
+          "fato": "não recebeu retorno anterior",
+          "presente": true
+        }
+      ],
+      "fatos_omitidos": [],
+      "fatos_sem_suporte": [],
+      "resumo_palavras": 39,
+      "resumo_dentro_limite": true,
+      "decisao_esperada": "revisar",
+      "decisao_obtida": "revisar",
+      "decisao_ok": true,
+      "resumo": "Solicitante: não localizado. Protocolo: não localizado. Data: não localizado. Assunto: não localizado. Pedido não identificado. Trecho original: Preciso resolver aquele problema do documento que comentei antes, já mandei mensagem e ninguém me retornou. Vocês conseguem ver isso pra mim?",
+      "status_rag_minuta": "sem_evidencia_suficiente",
+      "metodo_resumo": "extrativo_local"
+    }
+  ]
+}

@@ -16,13 +16,15 @@ from .nlp import analisar_solicitacao
 from .rag import VERSAO_PROMPT, responder
 from .revisao import RepositorioRevisoes
 from .servicos import ClienteOpenAI, Orcamento
+from .acervo import carregar_catalogo_originais, preparar_documentos
 
-CATALOGO = ROOT / "dados/desafio6/acervo/catalogo.json"
+CATALOGO = None  # O catálogo padrão é descoberto em dados/originais.
 
 
 class FluxoDesafio6:
     def __init__(self, cliente=None, pasta=None):
         self.cliente = cliente or ClienteOpenAI()
+        self.limites_execucao = (self.cliente.orcamento.max_chamadas, self.cliente.orcamento.max_tokens)
         self.pasta = Path(pasta or ROOT / "resultados/desafio6" / (
             "simulado" if self.cliente.simulado else "real"
         )).resolve()
@@ -38,11 +40,12 @@ class FluxoDesafio6:
     @property
     def catalogo(self):
         ativo = self.pasta / "catalogo_ativo.json"
-        return ativo if ativo.exists() else CATALOGO
+        return ativo if ativo.exists() else carregar_catalogo_originais()
 
-    def _iniciar(self):
-        orc = self.cliente.orcamento
-        self.cliente.orcamento = Orcamento(orc.max_chamadas, orc.max_tokens)
+    def _iniciar(self, *, indexacao=False):
+        limites = carregar().get("desafio6", {}).get("limites_indexacao", {}) if indexacao else {}
+        self.cliente.orcamento = Orcamento(limites.get("max_chamadas", self.limites_execucao[0]),
+                                           limites.get("max_tokens", self.limites_execucao[1]))
         self.cliente.chamadas.clear()
         self.cliente.saidas_estruturadas.clear()
         return uuid.uuid4().hex[:16], datetime.now(timezone.utc).isoformat()
@@ -64,8 +67,8 @@ class FluxoDesafio6:
             raise ValueError("Entrada exige revisão: " + ", ".join(protecao["motivos"]))
 
     def indexar(self, catalogo=None, *, recriar=False):
-        id_execucao, _ = self._iniciar()
-        origem = catalogo or CATALOGO
+        id_execucao, _ = self._iniciar(indexacao=True)
+        origem = catalogo if catalogo is not None else carregar_catalogo_originais()
         if isinstance(origem, (str, Path)):
             path = Path(origem).resolve()
             dados = json.loads(path.read_text(encoding="utf-8"))
@@ -83,6 +86,7 @@ class FluxoDesafio6:
             novo["arquivo"] = str(caminho if caminho.is_absolute() else (base / caminho).resolve())
             documentos.append(novo)
         try:
+            documentos = preparar_documentos(documentos, self.pasta / "fontes_processadas", self.cliente)
             resultado = self.indice.indexar({"documentos": documentos}, recriar=recriar)
         except Exception as exc:
             self._auditar(id_execucao, "falha_indexacao", erro=type(exc).__name__, chamadas=self.cliente.chamadas)
@@ -176,7 +180,7 @@ class FluxoDesafio6:
         ids = set(json.loads(arquivo.read_text(encoding="utf-8"))) if arquivo.exists() else set()
         ids.add(documento_id)
         arquivo.write_text(json.dumps(sorted(ids)), encoding="utf-8")
-        if self.catalogo != CATALOGO:
+        if isinstance(self.catalogo, Path):
             dados = json.loads(self.catalogo.read_text(encoding="utf-8"))
             dados["documentos"] = [d for d in dados["documentos"] if d["id"] != documento_id]
             self.catalogo.write_text(json.dumps(dados, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -226,7 +230,7 @@ class FluxoDesafio6:
         removidos = []
         # Inclui índice, consultas, uploads, avaliações e revisões. Logs de auditoria
         # guardam apenas IDs/horários/métricas e seguem retenção independente documentada.
-        for nome in ("indice", "uploads", "entradas", "avaliacoes", "revisoes", "comparacao_chunking"):
+        for nome in ("indice", "uploads", "entradas", "avaliacoes", "revisoes", "comparacao_chunking", "fontes_processadas"):
             pasta = raiz / nome
             if not pasta.exists():
                 continue

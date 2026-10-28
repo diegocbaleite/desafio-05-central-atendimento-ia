@@ -25,6 +25,9 @@ def main(argv=None):
     p.add_argument("--modalidade", default="texto", choices=("texto", "audio", "ocr"))
     p.add_argument("--conferencia", action="store_true", help="operador confirma conferência dos dados STT/OCR no original")
     p.add_argument("--catalogo", type=Path)
+    p.add_argument("--dados", type=Path, help="diretório de avaliação com casos e gabaritos preparados previamente")
+    p.add_argument("--perguntas", type=Path, help="JSON de perguntas e referências prévias para comparação")
+    p.add_argument("--avaliacoes", type=Path, help="JSON de avaliações fornecidas pelo operador")
     p.add_argument("--recriar", action="store_true")
     p.add_argument("--pasta", type=Path, help="pasta local de índice, derivados e auditoria")
     p.add_argument("--modelo", help="modelo de geração OpenAI; não altera embeddings nem reconstrói índice")
@@ -42,7 +45,7 @@ def main(argv=None):
             print(empacotar())
             return 0
         if a.acao == "avaliar":
-            caminho = executar_avaliacao(mock=a.mock, pasta=a.pasta)
+            caminho = executar_avaliacao(mock=a.mock, pasta=a.pasta, dados=a.dados)
             relatorio = json.loads(caminho.read_text(encoding="utf-8"))
             print(json.dumps({"evidencia": str(caminho), "simulada": a.mock,
                               "metricas": relatorio.get("metricas"), "falhas": relatorio["falhas"],
@@ -77,12 +80,16 @@ def main(argv=None):
             fluxo._auditar(a.id, "revisao_registrada", decisao=a.decisao, simulada=a.mock,
                            sha256_minuta=a.sha256)  # Identidade e justificativa ficam no registro de revisão.
         elif a.acao == "chunking":
-            resultado = comparar_chunking(a.catalogo or CATALOGO, ROOT / "dados/desafio6/perguntas.json",
+            if not a.perguntas:
+                raise ValueError("Informe --perguntas com referências criadas antes da avaliação")
+            resultado = comparar_chunking(a.catalogo or fluxo.catalogo, a.perguntas,
                                           cliente, fluxo.pasta / "comparacao_chunking")
             resultado.update(simulada=a.mock, orcamento=cliente.orcamento.resumo(), chamadas=cliente.chamadas)
             (fluxo.pasta / "chunking.json").write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding="utf-8")
         else:
-            itens = json.loads((ROOT / "dados/desafio6/avaliacoes.json").read_text(encoding="utf-8"))["avaliacoes"]
+            if not a.avaliacoes:
+                raise ValueError("Informe --avaliacoes com dados fornecidos pelo operador")
+            itens = json.loads(a.avaliacoes.read_text(encoding="utf-8"))["avaliacoes"]
             resultado = classificar_avaliacoes(itens, cliente)
             (fluxo.pasta / "sentimentos.json").write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(resultado, ensure_ascii=False, indent=2))

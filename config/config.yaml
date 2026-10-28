@@ -91,4 +91,7 @@ desafio6:
     max_tokens: 60000
     max_caracteres: 12000
     max_arquivo_mib: 2
+  limites_indexacao:
+    max_chamadas: 12
+    max_tokens: 200000
   retencao_dias: 30

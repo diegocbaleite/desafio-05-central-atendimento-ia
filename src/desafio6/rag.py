@@ -50,8 +50,12 @@ def _termos(texto):
 
 def _fonte(item, trecho=None):
     return {"documento_id": item["documento_id"], "titulo": item["titulo"], "versao": item["versao"],
-            "arquivo": item["metadata"].get("arquivo"),
-            "chunk_id": item["chunk_id"], "pagina": item["pagina"], "secao": item["secao"],
+            "arquivo": item["metadata"].get("arquivo_original", item["metadata"].get("arquivo")),
+            "arquivo_indexado": item["metadata"].get("arquivo"),
+            "sha256_original": item["metadata"].get("sha256_original", item["sha256"]),
+            "metodo_extracao": item["metadata"].get("metodo_extracao", "texto do documento"),
+            "requer_conferencia_humana": item["metadata"].get("requer_conferencia_humana", False),
+            "chunk_id": item["chunk_id"], "pagina": item["pagina"] if item["pagina"] is not None else item["metadata"].get("pagina_original"), "secao": item["secao"],
             "sha256": item["sha256"], "trecho": trecho or item["texto"],
             "similaridade": item.get("similaridade")}
 
@@ -126,6 +130,15 @@ def _passagem_completa(literal, original):
     citadas = re.split(r"(?<=[.!?])\s+", citado)
     return bool(citado) and any(frases[inicio:inicio + len(citadas)] == citadas
                                for inicio in range(len(frases)))
+
+
+def _localizar_citacao(texto, citacao):
+    """Reconcilia quebras de linha do PDF e devolve os caracteres originais."""
+    caracteres = [re.escape(c) for c in citacao if not c.isspace()]
+    if not caracteres:
+        return None
+    encontrado = re.search(r"\s*".join(caracteres), texto)
+    return encontrado.group(0) if encontrado else None
 
 
 def _validar_solicitacao(solicitacao, original=None):
@@ -214,7 +227,7 @@ def responder(pergunta, indice, cliente, solicitacao=None, *, original=None):
         relevantes = [t for t in relevantes if not t["metadata"].get("conflito") or t["documento_id"] == preferidos.get(t["metadata"].get("grupo_politica", t["metadata"].get("conflito_grupo")))]
     prompt = (Path(__file__).resolve().parents[2] / "prompts/desafio6/rag.md").read_text(encoding="utf-8")
     contexto = [{"chunk_id": t["chunk_id"], "documento_id": t["documento_id"], "versao": t["versao"],
-                 "pagina": t["pagina"], "secao": t["secao"], "texto": t["texto"]} for t in relevantes]
+                 "pagina": t["pagina"], "secao": t["secao"], "texto": minimizar(t["texto"])} for t in relevantes]
     conteudo = json.dumps({"pergunta": minimizar(pergunta), "fatos_solicitacao": solicitacao,
                            "contexto_documental": contexto}, ensure_ascii=False)
     bruto = cliente.gerar_json(prompt, delimitar(conteudo), ESQUEMA_RAG, nome="resposta_rag")
@@ -227,9 +240,11 @@ def responder(pergunta, indice, cliente, solicitacao=None, *, original=None):
     for afirmacao in bruto["afirmacoes"]:
         origem = por_id.get(afirmacao["chunk_id"])
         literal = afirmacao["trecho"].strip()
-        if not origem or not literal or literal not in origem["texto"]:
+        encontrado = _localizar_citacao(origem["texto"], literal) if origem and literal else None
+        if encontrado is None:
             resultado.update({"bloqueado": True, "motivos": ["Afirmação sem passagem literal correspondente; saída bloqueada."]})
             return resultado
+        literal = encontrado
         if not _passagem_completa(literal, indice.texto_original(origem["chunk_id"])):
             resultado.update({"bloqueado": True, "motivos": ["Citação recorta uma frase e pode omitir negação ou condição; saída bloqueada."]})
             return resultado

@@ -15,7 +15,8 @@ TERMOS_ESCOPO = (
     "cadastro", "certid", "solicit", "pedido", "processo", "curso", "inscri",
     "horário", "horario", "cidad", "canal", "comprovante", "cancel", "serviço",
     "servico", "reclama", "avalia", "segunda via", "triagem", "correção", "correcao",
-    "consult", "andamento",
+    "consult", "andamento", "vaga", "edital", "retifica", "sele", "técnic", "tecnic",
+    "escola", "cronograma", "classifica", "cota", "certifica", "etec", "unidade",
 )
 SEGREDOS = re.compile(
     r"\bsk-[A-Za-z0-9_-]{10,}|\b(?:OPENAI_API_KEY|api_key|senha|token|segredo)\s*[:=]\s*[^\s,;]+",

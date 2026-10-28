@@ -267,11 +267,12 @@ class TestStreamlitLocal(unittest.TestCase):
                 revisoes = fabrica().revisoes.listar()
                 self.assertEqual(len(revisoes), 1)
                 self.assertEqual(revisoes[0]["estado"], "pendente")
-                next(b for b in app.button if b.label.startswith("Classificar as 12")).click().run(timeout=20)
+                next(t for t in app.text_area if t.key == "avaliacoes_json").set_value('[{"id":"S1","texto":"Atendimento excelente."}]').run(timeout=20)
+                next(b for b in app.button if b.label.startswith("Classificar avaliações")).click().run(timeout=20)
                 self.assertEqual(len(app.exception), 0)
                 saida = Path(d) / "sentimentos.json"
                 self.assertTrue(saida.exists())
-                self.assertEqual(len(json.loads(saida.read_text(encoding="utf-8"))), 12)
+                self.assertEqual(len(json.loads(saida.read_text(encoding="utf-8"))["resultados"]), 1)
 
 
 if __name__ == "__main__":

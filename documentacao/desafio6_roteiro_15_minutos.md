@@ -1,5 +1,7 @@
 # Desafio 6 — roteiro de apresentação em 15 minutos
 
+**Atualização:** exemplos e métricas abaixo são históricos e usavam o conjunto sintético removido. Substitua os exemplos por consultas aos documentos atuais e não atribua as métricas antigas aos editais.
+
 Todos os integrantes devem compreender o fluxo inteiro. Use apenas os dados fictícios do exercício; a API real consome créditos e precisa da chave local.
 
 | Tempo | Demonstração | Evidência / limite a explicar |

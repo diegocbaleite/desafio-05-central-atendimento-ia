@@ -1,5 +1,7 @@
 # Desafio 6 — índice vetorial e geração com fontes
 
+**Acervo atual:** os arquivos de `dados/originais/`, exceto brasão e configuração. Resultados anteriores nesta documentação referem-se ao conjunto sintético removido e não avaliam os editais fornecidos.
+
 ## Arquitetura e estado de implementação
 
 `src/desafio6/indice.py` implementa um índice persistente equivalente para o pequeno

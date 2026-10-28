@@ -1,9 +1,0 @@
-# D03 - Guia fictício de remarcação - versão 1.0
-Documento sintético exclusivo do exercício. Não contém prazo nem calendário real.
-
-## Remarcação de atendimento
-Para remarcar atendimento, informar o protocolo fictício e indicar o novo período pretendido.
-O período pretendido é uma preferência e não confirma disponibilidade.
-A equipe confere os dados antes de confirmar uma orientação no exercício.
-Nenhuma reserva ou mensagem é enviada pelo assistente.
-O protocolo ausente precisa ser apontado como não localizado, sem gerar outro número.

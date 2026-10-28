@@ -177,7 +177,7 @@ class ClienteOpenAI:
 
     def transcrever(self, caminho):
         from src.seguranca import FORMATOS_AUDIO, validar_arquivo
-        entrada = validar_arquivo(caminho, FORMATOS_AUDIO, 2)
+        entrada = validar_arquivo(caminho, FORMATOS_AUDIO, 20)
         modelo = self.cfg["multimodal"]["stt_modelo"]
         idioma = {"languages[]": "pt"} if modelo == "gpt-transcribe" else {"language": "pt"}
         with entrada.open("rb") as arquivo:

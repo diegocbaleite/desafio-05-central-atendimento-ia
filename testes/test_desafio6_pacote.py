@@ -11,7 +11,7 @@ from src.desafio6 import pacote
 
 
 class TestPacoteDesafio6(unittest.TestCase):
-    def test_pacote_reproduzivel_sem_env_indice_ou_documento_real(self):
+    def test_pacote_reproduzivel_sem_env_e_inclui_documento_fornecido(self):
         with tempfile.TemporaryDirectory() as d:
             raiz = Path(d)
             (raiz / "README.md").write_text("Dados fictícios", encoding="utf-8")
@@ -26,4 +26,4 @@ class TestPacoteDesafio6(unittest.TestCase):
             with zipfile.ZipFile(a) as arquivo:
                 self.assertNotIn(".env", arquivo.namelist())
                 self.assertIn(".env.example", arquivo.namelist())
-                self.assertNotIn("dados/originais/edital_real.pdf", arquivo.namelist())
+                self.assertIn("dados/originais/edital_real.pdf", arquivo.namelist())

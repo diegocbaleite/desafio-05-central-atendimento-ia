@@ -1,5 +1,7 @@
 # Desafio 6 — matriz RF14–RF24 e testes T01–T15
 
+**Histórico:** a matriz e métricas abaixo foram produzidas com o conjunto sintético anterior, removido a pedido do usuário. Não demonstram acurácia dos documentos atuais em `dados/originais/`; novos casos e gabaritos precisam ser preparados antes de uma nova avaliação.
+
 Estados distintos: **I** implementado; **S** testado com simulação; **R** execução real observada; **H** conferência humana. I/S/R não implicam H. Baseline: 130 testes; evolução integrada: 218 testes. Para resultados medidos e falhas, ver [relatório](desafio6_relatorio.md) e [evidência real](../docs/evidencias/desafio6/real/avaliacao_3ac210a30801.json).
 
 | RF | Implementação principal | Estado | Evidência e pendência |

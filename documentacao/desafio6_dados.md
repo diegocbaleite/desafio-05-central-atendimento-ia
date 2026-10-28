@@ -1,6 +1,6 @@
 # Desafio 6 — contratos, NLP e dados prévios
 
-Esta evolução corresponde ao Desafio Prático 02, versão 2.0/2026, Aulas 08–14. Mantém a autoria de Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa, SECITECI / Escola Técnica Estadual de Cuiabá, curso FIC_DEV. Por instrução posterior explícita do usuário, o acervo funcional passa a usar os arquivos fornecidos em `dados/originais/`, excluindo o brasão; os documentos sintéticos criados inicialmente deixam de compor o acervo. Nenhum gabarito anterior ou original foi modificado.
+Esta evolução corresponde ao Desafio Prático 02, versão 2.0/2026, Aulas 08–14. Mantém a autoria de Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa, SECITECI / Escola Técnica Estadual de Cuiabá, curso FIC_DEV. Por instrução posterior explícita do usuário, o acervo funcional usa os arquivos fornecidos em `dados/originais/`, excluindo o brasão; o conjunto sintético inicial de `dados/desafio6/`, inclusive seus gabaritos, foi removido. Os gabaritos do Desafio 01 em `dados/gabaritos/` e os originais foram preservados.
 
 ## Contrato RF14
 
@@ -21,6 +21,10 @@ Para áudio/OCR, a ficha pode ser analisada, mas `apta_para_minuta` permanece fa
 ## Acervo fornecido e preservação
 
 O acervo funcional utiliza os arquivos de `dados/originais/` fornecidos pelo usuário: edital e retificações em PDF, entrada textual, áudio e formulário digitalizado. O arquivo `casos.yaml` fornece metadados de origem/modalidade; o brasão não participa da recuperação. A indexação deve preservar o original e registrar hash, nome, ID, versão, seção/página e origem da transcrição/OCR. Texto extraído de edital real não pode ser apresentado como documento institucional sintético.
+
+Na execução real desta migração foram indexados **10 arquivos e 180 trechos** com `text-embedding-3-small`; o áudio foi transcrito com `gpt-transcribe` e o PDF digitalizado processado com `gpt-6-luna`. Os hashes dos 12 arquivos da pasta, incluindo brasão e configuração, coincidiram com o manifesto anterior. Uma consulta ao objetivo do edital se absteve por insuficiência de evidência recuperada; outra recuperou o edital, mas foi bloqueada porque o modelo juntou quebras de linha da citação. A correspondência foi corrigida para reconstruir a passagem original sem trocar caracteres, com testes para preservar negações. A repetição dessa segunda consulta retornou uma minuta fundamentada com fonte e página, pendente de revisão humana; é necessário conferir as retificações antes de usar seu conteúdo.
+
+Verificação após a migração: **226 testes aprovados**, além de `python -m src.main verificar` e `python -m src.main desafio6 estado`. O acervo antigo foi removido, e o pacote atualizado inclui os PDFs fornecidos. Resultados simulados usam as referências humanas anteriores para as mídias; não são novas transcrições ou OCR. A indexação real consome créditos; as saídas de áudio e OCR exigem conferência humana.
 
 Referências conferidas antigas de STT/OCR permanecem evidências históricas; não comprovam nova execução desses motores. A saída bruta I01 rejeitada não deve ser substituída pelos campos corrigidos. Conferência e correção humanas precisam manter vínculo com a versão da entrada.
 

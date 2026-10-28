@@ -182,6 +182,17 @@ class TestRAG(unittest.TestCase):
         self.assertEqual(resultado["estado_revisao"], "pendente")
         self.assertFalse(resultado["envio_automatico"])
 
+    def test_citacao_reconstroi_espacos_e_quebras_do_pdf_sem_mudar_palavras(self):
+        texto = "# Matrícula\nPara matrícula, apresente o documento de identidade e -\nmail para contato."
+        self.doc.write_text(texto, encoding="utf-8")
+        self.indice.indexar(self.catalogo)
+        self.cliente.saida = lambda d: {"status": "fundamentada", "afirmacoes": [{
+            "chunk_id": d["contexto_documental"][0]["chunk_id"],
+            "trecho": "Para matrícula, apresente o documento de identidade e -mail para contato."}]}
+        resultado = responder("Qual documento para matrícula?", self.indice, self.cliente)
+        self.assertEqual(resultado["status"], "fundamentada")
+        self.assertIn("e -\nmail", resultado["fontes"][0]["trecho"])
+
     def test_id_existente_nao_basta_para_afirmacao_inventada(self):
         self.indice.indexar(self.catalogo)
         self.cliente.saida = lambda d: {"status": "fundamentada", "afirmacoes": [{"chunk_id": d["contexto_documental"][0]["chunk_id"], "trecho": "A matrícula será deferida em 3 dias."}]}

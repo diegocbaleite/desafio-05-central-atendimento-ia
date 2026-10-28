@@ -9,6 +9,7 @@ from unittest.mock import patch
 from src.config import ROOT
 from src.desafio6.fluxo import FluxoDesafio6
 from src.desafio6.servicos import ClienteSimulado
+from testes.apoio_desafio6 import preparar_dados
 
 
 class TestFluxoDesafio6(unittest.TestCase):
@@ -18,8 +19,10 @@ class TestFluxoDesafio6(unittest.TestCase):
         self.pasta = Path(self.temp.name)
         self.cliente = ClienteSimulado()
         self.fluxo = FluxoDesafio6(self.cliente, self.pasta)
-        self.estado = self.fluxo.indexar()
-        self.caso = json.loads((ROOT / "dados/desafio6/solicitacoes.json").read_text(encoding="utf-8"))["solicitacoes"][0]
+        self.fixtures = preparar_dados(self.pasta / "fixtures")
+        self.catalogo_teste = self.fixtures / "acervo/catalogo.json"
+        self.estado = self.fluxo.indexar(self.catalogo_teste)
+        self.caso = json.loads((self.fixtures / "solicitacoes.json").read_text(encoding="utf-8"))["solicitacoes"][0]
 
     def test_ficha_e_fontes_ate_minuta_pendente(self):
         resultado = self.fluxo.processar(self.caso["texto"], "Quais documentos apresentar para solicitar matrícula?")
@@ -47,14 +50,14 @@ class TestFluxoDesafio6(unittest.TestCase):
     def test_exclusao_remove_derivados_e_nao_reintroduz_documento(self):
         resultado = self.fluxo.consultar("Quais documentos apresentar para solicitar matrícula?")
         arquivo = self.fluxo.pasta_execucoes / (resultado["id"] + ".json")
-        fonte = ROOT / "dados/desafio6/acervo/manual_matricula.txt"
+        fonte = self.fixtures / "acervo/manual_matricula.txt"
         original = fonte.read_bytes()
         exclusao = self.fluxo.excluir("D01")
         self.assertGreater(exclusao["chunks_excluidos"], 0)
         self.assertFalse(arquivo.exists())
         self.assertEqual(self.fluxo.revisoes.listar(), [])
         self.assertNotIn("D01", self.fluxo.indice.estado()["ids_documentos"])
-        estado = self.fluxo.indexar()
+        estado = self.fluxo.indexar(self.catalogo_teste)
         self.assertNotIn("D01", estado["ids_documentos"])
         self.assertEqual(fonte.read_bytes(), original)
 
@@ -87,12 +90,17 @@ class TestFluxoDesafio6(unittest.TestCase):
         import time
         arquivo = self.fluxo.pasta_execucoes / "antigo.json"
         arquivo.write_text('{"dado":"ficticio"}', encoding="utf-8")
+        derivado = self.pasta / "fontes_processadas" / "antigo.txt"
+        derivado.parent.mkdir(exist_ok=True)
+        derivado.write_text("Transcrição fictícia", encoding="utf-8")
         antigo = time.time() - 40 * 86400
         os.utime(arquivo, (antigo, antigo))
+        os.utime(derivado, (antigo, antigo))
         resultado = self.fluxo.limpar_expirados(30)
         self.assertFalse(arquivo.exists())
+        self.assertFalse(derivado.exists())
         self.assertIn("indice/execucoes/antigo.json", resultado["arquivos_removidos"])
-        self.assertTrue((ROOT / "dados/desafio6/acervo/manual_matricula.txt").exists())
+        self.assertTrue((self.fixtures / "acervo/manual_matricula.txt").exists())
 
 
 if __name__ == "__main__":

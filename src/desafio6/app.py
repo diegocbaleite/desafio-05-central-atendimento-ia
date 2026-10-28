@@ -219,6 +219,7 @@ def main():
     tabs = st.tabs(["Acervo", "Solicitação e consulta", "Revisões", "Avaliações e painel"])
     with tabs[0]:
         st.subheader("Documentos fornecidos e editais")
+        st.caption("Os editais possuem retificações: confira as alterações e a vigência das fontes antes de usar uma minuta.")
         catalogo = carregar_catalogo(fluxo.pasta)
         documentos = catalogo["documentos"]
         opcoes = {d["id"]: f"{d['id']} — {d['titulo']} · v{d['versao']}" for d in documentos}
@@ -331,10 +332,11 @@ def main():
                                                      max_registros=fluxo.cliente.orcamento.max_chamadas)
                 with st.spinner("Classificando avaliações com a OpenAI…"):
                     resultados = classificar_avaliacoes(entradas, fluxo.cliente)
-                arquivo.write_text(json.dumps(resultados, ensure_ascii=False, indent=2), encoding="utf-8")
+                arquivo.write_text(json.dumps({"origem": "fornecida pelo operador", "resultados": resultados}, ensure_ascii=False, indent=2), encoding="utf-8")
             except (ValueError, OSError, RuntimeError):
                 st.error("A classificação não foi concluída; confira os limites e a disponibilidade da API.")
-        resultados = json.loads(arquivo.read_text(encoding="utf-8")) if arquivo.exists() else []
+        armazenado = json.loads(arquivo.read_text(encoding="utf-8")) if arquivo.exists() else {}
+        resultados = armazenado.get("resultados", []) if isinstance(armazenado, dict) and armazenado.get("origem") == "fornecida pelo operador" else []
         filtro = st.multiselect("Polaridades", ["positiva", "negativa", "neutra", "indeterminada"])
         painel = agregar_painel(resultados, filtros={"polaridade": filtro} if filtro else None)
         st.metric("Avaliações na seleção", painel["total"])

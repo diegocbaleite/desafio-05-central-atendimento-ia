@@ -1,9 +1,0 @@
-# D05 - Orientação interna fictícia de canal - versão 1.0
-Documento sintético exclusivo do exercício.
-
-## Canal de agendamento
-O agendamento fictício é solicitado pelo Portal Aurora.
-Esta orientação diverge do documento D06, que indica o Balcão Horizonte.
-Não há prioridade nem vigência documentada entre D05 e D06.
-O resultado esperado dessa divergência é conflito de fontes e revisão humana.
-O assistente não deve escolher um canal por suposição.

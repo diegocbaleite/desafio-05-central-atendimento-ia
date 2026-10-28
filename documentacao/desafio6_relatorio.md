@@ -1,5 +1,7 @@
 # Desafio 6 — relatório técnico da primeira evolução
 
+**Atualização posterior:** por solicitação da equipe, o acervo sintético descrito neste relatório foi removido e substituído pelos arquivos de `dados/originais/`, exceto o brasão. As medições abaixo pertencem exclusivamente à execução histórica anterior e não são resultados dos editais. A avaliação do novo acervo requer perguntas e gabaritos prévios próprios. Consulte [dados e contratos](desafio6_dados.md) e o README para o fluxo atual.
+
 **Data:** 28/10/2026. **Equipe:** Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa. SECITECI / Escola Técnica Estadual de Cuiabá, FIC_DEV — Programador de Sistemas com IA.
 
 Corresponde ao **Desafio Prático 02, versão 2.0 — 2026**, continuação do Prático 01 no mesmo repositório. O PDF `desafio-06/Desafio_02-Pratico_IA_Generativa_Aulas_08_a_15.docx.pdf` foi lido integralmente (13 páginas). O escopo é Aulas 08–14, RF14–RF24; não foi implementada memória conversacional. A especificação textual e o PDF concordam no escopo; os vínculos RF inconsistentes na matriz do PDF estão registrados na [matriz local](desafio6_matriz.md).
@@ -24,7 +26,7 @@ O conjunto `dados/desafio6` foi escrito antes das chamadas: seis documentos fict
 
 Situação inicial: **130 testes aprovados**. Situação integrada: **218 testes aprovados**, incluindo AppTest do Streamlit, orçamento/retries, persistência, citações, exclusão, revisão, regressão e pacote. Os testes de HTTP são simulados; sua aprovação não comprova API real. O ambiente observado usa Windows e Python **3.14.6**, pypdf 6.16.2 e Streamlit 1.62.0. As dependências novas já estavam instaladas. O alias `python` do sandbox estava indisponível; usou-se o interpretador instalado em `C:/Users/ayron/AppData/Local/Python/pythoncore-3.14-64/python.exe`.
 
-**Rodada real:** `avaliacao_3ac210a30801`, preservada integralmente em `resultados/desafio6/real/avaliacoes/avaliacao_3ac210a30801/resultado.json`. Uma [cópia com caminhos minimizados](../docs/evidencias/desafio6/real/avaliacao_3ac210a30801.json) acompanha o código. O manifesto anterior às chamadas confirmou referências preservadas.
+**Rodada histórica real:** `avaliacao_3ac210a30801`, preservada localmente em `resultados/desafio6/real/avaliacoes/avaliacao_3ac210a30801/resultado.json`. Uma cópia local com caminhos minimizados existe em `docs/evidencias/desafio6/real/`; não integra o pacote atualizado. O manifesto anterior às chamadas confirmou referências preservadas.
 
 | Medida automática | Numerador/denominador | Resultado |
 |---|---|---|
@@ -42,7 +44,7 @@ Não houve vencedor no chunking: a medição empatou. Mantém-se a configuraçã
 
 A rodada principal registrou **45 requisições**, **15.564 tokens de entrada** e **2.108 de saída** disponibilizados nos metadados; soma das latências das requisições: **69,240 s** (não é o tempo total de trabalho nem o tempo humano até resultado utilizável). A indexação inicial real foi executada separadamente, em um lote, com seis documentos e 13 chunks. Custo monetário não foi retornado e não foi estimado: `não localizado`.
 
-Também foi executado o fluxo integrado real R01: análise, resumo, recuperação e minuta fundamentada, ID `cacf89f54d8746f7`. Sua [evidência minimizada](../docs/evidencias/desafio6/real/fluxo_R01_cacf89f54d8746f7.json) contém ficha, fontes, saídas estruturadas e estado pendente. Nenhuma revisão foi atribuída à equipe automaticamente.
+Também foi executado o fluxo integrado histórico real R01: análise, resumo, recuperação e minuta fundamentada, ID `cacf89f54d8746f7`. Sua evidência minimizada local contém ficha, fontes, saídas estruturadas e estado pendente. Nenhuma revisão foi atribuída à equipe automaticamente.
 
 ## Falhas preservadas e correções
 

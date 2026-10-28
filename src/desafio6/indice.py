@@ -174,10 +174,12 @@ class IndiceVetorial:
             # Alguns chamadores usam arquivo relativo à raiz do projeto.
             if not caminho.is_file() and not relativo.is_absolute():
                 caminho = (ROOT / relativo).resolve()
-            if not caminho.is_file() and not relativo.is_absolute():
-                caminho = (ROOT / "dados/desafio6/acervo" / relativo).resolve()
             if not caminho.is_file() or caminho.suffix.lower() not in {".txt", ".pdf"}:
                 raise ValueError("Documento ausente ou formato não suportado")
+            if item.get("arquivo_original"):
+                original = Path(item["arquivo_original"])
+                if not original.is_file() or _hash(original) != item.get("sha256_original"):
+                    raise ValueError("Original alterado ou não localizado; reindexação necessária")
             if not 0 < caminho.stat().st_size <= 2 * 1024 * 1024:
                 raise ValueError("Documento vazio ou acima de 2 MiB")
             if caminho.suffix.lower() == ".pdf" and not caminho.read_bytes().startswith(b"%PDF-"):
@@ -223,7 +225,8 @@ class IndiceVetorial:
         # inteira, e nenhum conteúdo é enviado antes de validar todo o acervo.
         todos_chunks = [chunk for _, _, _, chunks in novos for chunk in chunks]
         if todos_chunks:
-            vetores = self.cliente.embeddings([c["texto"] for c in todos_chunks])
+            from src.seguranca import minimizar
+            vetores = self.cliente.embeddings([minimizar(c["texto"]) for c in todos_chunks])
             if len(vetores) != len(todos_chunks):
                 raise ValueError("Quantidade de embeddings difere dos chunks")
             for chunk, vetor in zip(todos_chunks, vetores):
@@ -260,6 +263,11 @@ class IndiceVetorial:
             path = Path(doc["caminho"])
             if not path.is_file() or _hash(path) != doc["sha256"]:
                 motivos.append("fonte alterada ou removida: " + doc["id"])
+            metadata = json.loads(doc["metadata"])
+            if metadata.get("arquivo_original"):
+                original = Path(metadata["arquivo_original"])
+                if not original.is_file() or _hash(original) != metadata.get("sha256_original"):
+                    motivos.append("original alterado ou removido: " + doc["id"])
         if catalogo is not None:
             try:
                 atuais = {item["id"]: (_hash(path), _json(item)) for item, path in self._ler_catalogo(catalogo)}
@@ -329,13 +337,18 @@ class IndiceVetorial:
     def texto_original(self, chunk_id):
         """Contexto completo da seção: um corte de chunk não define uma frase."""
         with self._conectar() as con:
-            row = con.execute("""SELECT c.pagina, c.secao, c.texto, d.caminho, d.sha256
+            row = con.execute("""SELECT c.pagina, c.secao, c.texto, d.caminho, d.sha256, d.metadata
                 FROM chunks c JOIN documentos d ON c.documento_id=d.id WHERE c.id=?""", (chunk_id,)).fetchone()
         if not row:
             raise ValueError("Chunk inexistente ao conferir passagem")
         path = Path(row["caminho"])
         if not path.is_file() or _hash(path) != row["sha256"]:
             raise IndiceDesatualizado("Fonte alterada antes da conferência da passagem")
+        metadata = json.loads(row["metadata"])
+        if metadata.get("arquivo_original"):
+            original = Path(metadata["arquivo_original"])
+            if not original.is_file() or _hash(original) != metadata.get("sha256_original"):
+                raise IndiceDesatualizado("Original alterado antes da conferência da passagem")
         for pagina, texto in _paginas(path):
             if pagina != row["pagina"]:
                 continue

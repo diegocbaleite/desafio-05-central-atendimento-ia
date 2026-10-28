@@ -11,13 +11,12 @@ from src.config import ROOT
 
 def empacotar(destino=None) -> Path:
     arquivos = {ROOT / nome for nome in ("README.md", "requirements.txt", ".env.example", ".gitignore", ".streamlit/config.toml", "AGENTS.md", "desafio-expert.agents.md")}
-    for pasta in ("src", "testes", "config", "prompts", "documentacao", "docs/evidencias/desafio6", "desafio-06", "dados/desafio6", "dados/gabaritos", "dados/revisao"):
+    for pasta in ("src", "testes", "config", "prompts", "documentacao", "desafio-06", "dados/gabaritos", "dados/revisao"):
         for p in (ROOT / pasta).rglob("*"):
             if p.is_file() and "__pycache__" not in p.parts and p.suffix.lower() not in {".pyc", ".tmp"}:
                 arquivos.add(p)
-    # Somente as entradas do exercício anterior, nunca editais/pessoas/documentos reais adicionais.
-    for nome in ("casos.yaml", "entrada_texto.txt", "entrada_audio.mp3", "entrada_pdf-imagem.pdf", "brasao.png"):
-        p = ROOT / "dados/originais" / nome
+    # Inclui os arquivos fornecidos, inclusive editais; o brasão não entra no acervo.
+    for p in (ROOT / "dados/originais").iterdir():
         if p.is_file():
             arquivos.add(p)
     for p in (ROOT / "resultados/multimodal/referencias").glob("*.txt"):

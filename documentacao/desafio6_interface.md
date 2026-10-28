@@ -1,12 +1,14 @@
 # Interface, sentimentos, painel e revisão — Desafio 6
 
+**Atualização:** o acervo usa os arquivos fornecidos em `dados/originais/`, exceto brasão e configuração. As avaliações são fornecidas pelo operador; o conjunto sintético inicial foi removido. As descrições e métricas antigas abaixo são históricas.
+
 ## Execução local
 
 ```powershell
 python -m streamlit run src/desafio6/app.py
 ```
 
-A interface usa o mesmo `FluxoDesafio6` da CLI e o adaptador OpenAI. Não possui envio de mensagens, assinatura, deferimento ou protocolo real. O catálogo de exercício permanece em `dados/desafio6/acervo/`; uploads e derivados ficam em `resultados/desafio6/`, ignorados pelo Git.
+A interface usa o mesmo `FluxoDesafio6` da CLI e o adaptador OpenAI. Não possui envio de mensagens, assinatura, deferimento ou protocolo real. O catálogo é descoberto em `dados/originais/`; uploads e derivados ficam em `resultados/desafio6/`, ignorados pelo Git.
 
 As abas oferecem seleção/upload e indexação de TXT/PDF textual até 2 MB; solicitação textual ou texto extraído de áudio/imagem; pergunta independente; ficha, resumo, trechos, fontes e minuta; revisão; avaliações e painel. A inclusão de upload e mídia exige confirmação de que os dados são fictícios. A interface informa falhas e índice desatualizado. O fluxo exige conferência de nomes, datas e protocolos antes de usar mídia na minuta. Refazer extração ou editar o texto invalida a confirmação visível. A origem e o hash da mídia acompanham o texto mesmo ao alternar o seletor para Texto, impedindo contornar a conferência. Iniciar uma solicitação textual independente limpa expressamente o conteúdo e seu vínculo anterior.
 
@@ -24,7 +26,7 @@ Excluir um documento retira vetores e derivados vinculados pelo controlador. Upl
 
 `classificar_avaliacoes` usa esquema fechado com polaridade `positiva`, `negativa`, `neutra` ou `indeterminada`, justificativa curta e `necessita_revisao`. Mistura, ironia e contexto insuficiente exigem indeterminação/revisão; isso é uma regra do prompt que deve ser conferida com os gabaritos. O gerador não lê rótulos esperados. Entradas adversariais ou com possível credencial são encaminhadas à revisão sem chamada ao modelo. Validação local rejeita formato inválido e justificativas com dados indevidos.
 
-Não se estima confiança numérica. Polaridade descreve a mensagem, sem inferir personalidade, diagnóstico, atributos sensíveis ou sentimento da população. As doze entradas têm gabaritos prévios separados em `dados/desafio6/gabaritos.json`.
+Não se estima confiança numérica. Polaridade descreve a mensagem, sem inferir personalidade, diagnóstico, atributos sensíveis ou sentimento da população. A interface recebe avaliações fornecidas pelo operador; não há conjunto pré-preenchido. Gabaritos para uma nova avaliação precisam ser preparados antes das chamadas.
 
 `metricas.py` agrega por código, deduplica pelo ID (último registro prevalece) e aplica filtros depois da deduplicação. Percentuais exibem numerador e denominador; conjunto vazio tem percentual `null`, exibido como indisponível, sem divisão por zero. Comparação de rótulos inclui ausências no denominador. As métricas RAG só contam `todas_afirmacoes_sustentadas: true` quando a verificação do fluxo explicitamente forneceu essa evidência; a mera existência de fonte citada não basta.
 

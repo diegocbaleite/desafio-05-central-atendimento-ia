@@ -2,6 +2,8 @@
 
 **Histórico:** a matriz e métricas abaixo foram produzidas com o conjunto sintético anterior, removido a pedido do usuário. Não demonstram acurácia dos documentos atuais em `dados/originais/`; novos casos e gabaritos precisam ser preparados antes de uma nova avaliação.
 
+**Esclarecimento do acervo atual:** segundo o usuário, os dados fornecidos em `dados/originais/` são fictícios e usados para avaliação do desafio. A caracterização anterior de que o ZIP continha dados reais não se aplica ao material declarado. Permanecem pendentes os gabaritos e as avaliações específicas do acervo atual, a revisão humana e a correção da exclusão dos textos derivados.
+
 Estados distintos: **I** implementado; **S** testado com simulação; **R** execução real observada; **H** conferência humana. I/S/R não implicam H. Baseline: 130 testes; evolução integrada: 218 testes. Para resultados medidos e falhas, ver [relatório](desafio6_relatorio.md) e [evidência real](../docs/evidencias/desafio6/real/avaliacao_3ac210a30801.json).
 
 | RF | Implementação principal | Estado | Evidência e pendência |

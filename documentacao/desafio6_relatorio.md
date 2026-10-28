@@ -1,6 +1,6 @@
 # Desafio 6 — relatório técnico da primeira evolução
 
-**Atualização posterior:** por solicitação da equipe, o acervo sintético descrito neste relatório foi removido e substituído pelos arquivos de `dados/originais/`, exceto o brasão. As medições abaixo pertencem exclusivamente à execução histórica anterior e não são resultados dos editais. A avaliação do novo acervo requer perguntas e gabaritos prévios próprios. Consulte [dados e contratos](desafio6_dados.md) e o README para o fluxo atual.
+**Atualização posterior:** por solicitação da equipe, o acervo sintético descrito neste relatório foi removido e substituído pelos arquivos de `dados/originais/`, exceto o brasão. O usuário esclareceu que os dados fornecidos nessa pasta são fictícios e usados na avaliação do desafio. As medições abaixo pertencem exclusivamente à execução histórica anterior e não são resultados dos editais atuais. A avaliação do novo acervo requer perguntas e gabaritos prévios próprios. Consulte [dados e contratos](desafio6_dados.md) e o README para o fluxo atual.
 
 **Data:** 28/10/2026. **Equipe:** Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa. SECITECI / Escola Técnica Estadual de Cuiabá, FIC_DEV — Programador de Sistemas com IA.
 
@@ -22,7 +22,7 @@ Corresponde ao **Desafio Prático 02, versão 2.0 — 2026**, continuação do P
 
 ## Dados e validação observada
 
-O conjunto `dados/desafio6` foi escrito antes das chamadas: seis documentos fictícios (quatro TXT e dois PDFs textuais), seis solicitações, oito perguntas, 12 avaliações e três ataques. Gabaritos ficam separados e o gerador não os consulta. R03/R04 são recortes identificados das referências antigas STT/OCR, não novo reconhecimento nem substituição do bruto I01 rejeitado. Os editais reais presentes em `dados/originais` não foram incorporados.
+O conjunto anterior `dados/desafio6` foi escrito antes das chamadas: seis documentos fictícios (quatro TXT e dois PDFs textuais), seis solicitações, oito perguntas, 12 avaliações e três ataques. Os gabaritos eram separados e o gerador não os consultava. R03/R04 são recortes identificados das referências antigas STT/OCR, não novo reconhecimento nem substituição do bruto I01 rejeitado. Os documentos fornecidos em `dados/originais/` não foram incorporados àquela rodada histórica; integram o acervo atual.
 
 Situação inicial: **130 testes aprovados**. Situação integrada: **218 testes aprovados**, incluindo AppTest do Streamlit, orçamento/retries, persistência, citações, exclusão, revisão, regressão e pacote. Os testes de HTTP são simulados; sua aprovação não comprova API real. O ambiente observado usa Windows e Python **3.14.6**, pypdf 6.16.2 e Streamlit 1.62.0. As dependências novas já estavam instaladas. O alias `python` do sandbox estava indisponível; usou-se o interpretador instalado em `C:/Users/ayron/AppData/Local/Python/pythoncore-3.14-64/python.exe`.
 

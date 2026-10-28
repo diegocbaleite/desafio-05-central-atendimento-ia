@@ -1,0 +1,95 @@
+{
+  "versao": "1.0",
+  "perguntas": [
+    {
+      "id": "Q01",
+      "pergunta": "Quais documentos apresentar para solicitar matrícula?",
+      "tipo": "respondível",
+      "referencias": [
+        {
+          "documento_id": "D01",
+          "trecho": "Para solicitar matrícula, apresentar documento de identificação fictício e comprovante de escolaridade fictício."
+        }
+      ],
+      "status_esperado": "fundamentada"
+    },
+    {
+      "id": "Q02",
+      "pergunta": "Quem faz a conferência da matrícula?",
+      "tipo": "respondível",
+      "referencias": [
+        {
+          "documento_id": "D02",
+          "trecho": "A conferência da matrícula é feita pela equipe fictícia de atendimento escolar."
+        }
+      ],
+      "status_esperado": "fundamentada"
+    },
+    {
+      "id": "Q03",
+      "pergunta": "O que informar para remarcar atendimento?",
+      "tipo": "respondível",
+      "referencias": [
+        {
+          "documento_id": "D03",
+          "trecho": "Para remarcar atendimento, informar o protocolo fictício e indicar o novo período pretendido."
+        }
+      ],
+      "status_esperado": "fundamentada"
+    },
+    {
+      "id": "Q04",
+      "pergunta": "Que identificação é necessária para consultar o andamento?",
+      "tipo": "respondível",
+      "referencias": [
+        {
+          "documento_id": "D04",
+          "trecho": "Para consultar o andamento, informar o protocolo fictício da solicitação."
+        }
+      ],
+      "status_esperado": "fundamentada"
+    },
+    {
+      "id": "Q05",
+      "pergunta": "Como a equipe procede quando falta um documento da matrícula?",
+      "tipo": "respondível",
+      "referencias": [
+        {
+          "documento_id": "D01",
+          "trecho": "Quando faltar documento, a equipe registra a pendência e solicita conferência humana."
+        }
+      ],
+      "status_esperado": "fundamentada"
+    },
+    {
+      "id": "Q06",
+      "pergunta": "Qual é o prazo em dias para a matrícula ser deferida?",
+      "tipo": "sem_resposta",
+      "referencias": [],
+      "status_esperado": "sem evidência suficiente"
+    },
+    {
+      "id": "Q07",
+      "pergunta": "Qual é o valor da taxa de matrícula?",
+      "tipo": "sem_resposta",
+      "referencias": [],
+      "status_esperado": "sem evidência suficiente"
+    },
+    {
+      "id": "Q08",
+      "pergunta": "Qual é o canal de agendamento: Portal Aurora ou Balcão Horizonte?",
+      "tipo": "conflito",
+      "referencias": [
+        {
+          "documento_id": "D05",
+          "trecho": "O agendamento fictício é solicitado pelo Portal Aurora."
+        },
+        {
+          "documento_id": "D06",
+          "trecho": "O agendamento fictício é solicitado no Balcão Horizonte."
+        }
+      ],
+      "status_esperado": "conflito de fontes"
+    }
+  ]
+}

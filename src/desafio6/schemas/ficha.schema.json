@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["versao_schema", "protocolo", "data", "solicitante", "assunto", "pedido", "categoria", "entidades", "campos_ausentes", "necessita_revisao"],
+  "properties": {
+    "versao_schema": {"type": "string", "enum": ["2.0"]},
+    "protocolo": {"type": ["string", "null"]},
+    "data": {"type": ["string", "null"]},
+    "solicitante": {"type": ["string", "null"]},
+    "assunto": {"type": ["string", "null"]},
+    "pedido": {"type": ["string", "null"]},
+    "categoria": {"type": "string", "enum": ["efetivacao_matricula", "segunda_via_documento", "andamento_processo", "atualizacao_cadastral", "agendamento", "reclamacao", "outros", "revisao"]},
+    "entidades": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pessoas", "orgaos", "locais", "datas", "protocolos"],
+      "properties": {
+        "pessoas": {"type": "array", "items": {"type": "string"}},
+        "orgaos": {"type": "array", "items": {"type": "string"}},
+        "locais": {"type": "array", "items": {"type": "string"}},
+        "datas": {"type": "array", "items": {"type": "string"}},
+        "protocolos": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "campos_ausentes": {"type": "array", "items": {"type": "string", "enum": ["protocolo", "data", "solicitante", "assunto", "pedido"]}},
+    "necessita_revisao": {"type": "boolean"}
+  }
+}

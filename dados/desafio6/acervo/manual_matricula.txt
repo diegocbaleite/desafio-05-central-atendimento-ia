@@ -1,0 +1,11 @@
+# D01 - Manual fictício de matrícula - versão 1.0
+Documento sintético exclusivo do exercício. Não constitui norma ou serviço real.
+
+## Documentos para matrícula
+Para solicitar matrícula, apresentar documento de identificação fictício e comprovante de escolaridade fictício.
+A lista serve somente aos casos simulados deste acervo. Nenhuma lei, prazo ou autoridade real é estabelecida.
+
+## Documentação pendente
+Quando faltar documento, a equipe registra a pendência e solicita conferência humana.
+A ausência de documento não autoriza o sistema a afirmar que a matrícula foi deferida.
+O solicitante é informado apenas sobre a pendência registrada no caso simulado.

@@ -64,3 +64,31 @@ seguranca:
   marcador_ausente: "não localizado"
   envio_automatico: false
   revisao_obrigatoria: true
+
+# Desafio 6 / Prático 02: geração e recuperação independentes.
+desafio6:
+  geracao:
+    provider: "openai"
+    modelo: "gpt-6-luna"
+    reasoning_effort: "none"
+    temperatura: 0.2
+    max_tokens: 2400
+    timeout_s: 30
+  segunda_geracao:
+    provider: "openai"
+    modelo: "gpt-6.1-terra"
+    reasoning_effort: "none"
+  embeddings:
+    modelo: "text-embedding-3-small"
+    dimensao: 256
+  chunking:
+    tamanho: 90
+    sobreposicao: 20
+    unidade: "palavras"
+    top_k: 3
+  limites:
+    max_chamadas: 12
+    max_tokens: 60000
+    max_caracteres: 12000
+    max_arquivo_mib: 2
+  retencao_dias: 30

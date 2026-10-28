@@ -1,4 +1,55 @@
-# 🤖 Central Inteligente de Atendimento e Comunicação Institucional
+# Desafio 6 — Central Inteligente de Atendimento e Comunicação Institucional
+
+Esta evolução corresponde ao **Desafio Prático 02, versão 2.0 — 2026**, Aulas 08 a 14, e continua o Desafio Prático 01 no mesmo repositório. A autoria e o histórico de Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa foram preservados. Instituição: SECITECI / Escola Técnica Estadual de Cuiabá; curso FIC_DEV — Programador de Sistemas com IA.
+
+O Desafio 6 acrescenta ficha com JSON Schema e regras de negócio, resumo extrativo, entidades, guardrails, embeddings OpenAI, índice SQLite persistente, RAG com citações verificadas, revisão humana, Streamlit e painel de sentimentos. A documentação abaixo dessa seção preserva o histórico do Desafio 01. Não reutilize métricas históricas como evidência do fluxo novo.
+
+## Executar o Desafio 6
+
+Com Python 3.12+ (ambiente observado: 3.14.6), instale as dependências no ambiente virtual e mantenha `OPENAI_API_KEY` apenas no `.env` ignorado. Se o `.env` já existe, preserve-o; copie `.env.example` somente em uma configuração nova.
+
+```powershell
+python -m pip install -r requirements.txt
+python -m src.main verificar
+python -m src.main desafio6 indexar
+python -m src.main desafio6 consultar --pergunta "Quais documentos apresentar para solicitar matrícula?"
+python -m streamlit run src/desafio6/app.py --server.address 127.0.0.1
+```
+
+Na interface, selecione documentos fictícios, indexe, informe solicitação/pergunta, confira a ficha, os trechos e a minuta e registre a decisão com responsável e justificativa. Áudio/OCR exigem conferência de nomes, datas e protocolos. Cada consulta é independente. Não há envio automático, memória conversacional ou aprovação por IA.
+
+```powershell
+# Sem APIs: simulação identificada em pasta separada; não comprova execução de modelo
+python -m src.main desafio6 indexar --mock
+python -m src.main desafio6 consultar --mock --pergunta "Quais documentos apresentar para solicitar matrícula?"
+python -m src.main desafio6 avaliar --mock
+
+# Avaliações reais: consomem créditos da API; preservam falhas e revisão pendente
+python -m src.main desafio6 avaliar
+python -m src.main desafio6 chunking
+python -m src.main desafio6 sentimentos
+
+# Trocar apenas a geração reutiliza o índice de embeddings
+python -m src.main desafio6 consultar --modelo gpt-6.1-terra --pergunta "Quem faz a conferência da matrícula?"
+
+# Exclusão remove trechos e derivados, preserva originais e impede reintrodução automática
+python -m src.main desafio6 excluir --documento-id D01
+python -m src.main desafio6 estado
+
+python -m unittest discover -s testes -t .
+python -m src.main --mock --decisoes dados/revisao/decisoes_demo.yaml
+python -m src.main desafio6 empacotar
+```
+
+O índice, uploads, revisões e evidências locais ficam em `resultados/desafio6/real/` e `resultados/desafio6/simulado/`, ignorados pelo Git. Dados prévios estão em `dados/desafio6/`; os PDFs institucionais reais fornecidos na pasta antiga não compõem o novo acervo fictício. O pacote de código sai em `dist/desafio-06-central-atendimento-ia.zip`, sem `.env`, índices ou logs locais.
+
+Geração: `gpt-6-luna`; embeddings: `text-embedding-3-small`, 256 dimensões. Configuração em `config/config.yaml`, seção `desafio6`. A busca percorre vetores por cosseno em SQLite, equivalente persistente para acervo pequeno; não é uma busca ANN escalável. Fonte literal, relevância e revisão humana são verificações distintas. A reserva de tokens não é custo medido; uso/custo ausentes permanecem indisponíveis.
+
+Consulte o [relatório do Desafio 6](documentacao/desafio6_relatorio.md), a [matriz RF14–RF24/T01–T15](documentacao/desafio6_matriz.md), os [dados e gabaritos](documentacao/desafio6_dados.md), a [recuperação e RAG](documentacao/desafio6_rag.md) e a [interface/revisão/sentimentos](documentacao/desafio6_interface.md). A implementação não comprova aprovação humana nem homologação institucional.
+
+---
+
+## Histórico do Desafio Prático 01
 
 Protótipo educacional desenvolvido em **Python** para apoiar o tratamento de solicitações fictícias recebidas por **texto, áudio e imagem**. A aplicação valida entradas, transcreve áudio, executa OCR, extrai e classifica informações, gera minutas institucionais, oferece síntese de voz, prepara peças visuais e registra evidências de execução e revisão humana.
 

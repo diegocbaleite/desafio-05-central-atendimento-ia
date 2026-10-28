@@ -37,6 +37,8 @@ BIBLIOTECAS = (
     "python-dotenv",
     "pillow",
     "pytesseract",
+    "pypdf",
+    "streamlit",
 )
 FERRAMENTAS = ("tesseract", "pdftoppm", "espeak", "ffprobe")
 
@@ -683,11 +685,14 @@ def _comando_midia(a):
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "desafio6":
+        from .desafio6.cli import main as main_desafio6
+        return main_desafio6(sys.argv[2:])
     p = argparse.ArgumentParser()
     p.add_argument(
         "comando",
         nargs="?",
-        choices=["verificar", "modelos", "processar", "experimento", "imagem", *COMANDOS_MIDIA],
+        choices=["verificar", "modelos", "processar", "experimento", "imagem", "desafio6", *COMANDOS_MIDIA],
         default="processar",
     )
     p.add_argument(

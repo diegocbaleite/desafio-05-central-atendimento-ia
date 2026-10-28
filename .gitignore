@@ -1,16 +1,60 @@
+# Credenciais locais (manter apenas exemplos sem chaves)
 .env
 .env.*
 !.env.example
+**/.streamlit/secrets.toml
+
+# Ambientes virtuais e arquivos gerados pelo Python
 .venv/
+venv/
+env/
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Caches e cobertura de testes
 .pytest_cache/
-resultados/execucoes/
-resultados/minutas/
-resultados/logs/
-resultados/imagens/
-resultados/audios/
-resultados/ocr/
-resultados/arquivos_fornecidos/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Saídas de execução: relatórios, experimentos, minutas, logs, mídias e uploads
+/resultados/*
+# Referências humanas prévias são entradas dos testes, não resultados gerados
+!/resultados/multimodal/
+/resultados/multimodal/*
+!/resultados/multimodal/referencias/
+
+# Cópias de evidências derivadas das execuções (inclui JSON do Desafio 6)
+/docs/evidencias/
+
+# Índice persistente local
+indice/
+
+# Índices SQLite, inclusive quando usada uma pasta personalizada
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Temporários de gravação, editores e sistema operacional
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Arquivos locais legados
 Python
 Desafio_01-Pratico_IA_Generativa_Aulas_01_a_07.docx.pdf

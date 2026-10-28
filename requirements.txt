@@ -4,3 +4,5 @@ jsonschema>=4.20,<5
 python-dotenv>=1,<2
 pillow>=10,<13
 pytesseract>=0.3.10,<0.4
+pypdf>=6,<7
+streamlit>=1.50,<2

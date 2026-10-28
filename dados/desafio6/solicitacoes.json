@@ -1,0 +1,46 @@
+{
+  "versao": "1.0",
+  "somente_dados_ficticios": true,
+  "solicitacoes": [
+    {
+      "id": "R01",
+      "tipo": "completa",
+      "modalidade": "texto",
+      "texto": "Protocolo: 2026-000201\nData: 28/10/2026\nNome: Ana Fictícia Aurora\nÓrgão: Escola Fictícia Aurora\nLocal: Vila Fictícia Azul\nAssunto: Efetivação de matrícula\nPedido: Solicito a efetivação da matrícula e orientação sobre documentos."
+    },
+    {
+      "id": "R02",
+      "tipo": "completa",
+      "modalidade": "texto",
+      "texto": "Protocolo: 2026-000202\nData: 28/10/2026\nNome: Bruno Fictício Horizonte\nAssunto: Remarcação de atendimento\nPedido: Solicito remarcar o atendimento para outro período."
+    },
+    {
+      "id": "R03",
+      "tipo": "completa",
+      "modalidade": "audio",
+      "origem_reutilizada": "resultados/multimodal/referencias/referencia_audio_conferida.txt",
+      "transformacoes": "Recorte fictício da referência STT conferida; omitidos nascimento, CPF, RG, filiação, e-mail e declaração. Rótulos adicionados para a ficha de teste. Não é nova execução de STT.",
+      "texto": "Protocolo: 2026-000142\nData: 14/10/2026\nNome: Marcos Vinícius de Almeida Santos\nLocal: Cuiabá\nAssunto: Efetivação da matrícula\nPedido: Quero pedir a efetivação da minha matrícula no curso Técnico em Infirmagem."
+    },
+    {
+      "id": "R04",
+      "tipo": "completa",
+      "modalidade": "ocr",
+      "origem_reutilizada": "resultados/multimodal/referencias/referencia_ocr_conferida.txt",
+      "transformacoes": "Recorte fictício da referência OCR conferida, com rótulos de assunto e pedido sintéticos anexados para o exercício. O bruto I01 rejeitado não foi substituído ou corrigido. Não é nova execução de OCR.",
+      "texto": "CÓDIGO: 2026-000142\nDATA MATRÍCULA: 14/10/2026\nNOME: MARCOS VINÍCIUS DE ALMEIDA SANTOS\nLOCAL: CUIABÁ\nAssunto: Andamento da matrícula\nPedido: Solicito acompanhar o andamento da matrícula."
+    },
+    {
+      "id": "R05",
+      "tipo": "incompleta",
+      "modalidade": "texto",
+      "texto": "Assunto: Agendamento de atendimento\nPedido: Quero agendar atendimento, mas não tenho protocolo nem data pretendida."
+    },
+    {
+      "id": "R06",
+      "tipo": "ambigua",
+      "modalidade": "texto",
+      "texto": "Protocolo: 2026-000206\nData: 28/10/2026\nNome: Clara Fictícia Brisa\nAssunto: Dúvida entre dois serviços\nPedido: Não sei se quero remarcar atendimento ou pedir segunda via; preciso esclarecer a opção."
+    }
+  ]
+}

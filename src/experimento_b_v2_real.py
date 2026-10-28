@@ -1,7 +1,7 @@
-"""Executa Prompt B V2, V3 ou V4 com OpenRouter real; sem homologação automática.
+"""Executa Prompt B V2, V3 ou V4 com o provedor configurado; sem homologação automática.
 
 Uso: python -m src.experimento_b_v2_real
-Pré-requisitos: .env local com OPENROUTER_API_KEY válida; dados fictícios.
+Pré-requisitos: .env local com chave válida do provedor configurado; dados fictícios.
 Resultados locais ignorados pelo Git: resultados/execucoes/prompts_b_v2_real/.
 """
 from __future__ import annotations
@@ -62,14 +62,14 @@ def preparar_mensagens(prompt: str, entrada: str) -> list[dict[str, str]]:
 def executar(casos: list[str] | None = None, modelo: str | None = None, *, somente_checar: bool = False, versao: str = "v2") -> tuple[Path | None, bool]:
     """Faz chamadas REAIS e devolve (pasta, sucesso_total), sem alterar arquivos históricos."""
     cfg = carregar()
-    provedor = "openrouter"
+    provedor = cfg["llm"].get("provider", "openrouter")
     modelo = modelo or cfg["llm"]["modelo"]
     if not isinstance(modelo, str) or not modelo.strip():
         raise ValueError("Modelo não configurado")
     token = chave(cfg, provedor)
     if not token:
         raise RuntimeError(
-            "OPENROUTER_API_KEY ausente no .env local. Não cole a chave no chat nem faça commit do .env."
+            "Chave do provedor ausente no .env local. Não cole a chave no chat nem faça commit do .env."
         )
     if versao not in PROMPTS:
         raise ValueError("Versão do prompt inválida: " + versao)
@@ -87,7 +87,7 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
             raise ValueError("Caso não previsto no experimento: " + caso)
         if not (ROOT / arquivos[caso]).is_file():
             raise FileNotFoundError("Entrada fictícia ausente: " + arquivos[caso])
-    print(f"Versão: B_{versao} | Provedor: openrouter | Modelo solicitado:", modelo)
+    print(f"Versão: B_{versao} | Provedor: {provedor} | Modelo solicitado:", modelo)
     print("Casos:", ", ".join(ids), "| Token configurado: sim (valor oculto)")
     print("Envio automático de respostas a cidadãos: NÃO")
     if somente_checar:
@@ -102,6 +102,7 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
         "versao_prompt": f"B_{versao}", "arquivo_prompt": PROMPTS[versao],
         "temperatura": cfg["llm"]["temperatura"],
         "max_tokens": cfg["llm"]["max_tokens"], "timeout_s": cfg["llm"]["timeout_s"],
+        "reasoning_effort": cfg["llm"].get("reasoning_effort", "não localizado"),
         "sha256_prompt": sha_prompt,
         "revisao_humana": "pendente",
         "observacao": f"Saídas do B_{versao}; não substituir a matriz original A/B/C nem outras versões.",
@@ -135,6 +136,10 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
                 raise ErroAPI("Modelo não retornou texto utilizável")
             arquivo_saida = caso + f"_prompt_B_{versao}_saida.txt"
             (pasta / arquivo_saida).write_text(resposta["texto"], encoding="utf-8")
+            (pasta / f"{caso}_metadados.json").write_text(
+                json.dumps({k: v for k, v in resposta.items() if k != "texto"},
+                           ensure_ascii=False, indent=2), encoding="utf-8"
+            )
             status = "sucesso"
         except ErroAPI as exc:
             # O cliente não deve expor chaves; uma segunda barreira remove o token.
@@ -165,10 +170,10 @@ def executar(casos: list[str] | None = None, modelo: str | None = None, *, somen
 
 def main() -> int:
     casos_disponiveis = carregar_arquivos_textuais()
-    p = argparse.ArgumentParser(description="Executa Prompt B V2, V3 ou V4 com modelo real OpenRouter.")
+    p = argparse.ArgumentParser(description="Executa Prompt B V2, V3 ou V4 com o provedor configurado.")
     p.add_argument("--caso", action="append", choices=list(casos_disponiveis),
                    help="Executar só casos textuais específicos (repetível); padrão: catálogo atual")
-    p.add_argument("--modelo", help="Modelo OpenRouter opcional; padrão do config.yaml")
+    p.add_argument("--modelo", help="Modelo do provedor configurado; padrão do config.yaml")
     p.add_argument("--versao", choices=tuple(PROMPTS), default="v2",
                    help="Versão isolada (padrão v2; use v4 para a versão atual em avaliação)")
     p.add_argument("--checar", action="store_true",

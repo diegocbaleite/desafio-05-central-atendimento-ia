@@ -3,6 +3,8 @@
 **Equipe:** Diego, Ayron e Guilherme. **Desafio:** FIC_DEV IA Generativa, Prático 1/2026.  
 **Atualização:** 18/10/2026, após correções da auditoria técnica.
 
+**Adendo de 28/10/2026:** OpenAI substitui os provedores padrão na configuração, com uma chamada real de texto concluída e contratos multimodais testados por simulação. O estado e as tabelas abaixo são históricos; não transferir suas métricas para os novos modelos. Consulte [integração OpenAI](integracao_openai.md) para configuração, parâmetros, medição real, limites e pendências. A revisão humana da nova saída ainda não ocorreu.
+
 Este relatório prioriza o catálogo vigente em `dados/originais/casos.yaml`. Existe também uma avaliação humana concluída de uma rodada anterior com três casos substituídos. Seus resultados são preservados e apresentados em seção própria, sem serem atribuídos aos casos atuais.
 
 ## Catálogo avaliado

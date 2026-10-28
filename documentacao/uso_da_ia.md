@@ -2,6 +2,16 @@
 
 **Equipe:** Diego, Ayron, Guilherme.
 
+## Atualização de 28/10/2026 — OpenAI
+
+Solicitação atual: usar os modelos disponíveis na API OpenAI após disponibilização de crédito. O assistente de codificação Codex adaptou configuração, cliente HTTP, áudio, visão, imagem, CLI, executor B e testes, usando documentação oficial OpenAI. O modelo exato/versão deste assistente não está exposto nesta sessão. A API efetivamente executada retornou `gpt-6-luna`; catálogo, parâmetros e medição estão no [registro da integração](integracao_openai.md).
+
+Sugestões aceitas na implementação: reaproveitar `requests`, consultar o catálogo da conta e manter revisão humana/hash antes do TTS. Sugestão adaptada: modelos foram escolhidos para cada modalidade e o TTS manteve Speech com descontinuação documentada. Alternativa rejeitada: tratar os testes simulados como validação real multimodal. Apenas uma solicitação atual do usuário foi feita nesta etapa; os exemplos anteriores abaixo pertencem ao histórico, sem inventar novos pedidos.
+
+Problemas encontrados: alias Python indisponível no sandbox (usado interpretador instalado), rede restrita (consulta e chamada real executadas com autorização externa), metadados de testes ainda fixados nos antigos provedores e executor B fixado no OpenRouter. Corrigidos o provedor configurável e o padrão STT da CLI. Uma resposta de erro podia ecoar o token; agora ele é removido antes de truncar o diagnóstico. Na saída real X02 houve flexão do marcador de ausência; conteúdo permanece pendente de revisão, sem alteração de gabarito.
+
+As seções abaixo registram etapas históricas, não o estado dos modelos OpenAI atuais. A integração não representa aprovação humana nem implementação do Desafio 6.
+
 ## Ferramentas e modelos
 - ChatGPT (OpenAI), assistente de programação/documentação — modelo disponibilizado na conversa: **GPT-6**.
 - Assistente de codificação integrado ao VS Code (Copilot SDK), usado em 17/10/2026 para auditoria, ajustes de código, testes e documentação — **versão/modelo não exposta ao assistente; preencher se a equipe souber**.

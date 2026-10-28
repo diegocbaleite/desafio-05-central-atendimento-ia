@@ -1,5 +1,18 @@
 # Matriz de requisitos RF01–RF13
 
+## Migração de provedor em 28/10/2026
+
+O padrão agora é OpenAI. A tabela consolidada abaixo preserva as evidências anteriores e não comprova validação dos novos modelos. Detalhes e execução: [integração OpenAI](integracao_openai.md).
+
+| Requisito | Arquivos/teste adicional | Estado OpenAI | Pendência |
+|---|---|---|---|
+| RF01/RF04/RF11 | `config/config.yaml`, `.env.example`, `src/cliente.py`, `src/main.py`, `testes/test_openai.py` | Implementado, simulado e catálogo real consultado | Concluir validação dos endpoints multimodais |
+| RF02/RF09 | `src/experimento_b_v2_real.py`, metadados X02 da rodada `20261028T172001971412Z` | Uma chamada real com B V4 concluída; revisão humana pendente | Avaliar fidelidade e uso literal de `não localizado`; não refizemos A/B/C |
+| RF06/RF08 | `src/audio.py`, `src/visao.py`, `testes/test_openai.py` | Implementado e simulado | STT/OCR reais, referências e conferência humana |
+| RF07/RF10 | `src/audio.py`, `src/imagem.py`, `testes/test_openai.py` | Implementado e simulado | Aprovação real da minuta antes do TTS; geração e audição/inspeção visual |
+
+## Evidências consolidadas anteriores à migração
+
 Estados usados (um não implica os demais): **P** planejado · **I** implementado · **S** testado com simulação (testes unitários/`--mock`) · **R** validado com serviço real · **H** validado por pessoa.
 As colunas R e H só citam evidência dos casos atuais `T01`, `A01`, `I01`, `X01` e `X02`. O fluxo real e o mecanismo de decisão humana foram exercitados; validações marcadas como parciais ainda exigem registros humanos específicos, e a validação em máquina limpa não foi realizada.
 

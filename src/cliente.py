@@ -14,26 +14,71 @@ class ErroAPI(RuntimeError):
     """Falha controlada de configuração, transporte ou resposta do provedor."""
 
 
-def _erro_provedor(data: Any) -> str:
+def _erro_provedor(data: Any, segredo: str = "") -> str:
     """Extrai apenas código e mensagem do erro, sem ecoar requisições ou tokens."""
     if not isinstance(data, dict):
         return "Resposta sem objeto JSON"
     erro = data.get("error")
     if isinstance(erro, dict):
-        codigo = str(erro.get("code", "não informado"))[:60]
-        mensagem = str(erro.get("message", "não informada"))[:300]
-        return f"código={codigo}; mensagem={mensagem}"
+        codigo = str(erro.get("code", "não informado"))
+        mensagem = str(erro.get("message", "não informada"))
+        if segredo:
+            codigo = codigo.replace(segredo, "[CREDENCIAL_REMOVIDA]")
+            mensagem = mensagem.replace(segredo, "[CREDENCIAL_REMOVIDA]")
+        return f"código={codigo[:60]}; mensagem={mensagem[:300]}"
     chaves = ", ".join(sorted(str(chave_) for chave_ in data)[:12])
     return "Campos de resposta inesperados: " + chaves
 
 
-def _payload(mensagens: list[dict[str, Any]], modelo: str, conf: dict) -> dict:
-    return {
+def _payload(mensagens: list[dict[str, Any]], modelo: str, conf: dict,
+             provider: str | None = None) -> dict:
+    payload = {
         "model": modelo,
         "messages": mensagens,
         "temperature": conf["temperatura"],
         "max_tokens": conf["max_tokens"],
     }
+    if provider == "openai":
+        payload["max_completion_tokens"] = payload.pop("max_tokens")
+        payload["store"] = False
+        if modelo.startswith(("gpt-5", "gpt-6", "o1", "o3", "o4")):
+            esforco = conf.get("reasoning_effort", "low")
+            payload["reasoning_effort"] = esforco
+            if esforco != "none":
+                payload.pop("temperature")
+    return payload
+
+
+def listar_modelos(provider: str | None = None) -> list[str]:
+    """Consulta o catálogo da conta; não gera conteúdo nem imprime credenciais."""
+    cfg = carregar()
+    provider = provider or cfg["llm"]["provider"]
+    perfil = cfg["provedores"].get(provider)
+    if not perfil:
+        raise ErroAPI("Provedor desconhecido")
+    token = chave(cfg, provider)
+    if not token:
+        raise ErroAPI("Chave ausente; configure o .env")
+    try:
+        resposta = requests.get(
+            perfil["base_url"].rstrip("/") + "/models",
+            headers={"Authorization": "Bearer " + token},
+            timeout=cfg["llm"]["timeout_s"],
+        )
+    except requests.RequestException as exc:
+        raise ErroAPI("Falha ao consultar modelos: " + type(exc).__name__) from exc
+    if not resposta.ok:
+        raise ErroAPI(f"Consulta de modelos recusada (HTTP {resposta.status_code})")
+    try:
+        dados = resposta.json()["data"]
+        if not isinstance(dados, list):
+            raise TypeError
+        modelos = [item["id"] for item in dados]
+        if not all(isinstance(item, str) and item.strip() for item in modelos):
+            raise TypeError
+        return sorted(set(modelos))
+    except (ValueError, KeyError, TypeError) as exc:
+        raise ErroAPI("Catálogo de modelos inválido") from exc
 
 
 def _espera_retentativa(resposta, tentativa: int) -> float:
@@ -83,7 +128,7 @@ def conversar(
             resposta = requests.post(
                 perfil["base_url"].rstrip("/") + "/chat/completions",
                 headers={"Authorization": "Bearer " + token},
-                json=_payload(mensagens, modelo, conf),
+                json=_payload(mensagens, modelo, conf, provider),
                 timeout=conf["timeout_s"],
             )
         except (requests.Timeout, requests.ConnectionError) as exc:
@@ -100,12 +145,12 @@ def conversar(
                 )
             if resposta.status_code == 429 or resposta.status_code >= 500:
                 ultimo_erro = (
-                    f"HTTP {resposta.status_code}: {_erro_provedor(dados)}"
+                    f"HTTP {resposta.status_code}: {_erro_provedor(dados, token)}"
                 )
                 espera = _espera_retentativa(resposta, tentativa)
             elif resposta.status_code >= 400:
                 raise ErroAPI(
-                    f"HTTP {resposta.status_code}: {_erro_provedor(dados)}"
+                    f"HTTP {resposta.status_code}: {_erro_provedor(dados, token)}"
                 )
             else:
                 erro_no_corpo = (
@@ -120,15 +165,21 @@ def conversar(
                     and str(erro_no_corpo.get("code"))
                     in {"429", "500", "502", "503", "504"}
                 ):
-                    ultimo_erro = "Provedor: " + _erro_provedor(dados)
+                    ultimo_erro = "Provedor: " + _erro_provedor(dados, token)
                     espera = min(20, 2**tentativa)
                     if tentativa < 2:
                         time.sleep(espera)
                         continue
                     break
-                return _interpretar_sucesso(
-                    dados, provider, modelo, conf, inicio, tentativa
+                resultado = _interpretar_sucesso(
+                    dados, provider, modelo, conf, inicio, tentativa, token
                 )
+                resultado["parametros"] = {
+                    k: v for k, v in _payload(mensagens, modelo, conf, provider).items()
+                    if k not in {"model", "messages"}
+                }
+                resultado["parametros"]["timeout_s"] = conf["timeout_s"]
+                return resultado
         if tentativa < 2:
             time.sleep(espera)
     raise ErroAPI(
@@ -144,11 +195,12 @@ def _interpretar_sucesso(
     conf: dict,
     inicio: float,
     tentativa: int,
+    segredo: str = "",
 ) -> dict[str, Any]:
     if not isinstance(dados, dict):
         raise ErroAPI("HTTP 200 sem objeto JSON na resposta")
     if "choices" not in dados:
-        raise ErroAPI("HTTP 200 sem choices: " + _erro_provedor(dados))
+        raise ErroAPI("HTTP 200 sem choices: " + _erro_provedor(dados, segredo))
     try:
         escolha = dados["choices"][0]
         texto = escolha["message"].get("content")

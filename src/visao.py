@@ -125,13 +125,13 @@ def ler_imagem(
     entrada = validar_arquivo(caminho, FORMATOS_IMAGEM, 20)
     if provider == "local":
         motor = None
-    elif provider == "gemini":
+    elif provider in {"gemini", "openai"}:
         modelo = modelo or carregar()["multimodal"]["ocr_modelo"]
         motor = lambda imagem, lang, modo: _ocr_modelo_visao(
             imagem, lang, modo, provider=provider, modelo=modelo
         )
     else:
-        raise ValueError("Provedor de OCR inválido; use local ou gemini")
+        raise ValueError("Provedor de OCR inválido; use local, gemini ou openai")
     paginas = _ocr_paginas(entrada, idioma, psm, limite_paginas, motor)
     return "\n\n".join(texto.strip() for texto, _ in paginas)
 
@@ -154,14 +154,14 @@ def avaliar_ocr(caminho, *, idioma="por", psm=6, limite_paginas=3,
         motor = None
         motor_nome = "Tesseract"
         modelo_usado = "Tesseract"
-    elif provider == "gemini":
+    elif provider in {"gemini", "openai"}:
         modelo_usado = modelo or carregar()["multimodal"]["ocr_modelo"]
         motor = lambda imagem, lang, modo: _ocr_modelo_visao(
             imagem, lang, modo, provider=provider, modelo=modelo_usado
         )
         motor_nome = "modelo de visão"
     else:
-        raise ValueError("Provedor de OCR inválido; use local ou gemini")
+        raise ValueError("Provedor de OCR inválido; use local, gemini ou openai")
     paginas_ocr = _ocr_paginas(entrada, idioma, psm, limite_paginas, motor)
     pasta = nova_saida(saida, "ocr")
     trechos, paginas, texto_para_metrica = [], [], []

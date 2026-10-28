@@ -5,13 +5,18 @@ projeto:
   casos: "dados/originais/casos.yaml"
 
 llm:
-  provider: "gemini"
-  modelo: "gemini-3.1-flash-lite"
+  provider: "openai"
+  modelo: "gpt-6-luna"
+  reasoning_effort: "none"
   temperatura: 0.2
   max_tokens: 2400
   timeout_s: 45
 
 provedores:
+  openai:
+    base_url: "https://api.openai.com/v1"
+    env_chave: "OPENAI_API_KEY"
+
   openrouter:
     base_url: "https://openrouter.ai/api/v1"
     env_chave: "OPENROUTER_API_KEY"
@@ -31,17 +36,18 @@ provedores:
     env_conta: "CLOUDFLARE_ACCOUNT_ID"
 
 multimodal:
-  stt_provider: "groq"
-  stt_modelo: "whisper-large-v3-turbo"
+  stt_provider: "openai"
+  stt_modelo: "gpt-transcribe"
 
   # O formulário I01 contém escrita manual, fora do ponto forte do Tesseract.
   # O modo --mock usa referência fictícia rotulada e nunca envia a imagem ao provedor.
-  ocr_provider: "gemini"
-  ocr_modelo: "gemini-3.8-flash"
+  ocr_provider: "openai"
+  ocr_modelo: "gpt-6-luna"
 
-  tts_provider: "gemini"
-  tts_modelo: "gemini-3.8-flash-lite-tts"
-  tts_voz: "Kore"
+  tts_provider: "openai"
+  # Speech API existente; migração para Realtime necessária antes de 06/01/2027.
+  tts_modelo: "gpt-4o-mini-tts"
+  tts_voz: "coral"
   tts_voz_local: "pt-br"
   tts_velocidade: 145
   tts_tom: 45
@@ -49,8 +55,10 @@ multimodal:
   tts_pausa_palavras_ms: 5
   tts_instrucoes: "Fale em português brasileiro, com tom institucional, claro, acolhedor e ritmo moderado. Preserve fielmente o conteúdo, sem comentários adicionais."
 
-  imagem_provider: "cloudflare"
-  imagem_modelo: "@cf/black-forest-labs/flux-1-schnell"
+  imagem_provider: "openai"
+  imagem_modelo: "gpt-image-2.5-flare"
+  imagem_tamanho: "1024x1536"
+  imagem_qualidade: "low"
 
 seguranca:
   marcador_ausente: "não localizado"

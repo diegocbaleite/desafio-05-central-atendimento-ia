@@ -8,6 +8,8 @@ Protótipo educacional desenvolvido em **Python** para apoiar o tratamento de so
 
 **Equipe:** Diego Assunção Leite · Ayron Brhenno Silva Figueiredo · Guilherme da Silva Lessa
 
+**Integração atualizada em 28/10/2026:** OpenAI é o provedor padrão de texto, visão, transcrição, voz e imagem. A chave é carregada de `OPENAI_API_KEY` no `.env` local. Uma chamada real de texto foi concluída; validações OpenAI de STT/OCR/TTS/imagem e revisão humana continuam pendentes. As métricas anteriores deste README pertencem às execuções históricas dos outros provedores. Veja o [registro da integração OpenAI](documentacao/integracao_openai.md).
+
 ## 👨‍💻 Identificação
 
 **Equipe e responsabilidades:**
@@ -218,17 +220,25 @@ A configuração atual do projeto define opções de modelo, provedor, recursos 
 
 ```
 llm:
-  provider: "gemini"
-  modelo: "gemini-3.1-flash-lite"
+  provider: "openai"
+  modelo: "gpt-6-luna"
+  reasoning_effort: "none"
   temperatura: 0.2
   max_tokens: 2400
   timeout_s: 45
 
 multimodal:
-  stt_provider: "groq"
-  ocr_provider: "gemini"
-  tts_provider: "gemini"
-  imagem_provider: "cloudflare"
+  stt_provider: "openai"
+  stt_modelo: "gpt-transcribe"
+  ocr_provider: "openai"
+  ocr_modelo: "gpt-6-luna"
+  tts_provider: "openai"
+  tts_modelo: "gpt-4o-mini-tts"
+  tts_voz: "coral"
+  imagem_provider: "openai"
+  imagem_modelo: "gpt-image-2.5-flare"
+  imagem_tamanho: "1024x1536"
+  imagem_qualidade: "low"
 
 seguranca:
   marcador_ausente: "não localizado"
@@ -236,9 +246,15 @@ seguranca:
   revisao_obrigatoria: true
 ```
 
-O fluxo atual seleciona **Gemini** na configuração principal. O experimento A/B/C aceita o mesmo provedor configurado e deve registrar modelo, parâmetros, latência, tokens e falhas em uma pasta nova por execução. O modo `--mock` é apenas uma simulação local.
+O fluxo atual seleciona **OpenAI** na configuração principal. Os experimentos A/B/C e B V2/V3/V4 usam o provedor configurado e registram evidências em pastas novas. `reasoning_effort: none` permite manter a temperatura comparável no modelo padrão; com raciocínio ativo, o cliente omite a temperatura incompatível. O limite é enviado como `max_completion_tokens` e `store` como `false`. O modo `--mock` é apenas uma simulação local.
+
+Preencha somente `OPENAI_API_KEY` no `.env` para o padrão atual. `python -m src.main modelos --provider openai` consulta os modelos acessíveis pela conta, sem gerar conteúdo; a presença no catálogo não comprova sucesso em cada endpoint. Provedores antigos e alternativas locais continuam disponíveis: ao trocar de provedor, ajuste também modelo e voz correspondentes no YAML, sem presumir compatibilidade entre nomes. Não há fallback automático para outro serviço.
+
+O TTS usa a integração Speech já existente com `gpt-4o-mini-tts`. A [documentação oficial](https://developers.openai.com/api/docs/guides/text-to-speech) informa descontinuação em **06/01/2027**; será necessária migração para Realtime. A gravação deve ser identificada como voz sintética, e sua geração exige aprovação humana da versão exata da minuta.
 
 ### Custos dos modelos e serviços de IA
+
+A tabela abaixo é histórica e não estima gastos dos modelos OpenAI atuais. A chamada OpenAI de validação retornou tokens e latência, sem custo monetário; esse custo permanece `não localizado`.
 
 Preços públicos consultados em **18/10/2026**, em dólares dos Estados Unidos. A tabela usa a modalidade padrão/síncrona paga. Camadas gratuitas, impostos, câmbio, franquias, limites e preços futuros podem alterar o valor efetivamente cobrado; confirme as páginas oficiais antes de executar.
 
@@ -308,6 +324,9 @@ Execute a partir da raiz do repositório:
 # Verificar versões, ferramentas, provedores e envio automático
 python -m src.main verificar
 
+# Consultar modelos disponíveis na conta OpenAI (sem gerar conteúdo)
+python -m src.main modelos --provider openai
+
 # Demonstração local e determinística, sem chamadas externas de IA
 python -m src.main --mock --caso T01 --decisoes dados/revisao/decisoes_demo.yaml
 
@@ -332,9 +351,12 @@ O lote `--mock` sem `--caso` valida também `A01` e `I01`. As referências indep
 **Serviços remotos — somente com conteúdo fictício e credenciais autorizadas:**
 
 ```
-python -m src.main audio dados/originais/entrada_audio.mp3 --provider groq
-python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider gemini
-python -m src.main arte --provider cloudflare --referencia dados/originais/brasao.png
+python -m src.main audio dados/originais/entrada_audio.mp3 --provider openai
+python -m src.main ocr dados/originais/entrada_pdf-imagem.pdf --provider openai
+python -m src.main arte --provider openai --referencia dados/originais/brasao.png
+
+# Uma chamada de texto com fixture fictícia; grava saída pendente e não pede aprovação
+python -m src.experimento_b_v2_real --versao v4 --caso X02
 ```
 
 **TTS:** requer arquivo real da minuta aprovada e JSON de revisão humana com hash correspondente; não basta uma decisão de `--mock`.
@@ -356,10 +378,10 @@ python -m unittest discover -s testes -t .
 python -m src.main verificar
 ```
 
-**Último resultado verificado localmente em 18/10/2026 (Windows, Python 3.14.6):**
+**Último resultado verificado localmente em 28/10/2026 (Windows, Python 3.14.6):**
 
 ```
-Ran 114 tests
+Ran 130 tests
 OK
 ```
 

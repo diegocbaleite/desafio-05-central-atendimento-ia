@@ -19,7 +19,7 @@ import jsonschema
 from .audio import avaliar_audio, gerar_voz, transcrever
 from .auditoria import nova_execucao, registrar
 from .avaliacao import avaliar_campos, taxa_aprovacao
-from .cliente import ErroAPI
+from .cliente import ErroAPI, listar_modelos
 from .config import ROOT, carregar, chave
 from .extracao import extrair
 from .imagem import gerar, gerar_visual, imagem_local
@@ -639,7 +639,7 @@ def _comando_midia(a):
             pasta = avaliar_audio(
                 a.entrada,
                 saida=ROOT / "resultados" / "audios",
-                provider=a.provider or "local",
+                provider=a.provider,
                 modelo_local=a.modelo_local,
                 gabarito=a.gabarito,
                 revisado=a.revisado,
@@ -687,7 +687,7 @@ def main():
     p.add_argument(
         "comando",
         nargs="?",
-        choices=["verificar", "processar", "experimento", "imagem", *COMANDOS_MIDIA],
+        choices=["verificar", "modelos", "processar", "experimento", "imagem", *COMANDOS_MIDIA],
         default="processar",
     )
     p.add_argument(
@@ -708,7 +708,7 @@ def main():
     )
     p.add_argument(
         "--provider",
-        help="audio: local|groq; ocr: local|gemini; voz: provedor TTS; imagem/arte: local|cloudflare (FLUX.1 schnell; cota grátis de 10.000 neurons/dia)",
+        help="modelos: provedor; audio: local|groq|openai; ocr: local|gemini|openai; voz: espeak|gemini|openai; imagem/arte: local|cloudflare|openai. Modelos em config/config.yaml",
     )
     p.add_argument("--modelo-local", default="small", help="audio local (Whisper)")
     p.add_argument(
@@ -726,6 +726,13 @@ def main():
     cfg = carregar()
     if a.comando == "verificar":
         _verificar(cfg)
+        return 0
+    if a.comando == "modelos":
+        try:
+            print("\n".join(listar_modelos(a.provider)))
+        except ErroAPI as exc:
+            print("Falha:", _mensagem_erro(exc))
+            return 2
         return 0
     if a.comando in COMANDOS_MIDIA:
         return _comando_midia(a)

@@ -162,13 +162,15 @@ def transcrever(caminho, provider=None, *, modelo_local="small"):
     perfil = cfg["provedores"].get(provider)
     if not perfil:
         raise ErroAPI("Provedor STT não cadastrado")
+    modelo = cfg["multimodal"]["stt_modelo"]
+    idioma = {"languages[]": "pt"} if provider == "openai" and modelo == "gpt-transcribe" else {"language": "pt"}
     with entrada.open("rb") as f:
         try:
             r = _post_com_retentativas(
                 "STT",
                 perfil["base_url"].rstrip("/") + "/audio/transcriptions",
                 headers={"Authorization": "Bearer " + token},
-                data={"model": cfg["multimodal"]["stt_modelo"], "language": "pt"},
+                data={"model": modelo, **idioma},
                 files={"file": (entrada.name, f)},
                 timeout=120,
             )
@@ -180,7 +182,7 @@ def transcrever(caminho, provider=None, *, modelo_local="small"):
         texto = r.json()["text"]
     except (ValueError, KeyError, TypeError) as e:
         raise ErroAPI("STT retornou transcrição inválida") from e
-    if not texto.strip():
+    if not isinstance(texto, str) or not texto.strip():
         raise ErroAPI("STT devolveu texto vazio")
     return texto
 
@@ -277,20 +279,21 @@ def duracao_audio(caminho: Path) -> float | None:
         return None
 
 
-def avaliar_audio(caminho, *, provider="local", modelo_local="small",
+def avaliar_audio(caminho, *, provider=None, modelo_local="small",
                   gabarito=None, revisado=None, saida=None, transcritor_teste=None) -> Path:
     """STT com transcrição bruta preservada, métricas contra referência e revisão pendente."""
     entrada = validar_arquivo(caminho, FORMATOS_AUDIO, 20)
-    if provider not in {"local", "groq"} and transcritor_teste is None:
-        raise ValueError("Provedor STT suportado: local ou groq")
+    provider = provider or carregar()["multimodal"]["stt_provider"]
+    if provider not in {"local", "groq", "openai"} and transcritor_teste is None:
+        raise ValueError("Provedor STT suportado: local, groq ou openai")
     inicio = time.monotonic()
     if transcritor_teste is not None:
         bruto = transcritor_teste(entrada)
         origem_execucao, modelo = "simulação de teste", "mock"
     else:
         bruto = transcrever(entrada, provider, modelo_local=modelo_local)
-        if provider == "groq":
-            origem_execucao, modelo = "API real (Groq)", carregar()["multimodal"]["stt_modelo"]
+        if provider in {"groq", "openai"}:
+            origem_execucao, modelo = f"API real ({provider})", carregar()["multimodal"]["stt_modelo"]
         else:
             origem_execucao, modelo = "modelo local", modelo_local
     if not isinstance(bruto, str) or not bruto.strip():

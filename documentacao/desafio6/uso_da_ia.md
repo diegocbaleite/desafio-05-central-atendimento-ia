@@ -81,3 +81,8 @@ Conforme informado por Diego nesta conversa, **Ayron Brhenno Silva Figueiredo** 
 Comandos, casos e resultados individuais desses testes: **não localizado**. Os 210 testes automatizados e as decisões de Diego pela interface mantêm suas atribuições e evidências próprias.
 
 Conteúdo elaborado com auxílio de IA.
+
+
+### Integração do PR #4 e revisão de entrega — 30/10/2026
+
+A pedido de Diego, o agente combinou a main com a branch de entrega, preservou as implementações paralelas, atualizou o README e conferiu o enunciado e os artefatos. Solicitações desta sessão: resolver os conflitos do PR; arrumar o README; verificar se o desafio está completo e apto à entrega. Foram mantidos o orçamento/JSON Schema da entrega e a listagem de modelos/remoção de segredos da main. A temperatura e o número de repetições dos testes importados foram ajustados ao contrato explícito da entrega. Dois testes de interface foram corrigidos para atualizar a tela após preencher a pergunta. A suíte integrada passou com 322 testes; não foram realizadas novas chamadas pagas nem decisões humanas. Limitações e evidências em `parecer_entrega_integrada_2026-10-30.md`.

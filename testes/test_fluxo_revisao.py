@@ -278,8 +278,8 @@ class TestConferenciaDeCamposCriticos(unittest.TestCase):
         metadados = json.loads(
             (pasta_caso / "entrada_multimodal.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(metadados["provedor"], "groq")
-        self.assertEqual(metadados["modelo"], "whisper-large-v3-turbo")
+        self.assertEqual(metadados["provedor"], "openai")
+        self.assertEqual(metadados["modelo"], "gpt-transcribe")
         self.assertTrue(metadados["requer_revisao_humana"])
 
     def test_pipeline_preserva_ocr_bruto_e_parametros(self):
@@ -305,8 +305,8 @@ class TestConferenciaDeCamposCriticos(unittest.TestCase):
         metadados = json.loads(
             (pasta_caso / "entrada_multimodal.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(metadados["provedor"], "gemini")
-        self.assertEqual(metadados["modelo"], "gemini-3.8-flash")
+        self.assertEqual(metadados["provedor"], "openai")
+        self.assertEqual(metadados["modelo"], "gpt-6-luna")
         self.assertEqual(metadados["parametros"]["psm"], "não aplicado")
         self.assertEqual(metadados["parametros"]["dpi_pdf"], 300)
 

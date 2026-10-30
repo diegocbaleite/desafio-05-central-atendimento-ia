@@ -4,7 +4,7 @@ Projeto de estudo FIC_DEV — Diego, Ayron e Guilherme.
 
 Regras inegociáveis:
 - Nada de envio automático, email, WhatsApp, assinatura, deferimento ou protocolo real.
-- Somente dados fictícios; nunca gravar chaves no git ou em logs.
+- Somente dados fictícios para avaliação do desafio. Usar os arquivos fornecidos em `dados/originais/` como acervo, exceto o brasão; minimizar identificadores e nunca gravar chaves no git ou em logs.
 - Ausência de valor = `não localizado`; nunca criar lei, prazo, autoridade ou número.
 - Não modificar entradas de `dados/originais/` durante o processamento nem adaptar gabaritos depois do teste.
 - Respostas do LLM são minutas pendentes de revisão humana; decisões de YAML são simulações.

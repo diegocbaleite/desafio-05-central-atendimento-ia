@@ -143,23 +143,32 @@ def gerar(destino=None, *, provider=None, referencia=None):
     caminho = Path(destino or ROOT / "resultados" / "peca_visual.png")
     if provider == "local":
         return imagem_local(caminho, referencia=referencia)
-    if provider != "cloudflare":
+    if provider not in {"cloudflare", "openai"}:
         raise ErroAPI("Provedor de imagem inválido")
-    item = cfg["provedores"]["cloudflare"]
-    token = chave(cfg, "cloudflare")
+    item = cfg["provedores"][provider]
+    token = chave(cfg, provider)
     conta = os.getenv(item.get("env_conta", ""), "")
-    if not token or not conta:
+    if not token or (provider == "cloudflare" and not conta):
         raise ErroAPI(
-            "CLOUDFLARE_API_KEY e CLOUDFLARE_ACCOUNT_ID são necessários para geração real da imagem"
+            "OPENAI_API_KEY é necessária para geração real da imagem" if provider == "openai"
+            else "CLOUDFLARE_API_KEY e CLOUDFLARE_ACCOUNT_ID são necessários para geração real da imagem"
         )
     prompt = (ROOT / "prompts" / "imagem_orientacao.md").read_text(encoding="utf-8")
-    if len(prompt) > LIMITE_PROMPT_CLOUDFLARE:
+    if provider == "cloudflare" and len(prompt) > LIMITE_PROMPT_CLOUDFLARE:
         raise ErroAPI("Prompt de imagem excede o limite do modelo (2048 caracteres)")
     modelo = cfg["multimodal"]["imagem_modelo"]
     parametros = {"prompt": prompt, "steps": 4}
+    url = f"{item['base_url'].rstrip('/')}/accounts/{conta}/ai/run/{modelo}"
+    if provider == "openai":
+        url = item["base_url"].rstrip("/") + "/images/generations"
+        parametros = {
+            "model": modelo, "prompt": prompt, "n": 1,
+            "size": cfg["multimodal"].get("imagem_tamanho", "1024x1536"),
+            "quality": cfg["multimodal"].get("imagem_qualidade", "low"),
+        }
     try:
         r = _post_com_retentativas(
-            f"{item['base_url'].rstrip('/')}/accounts/{conta}/ai/run/{modelo}",
+            url,
             headers={"Authorization": "Bearer " + token},
             json=parametros,
             timeout=180,
@@ -176,10 +185,16 @@ def gerar(destino=None, *, provider=None, referencia=None):
         raise ErroAPI("Gerador retornou JSON inválido") from e
     if not isinstance(dados_api, dict):
         raise ErroAPI("Gerador retornou formato inesperado")
-    resultado = dados_api.get("result", dados_api)
-    if not isinstance(resultado, dict):
-        raise ErroAPI("Gerador não retornou imagem")
-    codificado = resultado.get("image")
+    if provider == "openai":
+        try:
+            codificado = dados_api["data"][0]["b64_json"]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise ErroAPI("Gerador não retornou imagem base64") from exc
+    else:
+        resultado = dados_api.get("result", dados_api)
+        if not isinstance(resultado, dict):
+            raise ErroAPI("Gerador não retornou imagem")
+        codificado = resultado.get("image")
     if not isinstance(codificado, str) or not codificado:
         raise ErroAPI("Gerador retornou imagem sem dados")
     try:
@@ -203,17 +218,20 @@ def gerar(destino=None, *, provider=None, referencia=None):
     )
     caminho.parent.mkdir(parents=True, exist_ok=True)
     im.save(caminho)
+    uso = dados_api.get("usage") or {}
+    if not isinstance(uso, dict):
+        uso = {}
     proveniencia = {
             "metodo": "geracao_api",
             "por_ia": True,
-            "provider": "cloudflare",
+            "provider": provider,
             "modelo": modelo,
             "data": dt.datetime.now(dt.UTC).isoformat(),
             "prompt": "prompts/imagem_orientacao.md",
             "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
-            "parametros": {"steps": parametros["steps"]},
-            "tokens_entrada": "não localizado",
-            "tokens_saida": "não localizado",
+            "parametros": {k: v for k, v in parametros.items() if k not in {"model", "prompt"}},
+            "tokens_entrada": uso.get("input_tokens", "não localizado"),
+            "tokens_saida": uso.get("output_tokens", "não localizado"),
             "custo_usd": "não localizado",
             "arquivo": str(caminho),
             "operador": "não localizado",

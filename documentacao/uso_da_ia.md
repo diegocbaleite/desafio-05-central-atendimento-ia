@@ -2,6 +2,26 @@
 
 **Equipe:** Diego, Ayron, Guilherme.
 
+## Desafio 6 — 28/10/2026
+
+Pedido atual: iniciar a evolução conforme `desafio-06/PROMPT_DESAFIO_06.md`, usando a API OpenAI e podendo delegar. O assistente Codex leu o PDF integral (13 páginas) e distribuiu o trabalho a três agentes de codificação autorizados pelo usuário. Modelo/versão exatos dos agentes não foram expostos nesta sessão; não inferimos nomes a partir dos modelos da aplicação.
+
+Três solicitações técnicas efetivamente delegadas: (1) implementar contrato RF14/RF15 e preparar dados/gabaritos antes das chamadas; (2) implementar índice persistente, comparação de chunking, RAG e exclusão; (3) implementar Streamlit, sentimentos, métricas e revisão. O agente principal integrou adaptador OpenAI, orçamento, guardrails, CLI, avaliação, retenção, pacote e verificações. São tarefas internas de IA, não pedidos ou decisões humanas inventados.
+
+Aceitas: reaproveitar o projeto, manter índice SQLite para pequeno acervo, separar geração de recuperação e preservar gabaritos. Modificadas: resumo e citação passaram a exigir frases completas para impedir apagar negações; mídia da UI passou a usar o orçamento D6 e manter origem ao mudar o seletor. Rejeitadas: tratar mock como modelo, usar só existência de ID como prova de suporte, resolver conflito com vigência ambígua ou preencher aprovação humana pelo agente.
+
+Validação: baseline130 e suíte integrada218 testes aprovados, incluindo AppTest com simulação; embeddings e geração OpenAI reais observados. `gpt-6-luna` e `text-embedding-3-small` são modelos da aplicação, não identificação dos agentes. A rodada real teve categorias6/6, recuperação5/5, respostas aceitas4/5, abstenções2/2 e sentimentos11/12. R04/Q03/S11 e limites foram preservados no [relatório](desafio6_relatorio.md). As aprovações humanas continuam pendentes. Não foram alterados os gabaritos nem as entradas antigas para coincidir com saídas.
+
+## Atualização de 28/10/2026 — OpenAI
+
+Solicitação atual: usar os modelos disponíveis na API OpenAI após disponibilização de crédito. O assistente de codificação Codex adaptou configuração, cliente HTTP, áudio, visão, imagem, CLI, executor B e testes, usando documentação oficial OpenAI. O modelo exato/versão deste assistente não está exposto nesta sessão. A API efetivamente executada retornou `gpt-6-luna`; catálogo, parâmetros e medição estão no [registro da integração](integracao_openai.md).
+
+Sugestões aceitas na implementação: reaproveitar `requests`, consultar o catálogo da conta e manter revisão humana/hash antes do TTS. Sugestão adaptada: modelos foram escolhidos para cada modalidade e o TTS manteve Speech com descontinuação documentada. Alternativa rejeitada: tratar os testes simulados como validação real multimodal. Apenas uma solicitação atual do usuário foi feita nesta etapa; os exemplos anteriores abaixo pertencem ao histórico, sem inventar novos pedidos.
+
+Problemas encontrados: alias Python indisponível no sandbox (usado interpretador instalado), rede restrita (consulta e chamada real executadas com autorização externa), metadados de testes ainda fixados nos antigos provedores e executor B fixado no OpenRouter. Corrigidos o provedor configurável e o padrão STT da CLI. Uma resposta de erro podia ecoar o token; agora ele é removido antes de truncar o diagnóstico. Na saída real X02 houve flexão do marcador de ausência; conteúdo permanece pendente de revisão, sem alteração de gabarito.
+
+As seções abaixo registram etapas históricas, não o estado dos modelos OpenAI atuais. A integração não representa aprovação humana nem implementação do Desafio 6.
+
 ## Ferramentas e modelos
 - ChatGPT (OpenAI), assistente de programação/documentação — modelo disponibilizado na conversa: **GPT-6**.
 - Assistente de codificação integrado ao VS Code (Copilot SDK), usado em 17/10/2026 para auditoria, ajustes de código, testes e documentação — **versão/modelo não exposta ao assistente; preencher se a equipe souber**.

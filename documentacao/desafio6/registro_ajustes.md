@@ -79,3 +79,18 @@ O reteste `20261030T022141Z_443e46` utilizou duas chamadas reais e corrigiu os d
 16. Ao consolidar os inventários, foi observado que a sanitização genérica mascarava como telefone uma sequência numérica dentro de um SHA-256 técnico do README dos gabaritos. A fonte permanecia idêntica ao Git; a diferença estava no texto do hash exportado. O exportador passou a gravar inventários tipados contendo somente caminhos e SHA-256 completos, sem aplicar máscara de telefone aos digests. Acrescentada regressão que preserva esse hash e recusa valores livres. Inventários antigos preservados; conferência técnica complementar com hashes completos, sem novas chamadas ao LLM.
 
 Validação final: **210 testes aprovados** em 12,254 s; 29 chamadas reais no total, 16.917 tokens de entrada, 3.846 de saída, custo indisponível. Logs em `resultados/logs/complementar_llm_final_2026-10-29_unittest.log`. O avaliador não alterou gabaritos ou decisões humanas e não enviou respostas a cidadãos.
+
+
+## 17. RF14 — Coerência literal de assunto e pedido — 30/10/2026
+
+A revisão da main `5951ddc` reproduziu um falso aceite: o original dizia “Não solicito cancelamento da matrícula.”, mas uma saída LLM simulada trocava por “Solicito cancelamento da matrícula.”. A comparação por radicais/50% de sobreposição ignorava negação, e o fluxo criava uma minuta pendente com o pedido invertido.
+
+Correção: assunto e pedido não usam mais similaridade lexical para comprovar fatos. O contrato compara o valor integral com a referência conservadora extraída do campo correspondente no original. A comparação permite somente NFC, caixa, espaços e ponto final opcional; preserva palavras, acentos, interrogação, restrições, condições e subpedidos. A extração livre mantém prefixos “não”, “nunca”, “jamais”, “somente” e “apenas”. A referência de outro campo não autoriza substituir o pedido rotulado. Sem referência verificável, a saída é rejeitada, admitindo a única correção já prevista; se persistir, não há RAG nem minuta. O prompt de extração passou de 1.1 para 1.2.
+
+Limite deliberado: é uma política conservadora de cópia, não um verificador semântico universal. Paráfrases ou formulações que o extrator não reconhece podem ser rejeitadas mesmo quando plausíveis. Dados ausentes continuam null, com revisão obrigatória. Não foi alterada a normalização da busca vetorial, nem foram adaptados os gabaritos.
+
+Regressões em `testes/test_rf14_coerencia_literal.py`: inversão de negação nos dois sentidos, restrições/condições omitidas, subpedido descartado, número acrescentado, pedido livre com prefixo, frase positiva em outro campo, assunto truncado, pergunta convertida em afirmação e normalização visual permitida. O teste integrado confirma duas saídas incoerentes rejeitadas, exatamente duas chamadas simuladas, nenhum registro de minuta e nenhuma consulta RAG; confirma também que uma correção fiel permite apenas minuta pendente.
+
+Avaliação local após a correção: execução `20261030T163407Z_61ba4f`, embedding real local e gerador extrativo, 14 aprovados/T11 parcial e nenhum erro de etapa; seis categorias e 18 campos críticos corretos. Não representa chamada LLM real. Originais, gabaritos, evidências históricas e decisões humanas permaneceram intactos. Nenhuma nova chamada paga ou decisão humana foi produzida; nenhum ZIP foi gerado.
+
+Validação final desta correção: **330 testes aprovados em 23,138 s**, sintaxe e `python -m src.main verificar` sem erro; envio automático desativado e chaves ausentes. Os 163 arquivos protegidos da revisão mantiveram seus hashes.

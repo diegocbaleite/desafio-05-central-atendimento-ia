@@ -55,7 +55,8 @@ CATEGORIAS = {
 }
 # Fallback conservador quando não há rótulo "Pedido:" na solicitação.
 PEDIDO_LIVRE = (
-    r"\b(?:solicito|solicitamos|peço|gostaria de|quero pedir|quero solicitar)"
+    r"\b(?:(?:não|nao|nunca|jamais|somente|apenas)\s+)*"
+    r"(?:solicito|solicitamos|peço|gostaria de|quero pedir|quero solicitar)"
     r"\b(?:(?![!?;\n]|\.(?!\d)).)+"
 )
 

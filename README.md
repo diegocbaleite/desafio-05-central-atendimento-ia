@@ -282,7 +282,11 @@ A suíte cobre contratos, regras de negócio, guardrails, orçamento, persistên
 python -m unittest discover -s testes -t .
 ```
 
-**Última validação técnica registrada em 30/10/2026:** 322 testes aprovados na integração e no ZIP extraído, com Python 3.12.14/Linux. Na cópia extraída:
+**Validação após a correção de RF14 em 30/10/2026:** 330 testes aprovados em 23,138 s. A validação agora rejeita assunto/pedido que alterem a referência literal do original, inclusive negação, condição, restrição ou subpedido omitido. Se a única correção permitida também falhar, não há consulta RAG nem criação de minuta. Paráfrases sem referência reconhecida podem ser rejeitadas por segurança; essa verificação não é equivalência semântica geral. Ver [registro do ajuste 17](documentacao/desafio6/registro_ajustes.md).
+
+A avaliação extrativa com embedding real local manteve 14 cenários aprovados e T11 parcial, sem erro de etapa. Não foram feitas novas chamadas ao LLM real. Os registros de 322 testes abaixo são históricos, anteriores a essa correção.
+
+**Validação anterior registrada em 30/10/2026:** 322 testes aprovados na integração e no ZIP extraído, com Python 3.12.14/Linux. Na cópia extraída:
 
 ```text
 Ran 322 tests in 11.174s

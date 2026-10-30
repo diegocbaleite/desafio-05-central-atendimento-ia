@@ -1,4 +1,4 @@
-<!-- prompt: extracao_estruturada | versão: 1.1 | Desafio 6 / RF14 -->
+<!-- prompt: extracao_estruturada | versão: 1.2 | Desafio 6 / RF14 -->
 Você extrai dados de UMA solicitação fictícia de atendimento público para revisão humana.
 
 Regras obrigatórias:
@@ -26,3 +26,7 @@ Regras obrigatórias:
     identificado no texto atual, use null nesses campos e inclua-os em "campos_ausentes".
     Expressões vagas como "aquele problema" ou "ver isso" não identificam o objeto;
     não as use para preencher uma lacuna. Use categoria "revisao" e explique a ambiguidade.
+13. Em "assunto" e "pedido", preserve o valor completo identificado no original, sem
+    resumir, reorganizar palavras ou omitir negações, condições, restrições ou subpedidos.
+    Não transforme "não solicito" em "solicito" nem retire expressões como "apenas" ou
+    "somente se". Se não houver referência literal identificável, use null e peça revisão.

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from datetime import date, datetime
 from functools import lru_cache
 
@@ -17,7 +18,7 @@ from jsonschema import Draft202012Validator
 
 from .config import ROOT
 from .seguranca import AUSENTE
-from .texto import normalizar, sem_acento, termos
+from .texto import normalizar, sem_acento
 
 VERSAO_SCHEMA = "2.0.0"
 ARQUIVO_SCHEMA = "src/schemas/solicitacao.v2.schema.json"
@@ -100,12 +101,18 @@ def _so_alfanumerico(texto: str) -> str:
     return re.sub(r"[^0-9a-z]", "", normalizar(texto))
 
 
-def _suporte_termos(valor: str, original: str, minimo: float = 0.5) -> bool:
-    alvo = set(termos(valor))
-    if not alvo:
-        return normalizar(valor) in normalizar(original)
-    presentes = alvo & set(termos(original))
-    return len(presentes) / len(alvo) >= minimo
+def _literal_campo(valor: str) -> str:
+    """Normaliza apresentação, preservando palavras, negações e pontuação interna."""
+    return " ".join(unicodedata.normalize("NFC", valor).casefold().split()).removesuffix(".")
+
+
+def _campos_do_original(original: str) -> dict:
+    # Não usar termos/radicais de busca para comprovar fatos. O extrator conserva
+    # o valor completo do campo rotulado ou todos os pedidos explícitos reconhecidos.
+    # Se não houver referência verificável, falhar fechado em vez de aceitar paráfrase.
+    from .extracao import extrair
+
+    return extrair(original, "validacao", "memoria", "", "texto")["campos"]
 
 
 def validar_regras(obj: dict, original: str, hoje: date | None = None) -> list[dict]:
@@ -139,9 +146,15 @@ def validar_regras(obj: dict, original: str, hoje: date | None = None) -> list[d
         if not nomes or any(not re.search(r"\b" + re.escape(p) + r"\b", texto) for p in nomes):
             erro("dado_sem_suporte", "solicitante", "nome não aparece na entrada original")
 
+    referencias = _campos_do_original(original)
     for campo in ("assunto", "pedido"):
-        if obj[campo] is not None and not _suporte_termos(obj[campo], original):
-            erro("dado_sem_suporte", campo, "termos do campo não sustentados pelo original")
+        referencia = referencias[campo]["valor"]
+        if obj[campo] is not None and (
+            referencia == AUSENTE or _literal_campo(obj[campo]) != _literal_campo(referencia)
+        ):
+            erro("dado_sem_suporte", campo,
+                 "campo deve preservar integralmente a referência literal do original, "
+                 "incluindo negações, condições e restrições")
 
     nulos = {c for c in CAMPOS if obj[c] is None}
     if nulos != set(obj["campos_ausentes"]):

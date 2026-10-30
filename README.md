@@ -150,21 +150,52 @@ O detalhamento refere-se ao fluxo principal em `src/app.py`. Implementação, te
 
 ## 📁 Estrutura do Projeto
 
-| Caminho | Conteúdo |
-|---|---|
-| `config/config.yaml` | Provedores, geração, recuperação, limites e retenção |
-| `dados/acervo/` | Documentos fictícios e catálogo do fluxo avaliado |
-| `dados/solicitacoes/`, `dados/avaliacoes/`, `dados/ataques/` | Casos de avaliação |
-| `dados/gabaritos/desafio6/` | Referências e parâmetros prévios |
-| `dados/originais/` | Entradas preservadas do projeto |
-| `prompts/d6/` | Prompts versionados da entrega |
-| `src/` | CLI, interface, contratos, NLP, RAG, revisão e auditoria |
-| `src/desafio6/` | Implementação paralela preservada na integração |
-| `testes/` | Testes unitários e de integração |
-| `scripts/` | Geração de acervo, relatórios e pacote |
-| `documentacao/desafio6/` | Matrizes, relatórios, evidências e uso de IA |
-| `documentacao/desafio1/` | Documentação histórica |
-| `indice/`, `resultados/`, `entrega/` | Artefatos locais; índice, bancos e logs locais não entram no ZIP |
+```text
+desafio-05-central-atendimento-ia/
+├── config/
+│   └── config.yaml
+├── dados/
+│   ├── acervo/
+│   ├── solicitacoes/
+│   ├── avaliacoes/
+│   ├── ataques/
+│   ├── gabaritos/
+│   │   └── desafio6/
+│   └── originais/
+├── prompts/
+│   └── d6/
+├── src/
+│   ├── main.py
+│   ├── app.py
+│   ├── contrato.py
+│   ├── estruturacao.py
+│   ├── nlp.py
+│   ├── guardrails.py
+│   ├── embeddings.py
+│   ├── indice.py
+│   ├── rag.py
+│   ├── geracao.py
+│   ├── pipeline.py
+│   ├── revisao.py
+│   ├── auditoria.py
+│   ├── schemas/
+│   └── desafio6/
+├── testes/
+├── scripts/
+├── documentacao/
+│   ├── desafio6/
+│   └── desafio1/
+├── indice/                 # Gerado localmente
+├── resultados/             # Resultados e registros locais
+├── entrega/                # Pacotes gerados localmente, quando utilizados
+├── .env.example
+├── .gitignore
+├── AGENTS.md
+├── requirements.txt
+└── README.md
+```
+
+Estrutura resumida, com os principais arquivos. `indice/`, `resultados/` e `entrega/` incluem artefatos gerados durante a execução; índices, bancos de revisão e logs locais não são versionados.
 
 ---
 

@@ -1,0 +1,27 @@
+{
+  "numero": 11,
+  "etapa": "extracao",
+  "caso": "S06",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:24.383276+00:00",
+  "payload_sha256": "7336895d02a9696f4c100f8c9e32ccf88865f1873d62064ad369781be506eb38",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"versao_schema\":\"2.0.0\",\"protocolo\":null,\"data\":null,\"solicitante\":null,\"assunto\":\"problema do documento\",\"pedido\":\"ver isso pra mim\",\"categoria\":\"revisao\",\"entidades\":[],\"campos_ausentes\":[\"protocolo\",\"data\",\"solicitante\"],\"requer_revisao\":true,\"motivos_revisao\":[\"Protocolo, data e solicitante não localizados.\",\"Pedido ambíguo: não é possível identificar qual problema relacionado ao documento deve ser resolvido.\",\"Instrução suspeita ou mudança de regra não identificada.\"]}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.792,
+    "tokens_entrada": 821,
+    "tokens_saida": 140,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2796.8
+}

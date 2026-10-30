@@ -9,7 +9,7 @@ Preparação (antes de começar): `python -m src.main indexar`, `streamlit run s
 | 3:00–8:00 | Índice, RAG, fontes, ausência de evidência e revisão | Ayron | Aba Acervo (status, 25 trechos, dimensão 384; reindexar não duplica); Consulta P02 (fundamentada, fonte DOC-02 p. 1, similaridade explicada); P06 (abstenção); P08 (conflito DOC-03 × DOC-05 → revisão); trocar o perfil de geração sem reindexar; aba Revisão: **aprovar uma minuta e rejeitar/pedir revisão de outra, com justificativa (decisão humana real)** |
 | 8:00–11:00 | Guardrails, ataque e auditoria | Guilherme | ATQ03 bloqueado sem chamar o modelo; ATQ01 vai para revisão sem “DEFERIDO”; DOC-07 em quarentena; aba Auditoria (logs mascarados); T05: fora de escopo, arquivo grande, orçamento |
 | 11:00–13:00 | Sentimentos e agregação | Guilherme | Aba Sentimentos: 12 avaliações, filtros, totais com denominador, conjunto vazio; regras para mista/ironia/sem contexto; confiança não calibrada |
-| 13:00–15:00 | Métricas, limitações e uso de IA | Ayron/Diego | Matriz T01–T15 (14 aprovados, 1 parcial); por que os 100% são otimistas; LLM real pendente; registro do uso de IA e ajustes pós-execução |
+| 13:00–15:00 | Métricas, limitações e uso de IA | Ayron/Diego | Matriz histórica T01–T15 (14 aprovados, 1 parcial) e complemento humano em PNGs 04/05; RAG OpenAI real após reajuste (5/5 completas, 12/12 fatos, 2/2 abstenções); por que esses números não medem generalização; validação complementar real, erros iniciais e reteste de S02/S06; sentimentos 12/12; ATQ02 seguro com critério de top-k parcial; 210 testes; distinguir os prints locais dos métodos LLM; registro do uso de IA |
 
 ## Perguntas prováveis
 

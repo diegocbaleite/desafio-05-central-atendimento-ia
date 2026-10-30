@@ -143,6 +143,31 @@ def validar_documento(nome: str, conteudo: bytes, cfg: dict) -> None:
             raise ValueError("TXT precisa estar em UTF-8") from exc
 
 
+def caminho_upload_seguro(pasta: Path, nome: str) -> Path:
+    """Resolve um único nome de arquivo, sem permitir sair da pasta de uploads."""
+    if (not nome or nome in (".", "..") or nome.endswith((".", " "))
+            or re.search(r'[<>:"/\\|?*\x00-\x1f]', nome)):
+        raise ValueError("Nome de arquivo inválido: informe somente o nome, sem caminhos")
+    reservado = nome.split(".", 1)[0].upper()
+    if reservado in {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)),
+                     *(f"LPT{i}" for i in range(1, 10))}:
+        raise ValueError("Nome de arquivo reservado pelo sistema")
+    base = Path(pasta).resolve()
+    destino = (base / nome).resolve()
+    if not destino.is_relative_to(base):
+        raise ValueError("Destino do upload fora da pasta permitida")
+    return destino
+
+
+def destino_documento_enviado(pasta: Path, documento_id: str, extensao: str) -> Path:
+    """ID do acervo não é caminho; o formato aceito é ASCII, até 64 caracteres."""
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", documento_id or ""):
+        raise ValueError("ID inválido: use até 64 letras, números, hífen ou sublinhado")
+    if extensao not in (".txt", ".pdf"):
+        raise ValueError("Formato de documento não permitido")
+    return caminho_upload_seguro(pasta, documento_id + extensao)
+
+
 def avaliar_trecho(texto: str) -> dict:
     """Conteúdo do acervo é não confiável: instruções ou pedidos de segredo -> quarentena."""
     motivos = sinais_injecao(texto)

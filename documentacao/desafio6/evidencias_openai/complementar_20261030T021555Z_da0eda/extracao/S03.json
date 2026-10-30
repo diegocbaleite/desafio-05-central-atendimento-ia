@@ -1,0 +1,226 @@
+{
+  "id": "S03",
+  "fonte": "testes/fixtures/completa.txt",
+  "modalidade": "texto",
+  "valida": true,
+  "baseline_regras": {
+    "categoria_ok": true,
+    "categoria_esperada": "segunda_via_documento",
+    "categoria_obtida": "segunda_via_documento",
+    "campos": {
+      "protocolo": {
+        "esperado": "2026.****23",
+        "obtido": "2026.****23",
+        "ok": true
+      },
+      "data": {
+        "esperado": "02/10/2026",
+        "obtido": "02/10/2026",
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": "Maria Fictícia Albuquerque",
+        "obtido": "Maria Fictícia Albuquerque",
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [
+          "maria ficticia albuquerque"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [
+          "02/10/2026"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [
+          "2026.****23"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 3,
+    "entidades_esperadas": 3,
+    "entidades_incorretas": 0
+  },
+  "resultado": {
+    "modo": "llm",
+    "ficha": {
+      "versao_schema": "2.0.0",
+      "protocolo": "2026.****23",
+      "data": "02/10/2026",
+      "solicitante": "Maria Fictícia Albuquerque",
+      "assunto": "segunda via de certidão",
+      "pedido": "Solicito segunda via da certidão.",
+      "categoria": "segunda_via_documento",
+      "entidades": [
+        {
+          "tipo": "pessoa",
+          "valor": "Maria Fictícia Albuquerque",
+          "literal": true,
+          "evidencia": "Maria Fictícia Albuquerque"
+        },
+        {
+          "tipo": "protocolo",
+          "valor": "2026.****23",
+          "literal": true,
+          "evidencia": "2026.****23"
+        },
+        {
+          "tipo": "data",
+          "valor": "02/10/2026",
+          "literal": true,
+          "evidencia": "02/10/2026"
+        }
+      ],
+      "campos_ausentes": [],
+      "requer_revisao": false,
+      "motivos_revisao": []
+    },
+    "validacao": {
+      "versao_schema": "2.0.0",
+      "sintaxe_ok": true,
+      "esquema_ok": true,
+      "regras_ok": true,
+      "valido": true,
+      "erros_sintaxe": [],
+      "erros_esquema": [],
+      "erros_regras": [],
+      "objeto": {
+        "versao_schema": "2.0.0",
+        "protocolo": "2026.****23",
+        "data": "02/10/2026",
+        "solicitante": "Maria Fictícia Albuquerque",
+        "assunto": "segunda via de certidão",
+        "pedido": "Solicito segunda via da certidão.",
+        "categoria": "segunda_via_documento",
+        "entidades": [
+          {
+            "tipo": "pessoa",
+            "valor": "Maria Fictícia Albuquerque",
+            "literal": true,
+            "evidencia": "Maria Fictícia Albuquerque"
+          },
+          {
+            "tipo": "protocolo",
+            "valor": "2026.****23",
+            "literal": true,
+            "evidencia": "2026.****23"
+          },
+          {
+            "tipo": "data",
+            "valor": "02/10/2026",
+            "literal": true,
+            "evidencia": "02/10/2026"
+          }
+        ],
+        "campos_ausentes": [],
+        "requer_revisao": false,
+        "motivos_revisao": []
+      }
+    },
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "valido": true,
+        "erros": [],
+        "metadados": {
+          "provider": "openai",
+          "modelo": "gpt-6-luna",
+          "duracao_s": 2.874,
+          "tokens_entrada": 849,
+          "tokens_saida": 187,
+          "custo_usd": null,
+          "tentativas": 1,
+          "parametros": {
+            "max_completion_tokens": 1200,
+            "timeout_s": 45,
+            "reasoning_effort": "none"
+          }
+        }
+      }
+    ],
+    "prompt": {
+      "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+      "sha256": "d07372cf372562c1767173170223aac45c65e3603589e94fb085049e607ad6ad"
+    }
+  },
+  "comparacao": {
+    "categoria_ok": true,
+    "categoria_esperada": "segunda_via_documento",
+    "categoria_obtida": "segunda_via_documento",
+    "campos": {
+      "protocolo": {
+        "esperado": "2026.****23",
+        "obtido": "2026.****23",
+        "ok": true
+      },
+      "data": {
+        "esperado": "02/10/2026",
+        "obtido": "02/10/2026",
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": "Maria Fictícia Albuquerque",
+        "obtido": "Maria Fictícia Albuquerque",
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [
+          "maria ficticia albuquerque"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [
+          "02/10/2026"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [
+          "2026.****23"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 3,
+    "entidades_esperadas": 3,
+    "entidades_incorretas": 0
+  }
+}

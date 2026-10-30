@@ -1,0 +1,117 @@
+{
+  "pergunta_sha256": "aa1e6707fb68267b5763bd7b686da97eac66cf2d6231ecebf324a418d55419a0",
+  "status": "sem_evidencia_suficiente",
+  "resposta": "Não há evidência suficiente no acervo para responder com segurança. A consulta foi encaminhada ao operador; nenhuma orientação institucional foi inventada.",
+  "afirmacoes": [],
+  "afirmacoes_removidas": [],
+  "fontes": [],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 2 — Transferência de turno",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 2 — Transferência de turno, p. 1",
+      "trecho": "O pedido de transferência de turno deve ser protocolado na secretaria escolar em até 15 dias corridos após o início das aulas e depende da existência de vaga no turno pretendido.",
+      "similaridade": 0.5145,
+      "posicao": 1,
+      "distancia_cosseno": 0.4855,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s1:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 1 — Finalidade",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 1 — Finalidade",
+      "trecho": "Este manual orienta as equipes de atendimento sobre a efetivação de matrícula nos cursos técnicos ofertados pelas escolas técnicas fictícias da rede estadual simulada. As orientações valem para cursos presenciais nos turnos matutino, vespertino e noturno.",
+      "similaridade": 0.4753,
+      "posicao": 2,
+      "distancia_cosseno": 0.5247,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s4:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 4 — Cancelamento por faltas",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 4 — Cancelamento por faltas",
+      "trecho": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+      "similaridade": 0.4609,
+      "posicao": 3,
+      "distancia_cosseno": 0.5391,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p2:s3:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 3 — Trancamento de matrícula",
+      "pagina": 2,
+      "local": "DOC-02 v2.0, Seção 3 — Trancamento de matrícula, p. 2",
+      "trecho": "O trancamento pode ser solicitado uma única vez durante o curso, mediante requerimento na secretaria escolar, e vale por um semestre letivo.",
+      "similaridade": 0.4531,
+      "posicao": 4,
+      "distancia_cosseno": 0.5469,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": false,
+    "resolvido": false,
+    "regra": null,
+    "divergencias": []
+  },
+  "encaminhar_revisao": true,
+  "motivos_revisao": [
+    "sem evidência suficiente: abstenção"
+  ],
+  "gerador": {
+    "perfil": "principal",
+    "e_llm": true,
+    "tipo": "llm",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "tokens_entrada": 1122,
+    "tokens_saida": 54,
+    "custo_usd": "indisponível",
+    "tentativas_json": 1,
+    "prompt": "prompts/d6/rag_resposta_v1.md",
+    "prompt_sha256": "5e98572c5ff622c887df448b3cb56fc5dadf09a0c448ea308aef09d30519ea73"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.5145,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "latencia_ms": 1446.1
+}

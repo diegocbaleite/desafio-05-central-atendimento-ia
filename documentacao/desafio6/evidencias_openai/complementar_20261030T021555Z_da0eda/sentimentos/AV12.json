@@ -1,0 +1,21 @@
+{
+  "id": "AV12",
+  "valida": true,
+  "esperado": {
+    "polaridade": "indeterminada",
+    "requer_revisao": true,
+    "justificativa": "Falta de contexto: 'aquilo de ontem' depende de conversa anterior."
+  },
+  "resultado": {
+    "id": "AV12",
+    "polaridade": "indeterminada",
+    "justificativa": "Depende de conversa anterior (“aquilo de ontem”), sem contexto suficiente para identificar a avaliação.",
+    "requer_revisao": true,
+    "confianca_declarada": "alta",
+    "metodo": "llm:openai:gpt-6-luna",
+    "observacao_confianca": "estimativa declarada pelo modelo, não calibrada; não é probabilidade de acerto",
+    "prompt_sha256": "a2423da60d1b6f294d02c0d0a2b6ac0b56680a7f9732ead495f5efb4f45a9a25"
+  },
+  "rotulo_ok": true,
+  "revisao_ok": true
+}

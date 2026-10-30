@@ -1,0 +1,65 @@
+{
+  "natureza": "revalidação local de respostas antigas; nenhuma chamada nova a LLM",
+  "execucao_original": "20261029T221237Z_33cce1",
+  "casos": [
+    {
+      "id": "P01",
+      "aceitas_antes": 1,
+      "aceitas_apos": 1,
+      "verificadas": [
+        {
+          "texto": "Candidatos menores de 18 anos devem apresentar também o documento de identidade do responsável legal, que assinará a ficha de matrícula.",
+          "chunk_ids": [
+            "DOC-01:v1.2:A:p0:s2:c0"
+          ],
+          "citacao_literal": "Candidatos menores de 18 anos devem apresentar também o documento de identidade do responsável legal, que assinará a ficha de matrícula.",
+          "sustentada": true,
+          "motivos": []
+        },
+        {
+          "texto": "Para efetivar a matrícula, o candidato aprovado deve apresentar documento de identidade com foto, CPF, comprovante de residência emitido nos últimos 90 dias, histórico escolar ou certificado de conclusão do ensino médio, ou declaração de matrícula no ensino médio para cursos concomitantes, e uma fotografia 3x4 recente.",
+          "chunk_ids": [
+            "DOC-01:v1.2:A:p0:s2:c0"
+          ],
+          "citacao_literal": "Para efetivar a matrícula, o candidato aprovado deve apresentar os seguintes documentos: documento de identidade com foto; CPF; comprovante de residência emitido nos últimos 90 dias; histórico escolar ou certificado de conclusão do ensino médio, ou declaração de matrícula no ensino médio para cursos concomitantes; e uma fotografia 3x4 recente.",
+          "sustentada": false,
+          "motivos": [
+            "afirmacao_nao_literal_completa"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "aceitas_antes": 0,
+      "aceitas_apos": 1,
+      "verificadas": [
+        {
+          "texto": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+          "chunk_ids": [
+            "DOC-01:v1.2:A:p0:s4:c0"
+          ],
+          "citacao_literal": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+          "sustentada": true,
+          "motivos": []
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "aceitas_antes": 0,
+      "aceitas_apos": 1,
+      "verificadas": [
+        {
+          "texto": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+          "chunk_ids": [
+            "DOC-03:v3.1:A:p0:s2:c0"
+          ],
+          "citacao_literal": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+          "sustentada": true,
+          "motivos": []
+        }
+      ]
+    }
+  ]
+}

@@ -20,7 +20,9 @@ Camadas separadas (ver diagrama no README):
 
 ## 3. Provedor configurável (RF21)
 
-- `config/config.yaml → geracao.perfis`: `principal` (LLM Gemini `gemini-3.1-flash-lite` via endpoint OpenAI-compatible, temperatura 0,1, 1.200 tokens, saída estruturada), `extrativo_local` (determinístico, **não-LLM**) e `simulado` (testes).
+- `config/config.yaml → geracao.perfis`: desde 29/10/2026, `principal` usa OpenAI `gpt-6-luna`, `reasoning_effort: none`, sem parâmetro de temperatura, limite de 1.200 tokens de conclusão e saída estruturada. Usa o adaptador HTTP existente em `https://api.openai.com/v1/chat/completions`, com `max_completion_tokens`. `extrativo_local` (determinístico, **não-LLM**) e `simulado` (testes) permanecem disponíveis. A configuração anterior era Gemini `gemini-3.1-flash-lite`.
+- O contrato JSON Schema local é preservado. Somente a cópia enviada à OpenAI recebe tipos explícitos em enums, constantes como enum e remoção de `uniqueItems`; a unicidade continua sendo validada localmente. O `.env` existente não foi alterado nem incluído no Git.
+- Um [teste real de conexão](evidencias_openai/teste_conexao_2026-10-29.json), com mensagem técnica fictícia e sem acervo, retornou JSON válido (55 tokens de entrada, 13 de saída, 2,846 s). Após autorização específica do usuário, as oito consultas RAG foram executadas com documentos fictícios. A [primeira rodada](avaliacao_rag_openai_2026-10-29.md) foi preservada; a [rodada após reajuste](reajuste_rag_openai_2026-10-29.md) aprovou T08–T10 com cinco respostas completas. Não houve decisão humana automatizada.
 - A chamada ao provedor fica isolada em `cliente.conversar` (timeout de 45 s, **no máximo 1 repetição** para 429/5xx/timeout, orçamento consultado antes de **cada** requisição, inclusive repetições e correções de esquema).
 - A recuperação é configurada à parte (`recuperacao.*`). O T12 mostrou o mesmo índice (hash do manifesto e contagem inalterados) atendendo o gerador extrativo, o perfil LLM (falhou por falta de chave, com erro tratado e auditado) e uma falha 503 simulada.
 - **Segunda configuração demonstrada:** `extrativo_local`. Ela não é um LLM e não tem qualidade equivalente; só prova que a interface do adaptador é trocável sem reindexar.
@@ -33,7 +35,7 @@ Camadas separadas (ver diagrama no README):
 | Regras de negócio separadas do esquema | Conformidade ao esquema não garante veracidade: datas reais, valores presentes no original, coerência entre nulos e `campos_ausentes`, revisão obrigatória quando há lacuna |
 | Embeddings locais (fastembed/ONNX, 384 dimensões) | Sem envio do acervo a terceiros e sem custo por token; roda em CPU |
 | Chroma persistente + manifesto próprio | IDs determinísticos e SHA-256 por documento impedem duplicatas; o manifesto detecta troca de modelo/dimensão/versão (`reindexacao_exigida`) e documentos alterados ou órfãos |
-| Status do RAG decidido por código | O gerador sugere; o código verifica citação literal, números e cobertura de termos, remove afirmações sem suporte, detecta conflito (mesma unidade, valores diferentes, documentos distintos) e só então decide |
+| Status do RAG decidido por código | O gerador sugere; o código exige frase completa literal de um trecho citado, remove afirmações sem suporte, detecta conflito (mesma unidade, valores diferentes, documentos distintos) e só então decide. Desde 29/10/2026, fontes que não prevalecem na resolução são descartadas da resposta |
 | Resposta exibida montada só com afirmações verificadas | Fecha o caminho em que texto livre do gerador traria conteúdo não verificado (ajuste nº 4) |
 | Abstenção por cobertura ponderada por IDF | Similaridade de cosseno alta não garante resposta: nas perguntas sem resposta, trechos com similaridade de 0,42–0,51 foram recuperados, e a cobertura dos termos raros (taxa, carteira, transporte) é que levou à abstenção |
 | Documento com trecho suspeito vira “documento suspeito” | Defesa em profundidade: o trecho malicioso nunca entra no contexto, e uma resposta que cite outra parte do mesmo documento vai para revisão (ajuste nº 2) |
@@ -61,7 +63,9 @@ Os números completos, por pergunta e por solicitação, estão em [`resultados_
 
 ## 6. Custos e recursos
 
-- **Nenhuma chamada paga foi feita nesta etapa.** Os embeddings são locais (custo monetário zero por token; a primeira indexação dos 7 documentos levou cerca de 2 s em CPU, após o download do modelo). A avaliação completa levou 15,0 s.
+Atualização real em 29/10/2026: a primeira rodada RAG `20261029T221237Z_33cce1` teve oito chamadas, 7.894 tokens de entrada, 1.201 de saída e latência somada de 22.503,5 ms; status/fonte em 3/5 respondíveis, com somente duas completas. Após o reajuste registrado no item 11, a rodada `20261029T222148Z_5018e2` teve oito chamadas, 8.950 tokens de entrada, 1.160 de saída e latência somada de 19.833,6 ms: 5/5 respondíveis completas, 12/12 fatos, abstenção correta 2/2 e conflito encaminhado. Custo monetário indisponível, sem estimativa. Esses números são separados da tabela extrativa da seção 5.
+
+- **Na avaliação de 27/10/2026, não houve chamada paga.** Os embeddings são locais (custo monetário zero por token; a primeira indexação dos 7 documentos levou cerca de 2 s em CPU, após o download do modelo). A avaliação completa levou 15,0 s. O teste real de conexão OpenAI em 29/10/2026 mediu 68 tokens no total; seu custo monetário não foi registrado.
 - Tokens e custo ficam como `"indisponível"` na auditoria das execuções locais; com LLM, o sistema registra os tokens informados pelo provedor e **não** estima os ausentes (`Orcamento.tokens_indisponiveis`).
 - Preços de referência do Gemini constam no README do Desafio 01 (consulta de 18/10/2026) e **não foram reconsultados**; confirme nas páginas oficiais antes de executar o perfil `principal`.
 - Orçamento padrão por execução: 30 chamadas e 60.000 tokens (`guardrails.max_chamadas_execucao`, `max_tokens_execucao`).
@@ -76,19 +80,25 @@ Os números completos, por pergunta e por solicitação, estão em [`resultados_
 
 ## 8. Riscos residuais
 
-1. **LLM real não validado:** comportamento com o Gemini (aderência ao esquema, citações, recusa) é desconhecido até a execução com credencial.
+1. **Cobertura do LLM real:** RAG e validações complementares foram executados no conjunto conhecido. A [rodada complementar](validacao_complementar_llm_2026-10-29.md) teve seis extrações/resumos e 12 sentimentos; S02/S06 foram retestadas após ajustar o prompt. A consolidação por caso tem 18/18 campos, 20/20 entidades e sentimentos 12/12. Não é nova rodada completa nem prova de generalização. ATQ02 continua parcial na recuperação do trecho malicioso no top-k, apesar do encaminhamento seguro.
 2. **Regras locais frágeis:** extração, categorias, entidades e sentimentos por regras acertam o conjunto de teste, mas falham com formulações novas (sinônimos, erros de STT, ironia sutil).
-3. **Verificação de suporte é léxica:** confere citação literal, números e sobreposição de termos; uma paráfrase correta pode ser removida, e uma afirmação que reutiliza as palavras do trecho com sentido invertido (ex.: negação) pode passar.
+3. **Suporte restrito a frases completas literais:** aceita uma ou mais frases consecutivas de um mesmo trecho. Paráfrases, saltos entre frases e recortes que removem negação, condição ou exceção são recusados. Isso reduz a fluidez e pode levar à abstenção mesmo com uma paráfrase correta. A seleção literal não comprova a veracidade do próprio acervo nem resolve limitações do chunking.
 4. **Detecção de conflito limitada a quantidades com unidade** (dias, horas, R$); divergências qualitativas não são detectadas.
 5. **Guardrails heurísticos:** padrões de injeção e de segredo podem ser contornados. A mitigação estrutural (segredo nunca no prompt, quarentena, saída montada só com afirmações verificadas, revisão humana) reduz o impacto, mas não o elimina.
 6. **Índice local sem controle de acesso;** em uso real exigiria autenticação, criptografia e trilha de auditoria imutável.
-7. **Revisão humana real ainda não demonstrada** pela equipe na interface.
+7. **Evidências humanas concluídas:** o pedido de revisão de Diego em UI-001 ([evidência](evidencias_humanas/revisao_UI001_20261029T232021Z.json)) e a aprovação de UI-002 ([evidência](evidencias_humanas/aprovacao_UI002_20261029T235412Z.json)) foram confirmados na interface e no banco, com origem `humana_interface` e hashes conferidos. Os 15 PNGs e cinco JSONs do [catálogo](evidencias_humanas/README.md) estão presentes e conferidos. O registro de uso de IA foi preenchido em nome de Diego por sua autorização expressa; não declara conferência individual dos outros integrantes. O fechamento do pacote foi retomado em 30/10/2026; ver [conferência da entrega](fechamento_entrega_2026-10-30.md).
 
 ## 9. Validações pendentes (ações concretas)
 
+As quatro falhas do [parecer de 28/10](parecer_prontidao_2026-10-28.md) foram corrigidas em 29/10/2026 e cobertas por regressões; a suíte passou com 188 testes. A avaliação local `20261029T214410Z_517c20` manteve 14 aprovados e T11 parcial. O [passo a passo de finalização](finalizacao_passo_a_passo.md) detalha as ações abaixo. Nenhum desses testes constitui execução de LLM real ou decisão de uma pessoa.
+
 | Pendência | Ação |
 |---|---|
-| Execução com LLM real | Criar `.env` com `GEMINI_API_KEY`; rodar `python -m src.main consultar "..." --gerador principal`, `python -m src.main sentimentos --gerador principal` e `python -m src.main avaliar --gerador principal`; registrar tokens, latência e resultados ao lado dos atuais |
-| Extração por LLM | Definir `estruturacao.modo: "llm"` e processar S01–S06; comparar com a extração por regras |
-| Demonstração humana (T11/RF24) | Na interface, um integrante aprova uma minuta e outro rejeita ou pede revisão, com justificativas; exportar a aba Auditoria |
+| RAG com LLM real | Reajuste concluído e T08–T10 aprovados na rodada `20261029T222148Z_5018e2`; preservar ambas as rodadas. A evidência cobre o conjunto conhecido e não substitui a revisão humana |
+| Extração, resumo, sentimentos e ataques com perfil real | Executados e documentados em [validação complementar](validacao_complementar_llm_2026-10-29.md): 27 chamadas iniciais e 2 de reteste, 16.917 tokens de entrada e 3.846 de saída. A interface mantém extração/resumo locais por padrão; ATQ02 tem limitação de top-k registrada |
+| Demonstração humana (T11/RF24) | Concluída: pedido de revisão de UI-001 e aprovação de UI-002 por Diego, JSONs e PNGs 04/05 presentes e conferidos. O critério RF24 (p. 8 do enunciado) admite outra minuta enviada para revisão. Essas decisões complementam o T11 parcial da avaliação automática histórica, sem alterar aquela execução |
+
+Fechamento conferido em 29/10/2026: a última suíte registrada passou com **201 testes** em 12,921 s; a pré-verificação e `git diff --check` passaram. As alterações ainda não estão commitadas, e o ZIP final não foi gerado. Ver [verificação de fechamento](verificacao_fechamento_2026-10-29.md).
+
+Atualização posterior no mesmo dia: após os ajustes da validação complementar, **210 testes passaram** em 12,254 s. A rodada completa, seus erros e o reteste direcionado foram preservados. A cobertura real desses métodos deixou de estar pendente; permanecem as limitações documentadas e o fechamento do pacote.
 | Nova transcrição/OCR | Opcional: com `GROQ_API_KEY`/Tesseract, processar `entrada_audio.mp3`/`entrada_pdf-imagem.pdf` pela aba Solicitação |

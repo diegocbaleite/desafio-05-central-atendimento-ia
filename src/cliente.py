@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from copy import deepcopy
 from typing import Any
 
 import requests
@@ -27,21 +28,55 @@ def _erro_provedor(data: Any) -> str:
     return "Campos de resposta inesperados: " + chaves
 
 
+def _schema_openai(schema: dict) -> dict:
+    """Adapta somente o esquema de transporte; a validação local mantém o contrato.
+
+    O subconjunto da API usa enum para constantes e não aplica uniqueItems.
+    Essa última regra continua sendo verificada localmente, inclusive na correção.
+    """
+    s = deepcopy(schema)
+    for chave_ in ("$schema", "$id", "uniqueItems"):
+        s.pop(chave_, None)
+    if "const" in s:
+        s["enum"] = [s.pop("const")]
+    if "enum" in s and "type" not in s:
+        tipos = {str: "string", bool: "boolean", int: "integer", float: "number", type(None): "null"}
+        encontrados = list(dict.fromkeys(tipos[type(v)] for v in s["enum"]))
+        s["type"] = encontrados[0] if len(encontrados) == 1 else encontrados
+    for grupo in ("properties", "$defs", "definitions"):
+        if grupo in s:
+            s[grupo] = {k: _schema_openai(v) for k, v in s[grupo].items()}
+    if isinstance(s.get("items"), dict):
+        s["items"] = _schema_openai(s["items"])
+    for grupo in ("anyOf", "oneOf", "allOf"):
+        if grupo in s:
+            s[grupo] = [_schema_openai(v) for v in s[grupo]]
+    return s
+
+
 def _payload(
     mensagens: list[dict[str, Any]],
     modelo: str,
     conf: dict,
     response_format: dict | None = None,
+    provider: str | None = None,
 ) -> dict:
+    limite = "max_completion_tokens" if provider == "openai" else "max_tokens"
     payload = {
         "model": modelo,
         "messages": mensagens,
-        "temperature": conf["temperatura"],
-        "max_tokens": conf["max_tokens"],
+        limite: conf["max_tokens"],
     }
+    if conf.get("temperatura") is not None:
+        payload["temperature"] = conf["temperatura"]
+    if provider == "openai" and conf.get("reasoning_effort") is not None:
+        payload["reasoning_effort"] = conf["reasoning_effort"]
     if response_format:
         # Saída restrita por esquema (OpenAI-compatible); o resultado é revalidado localmente.
-        payload["response_format"] = response_format
+        payload["response_format"] = deepcopy(response_format)
+        if provider == "openai" and response_format.get("type") == "json_schema":
+            formato = payload["response_format"]["json_schema"]
+            formato["schema"] = _schema_openai(formato["schema"])
     return payload
 
 
@@ -104,7 +139,7 @@ def conversar(
             resposta = requests.post(
                 perfil["base_url"].rstrip("/") + "/chat/completions",
                 headers={"Authorization": "Bearer " + token},
-                json=_payload(mensagens, modelo, conf, response_format),
+                json=_payload(mensagens, modelo, conf, response_format, provider=provider),
                 timeout=conf["timeout_s"],
             )
         except (requests.Timeout, requests.ConnectionError) as exc:
@@ -187,6 +222,14 @@ def _interpretar_sucesso(
             "pode ter esgotado o limite de tokens de raciocínio"
         )
     uso = dados.get("usage") or {}
+    parametros = {
+        "max_completion_tokens" if provider == "openai" else "max_tokens": conf["max_tokens"],
+        "timeout_s": conf["timeout_s"],
+    }
+    if conf.get("temperatura") is not None:
+        parametros["temperature"] = conf["temperatura"]
+    if provider == "openai" and conf.get("reasoning_effort") is not None:
+        parametros["reasoning_effort"] = conf["reasoning_effort"]
     return {
         "texto": texto.strip(),
         "provider": provider,
@@ -196,9 +239,5 @@ def _interpretar_sucesso(
         "tokens_saida": uso.get("completion_tokens"),
         "custo_usd": uso.get("cost", dados.get("cost")),
         "tentativas": tentativa + 1,
-        "parametros": {
-            "temperature": conf["temperatura"],
-            "max_tokens": conf["max_tokens"],
-            "timeout_s": conf["timeout_s"],
-        },
+        "parametros": parametros,
     }

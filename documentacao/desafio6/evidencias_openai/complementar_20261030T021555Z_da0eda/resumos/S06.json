@@ -1,0 +1,39 @@
+{
+  "id": "S06",
+  "executado": true,
+  "resumo": "Protocolo: não localizado. Data: não localizada. Solicitante: não localizado. Assunto: problema relacionado a um documento, sem detalhes. Pedido: verificar a situação, pois a pessoa já enviou mensagem e não recebeu retorno.",
+  "metadados": {
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.449,
+    "tokens_entrada": 203,
+    "tokens_saida": 52,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    },
+    "prompt": "prompts/d6/resumo_v1.md",
+    "prompt_sha256": "ee21c87806ea22af504c35471d17b726d7ee75da06f75ddfb741005f2891ddfb"
+  },
+  "palavras_brutas": 31,
+  "truncado_pelo_produto": false,
+  "avaliacao": {
+    "fatos": [
+      {
+        "fato": "problema com documento não especificado",
+        "presente": true
+      },
+      {
+        "fato": "não recebeu retorno anterior",
+        "presente": true
+      }
+    ],
+    "fatos_omitidos": [],
+    "fatos_sem_suporte": [],
+    "resumo_palavras": 31,
+    "resumo_dentro_limite": true
+  }
+}

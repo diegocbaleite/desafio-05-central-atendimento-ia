@@ -175,8 +175,8 @@ def main():
                     if not novo_id or not titulo or any(d["id"] == novo_id for d in catalogo):
                         raise ValueError("Informe ID único e título")
                     pasta = ROOT / cfg["acervo"]["diretorio_enviados"]
+                    destino = guardrails.destino_documento_enviado(pasta, novo_id, Path(arq.name).suffix.lower())
                     pasta.mkdir(parents=True, exist_ok=True)
-                    destino = pasta / f"{novo_id}{Path(arq.name).suffix.lower()}"
                     destino.write_bytes(conteudo)
                     cat_path = ROOT / cfg["acervo"]["catalogo_enviados"]
                     dados = (yaml.safe_load(cat_path.read_text(encoding="utf-8")) if cat_path.is_file() else None) or {"documentos": []}
@@ -225,10 +225,10 @@ def main():
             up = st.file_uploader("Arquivo", type=tipos, key="up_mm")
             modalidade = "audio" if "áudio" in modo else "imagem"
             if up is not None and st.button("Transcrever / extrair texto"):
-                temp = ROOT / "resultados" / "arquivos_fornecidos" / up.name
-                temp.parent.mkdir(parents=True, exist_ok=True)
-                temp.write_bytes(up.getvalue())
                 try:
+                    temp = guardrails.caminho_upload_seguro(ROOT / "resultados" / "arquivos_fornecidos", up.name)
+                    temp.parent.mkdir(parents=True, exist_ok=True)
+                    temp.write_bytes(up.getvalue())
                     with st.spinner("Processando mídia..."):
                         if modalidade == "audio":
                             from src.audio import transcrever
@@ -375,7 +375,10 @@ def main():
         rev = c2.selectbox("Requer revisão", ["todas", "sim", "não"])
         ag = agregar_sentimentos(resultados, gab, polaridade=pols or None,
                                  requer_revisao=None if rev == "todas" else rev == "sim")
-        if ag["total"] == 0:
+        if not resultados:
+            st.info("Nenhuma avaliação classificada nesta sessão. "
+                    "Clique em 'Classificar as 12 avaliações' para carregar o painel.")
+        elif ag["total"] == 0:
             st.info("Conjunto vazio para os filtros atuais (0/0): nenhum percentual é calculado.")
         else:
             cols = st.columns(len(POLARIDADES) + 1)

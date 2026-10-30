@@ -1,0 +1,27 @@
+{
+  "numero": 4,
+  "etapa": "resumo",
+  "caso": "S02",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:08.900238+00:00",
+  "payload_sha256": "03cd708f2c016c889aa9819106d687a3f9bf2cb2a36b652ecf7216d0521a968c",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "Protocolo 2026-****42, de 14 de outubro de 2026. Solicitante: Marcos Vinícius de Almeida Santos. Assunto: matrícula no curso Técnico em Infirmagem, do Eixo Tecnológico de Saúde, com carga horária de 1200 horas; turno não localizado. Pede a efetivação da matrícula e informação sobre quais documentos ainda precisa apresentar. Declara ciência das condições de cancelamento automático por faltas nos primeiros dias de aula.",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.253,
+    "tokens_entrada": 372,
+    "tokens_saida": 104,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2275.9
+}

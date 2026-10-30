@@ -1,0 +1,27 @@
+{
+  "numero": 19,
+  "etapa": "sentimento",
+  "caso": "AV07",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:38.081533+00:00",
+  "payload_sha256": "59930029e50f52b20dc9d9d2c3f939e109873119fd02cd7b63aadb88dc89b785",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV07\",\"polaridade\":\"neutra\",\"justificativa\":\"Relata comparecimento, apresentação do protocolo e orientação recebida, sem expressar avaliação positiva ou negativa.\",\"requer_revisao\":false,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.347,
+    "tokens_entrada": 396,
+    "tokens_saida": 63,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1366.4
+}

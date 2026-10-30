@@ -46,6 +46,11 @@ _MESES = {
     "junho": 6, "julho": 7, "agosto": 8, "setembro": 9, "outubro": 10,
     "novembro": 11, "dezembro": 12,
 }
+_MILHAR_COM_UNIDADE = re.compile(
+    r"(?<![\d.,])\d{1,3}(?:\.\d{3})+(?=(?:,\d+)?\s*"
+    r"(?:horas?|dias?|meses|anos?|reais|unidades?|vagas?|alunos?|pessoas?)\b)",
+    re.IGNORECASE,
+)
 
 
 def _adicionar(lista, vistos, tipo, valor, evidencia):
@@ -125,8 +130,11 @@ def fatos_sem_suporte(resumo: str, original: str) -> list[str]:
     """
     datas_original = {e["valor"] for e in extrair_entidades(original) if e["tipo"] == "data"}
     sem_datas_suportadas = _DATA.sub(lambda m: "" if m.group(0) in datas_original else m.group(0), resumo)
-    base = set(numeros(original))
-    return sorted(n for n in numeros(sem_datas_suportadas) if n not in base)
+    # Quantidades em português podem usar ponto de milhar: 1.200 horas = 1200 horas.
+    # Restringe a equivalência a números com unidade; protocolos/versões não mudam.
+    sem_milhar = lambda t: _MILHAR_COM_UNIDADE.sub(lambda m: m.group(0).replace(".", ""), t)
+    base = set(numeros(sem_milhar(original)))
+    return sorted(n for n in numeros(sem_milhar(sem_datas_suportadas)) if n not in base)
 
 
 def compreender(texto: str, ficha: dict, resumo: str | None = None, metodo="extrativo_local") -> dict:

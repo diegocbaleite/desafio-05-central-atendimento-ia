@@ -1,0 +1,188 @@
+{
+  "id": "S05",
+  "fonte": "testes/fixtures/lacunas.txt",
+  "modalidade": "texto",
+  "valida": true,
+  "baseline_regras": {
+    "categoria_ok": true,
+    "categoria_esperada": "agendamento",
+    "categoria_obtida": "agendamento",
+    "campos": {
+      "protocolo": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "data": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 0,
+    "entidades_esperadas": 0,
+    "entidades_incorretas": 0
+  },
+  "resultado": {
+    "modo": "llm",
+    "ficha": {
+      "versao_schema": "2.0.0",
+      "protocolo": null,
+      "data": null,
+      "solicitante": null,
+      "assunto": "agendamento",
+      "pedido": "Quero agendar um atendimento, mas não sei o número do protocolo.",
+      "categoria": "agendamento",
+      "entidades": [],
+      "campos_ausentes": [
+        "protocolo",
+        "data",
+        "solicitante"
+      ],
+      "requer_revisao": true,
+      "motivos_revisao": [
+        "Campos ausentes: protocolo, data e solicitante."
+      ]
+    },
+    "validacao": {
+      "versao_schema": "2.0.0",
+      "sintaxe_ok": true,
+      "esquema_ok": true,
+      "regras_ok": true,
+      "valido": true,
+      "erros_sintaxe": [],
+      "erros_esquema": [],
+      "erros_regras": [],
+      "objeto": {
+        "versao_schema": "2.0.0",
+        "protocolo": null,
+        "data": null,
+        "solicitante": null,
+        "assunto": "agendamento",
+        "pedido": "Quero agendar um atendimento, mas não sei o número do protocolo.",
+        "categoria": "agendamento",
+        "entidades": [],
+        "campos_ausentes": [
+          "protocolo",
+          "data",
+          "solicitante"
+        ],
+        "requer_revisao": true,
+        "motivos_revisao": [
+          "Campos ausentes: protocolo, data e solicitante."
+        ]
+      }
+    },
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "valido": true,
+        "erros": [],
+        "metadados": {
+          "provider": "openai",
+          "modelo": "gpt-6-luna",
+          "duracao_s": 2.378,
+          "tokens_entrada": 812,
+          "tokens_saida": 113,
+          "custo_usd": null,
+          "tentativas": 1,
+          "parametros": {
+            "max_completion_tokens": 1200,
+            "timeout_s": 45,
+            "reasoning_effort": "none"
+          }
+        }
+      }
+    ],
+    "prompt": {
+      "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+      "sha256": "d07372cf372562c1767173170223aac45c65e3603589e94fb085049e607ad6ad"
+    }
+  },
+  "comparacao": {
+    "categoria_ok": true,
+    "categoria_esperada": "agendamento",
+    "categoria_obtida": "agendamento",
+    "campos": {
+      "protocolo": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "data": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 0,
+    "entidades_esperadas": 0,
+    "entidades_incorretas": 0
+  }
+}

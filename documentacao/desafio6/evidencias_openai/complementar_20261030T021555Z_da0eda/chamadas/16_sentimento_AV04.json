@@ -1,0 +1,27 @@
+{
+  "numero": 16,
+  "etapa": "sentimento",
+  "caso": "AV04",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:33.474632+00:00",
+  "payload_sha256": "ce3bb1707ab11b5f9210ffb152a92c095aaf33d5c31387e108ca8ccd667fd89f",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV04\",\"polaridade\":\"negativa\",\"justificativa\":\"Relata longa espera, falta de resposta e avaliação explicitamente negativa.\",\"requer_revisao\":false,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.608,
+    "tokens_entrada": 395,
+    "tokens_saida": 56,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1629.9
+}

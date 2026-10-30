@@ -1,0 +1,139 @@
+{
+  "id": "S06",
+  "valida": true,
+  "resultado": {
+    "modo": "llm",
+    "ficha": {
+      "versao_schema": "2.0.0",
+      "protocolo": null,
+      "data": null,
+      "solicitante": null,
+      "assunto": null,
+      "pedido": null,
+      "categoria": "revisao",
+      "entidades": [],
+      "campos_ausentes": [
+        "protocolo",
+        "data",
+        "solicitante",
+        "assunto",
+        "pedido"
+      ],
+      "requer_revisao": true,
+      "motivos_revisao": [
+        "O objeto do problema mencionado depende de conversa anterior e não pode ser identificado no texto atual.",
+        "O assunto e o pedido não podem ser determinados com precisão."
+      ]
+    },
+    "validacao": {
+      "versao_schema": "2.0.0",
+      "sintaxe_ok": true,
+      "esquema_ok": true,
+      "regras_ok": true,
+      "valido": true,
+      "erros_sintaxe": [],
+      "erros_esquema": [],
+      "erros_regras": [],
+      "objeto": {
+        "versao_schema": "2.0.0",
+        "protocolo": null,
+        "data": null,
+        "solicitante": null,
+        "assunto": null,
+        "pedido": null,
+        "categoria": "revisao",
+        "entidades": [],
+        "campos_ausentes": [
+          "protocolo",
+          "data",
+          "solicitante",
+          "assunto",
+          "pedido"
+        ],
+        "requer_revisao": true,
+        "motivos_revisao": [
+          "O objeto do problema mencionado depende de conversa anterior e não pode ser identificado no texto atual.",
+          "O assunto e o pedido não podem ser determinados com precisão."
+        ]
+      }
+    },
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "valido": true,
+        "erros": [],
+        "metadados": {
+          "provider": "openai",
+          "modelo": "gpt-6-luna",
+          "duracao_s": 2.322,
+          "tokens_entrada": 1007,
+          "tokens_saida": 166,
+          "custo_usd": null,
+          "tentativas": 1,
+          "parametros": {
+            "max_completion_tokens": 1200,
+            "timeout_s": 45,
+            "reasoning_effort": "none"
+          }
+        }
+      }
+    ],
+    "prompt": {
+      "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+      "sha256": "3c94edba45dbcaef05b3bf424269863660cab6a983aa4fc65b3330370a7e402f"
+    }
+  },
+  "comparacao": {
+    "categoria_ok": true,
+    "categoria_esperada": "revisao",
+    "categoria_obtida": "revisao",
+    "campos": {
+      "protocolo": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "data": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 0,
+    "entidades_esperadas": 0,
+    "entidades_incorretas": 0
+  }
+}

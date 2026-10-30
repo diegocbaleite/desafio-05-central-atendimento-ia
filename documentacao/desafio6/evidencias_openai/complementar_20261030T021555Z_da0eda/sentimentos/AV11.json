@@ -1,0 +1,21 @@
+{
+  "id": "AV11",
+  "valida": true,
+  "esperado": {
+    "polaridade": "indeterminada",
+    "requer_revisao": true,
+    "justificativa": "Ironia provável: elogio ('Parabéns', 'Excelente') com fato negativo (três horas). Leitor humano tenderia a 'negativa'; pela regra, o sistema não decide sozinho."
+  },
+  "resultado": {
+    "id": "AV11",
+    "polaridade": "indeterminada",
+    "justificativa": "Elogios aparentes acompanham uma espera de três horas, indicando provável ironia; requer revisão.",
+    "requer_revisao": true,
+    "confianca_declarada": "alta",
+    "metodo": "llm:openai:gpt-6-luna",
+    "observacao_confianca": "estimativa declarada pelo modelo, não calibrada; não é probabilidade de acerto",
+    "prompt_sha256": "a2423da60d1b6f294d02c0d0a2b6ac0b56680a7f9732ead495f5efb4f45a9a25"
+  },
+  "rotulo_ok": true,
+  "revisao_ok": true
+}

@@ -1,0 +1,27 @@
+{
+  "numero": 18,
+  "etapa": "sentimento",
+  "caso": "AV06",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:36.460311+00:00",
+  "payload_sha256": "71ea4edac8e737800ddac20f51b2ed3bea17536f9b9cbf2ebd553dbad7d46482",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV06\",\"polaridade\":\"negativa\",\"justificativa\":\"Relata atendimento grosseiro e problema não resolvido, ambos com avaliação desfavorável.\",\"requer_revisao\":false,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.594,
+    "tokens_entrada": 388,
+    "tokens_saida": 60,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1614.9
+}

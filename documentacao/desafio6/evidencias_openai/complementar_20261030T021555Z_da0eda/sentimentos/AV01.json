@@ -1,0 +1,20 @@
+{
+  "id": "AV01",
+  "valida": true,
+  "esperado": {
+    "polaridade": "positiva",
+    "requer_revisao": false
+  },
+  "resultado": {
+    "id": "AV01",
+    "polaridade": "positiva",
+    "justificativa": "Elogia o atendimento, a paciência na explicação e a resolução rápida do pedido.",
+    "requer_revisao": false,
+    "confianca_declarada": "alta",
+    "metodo": "llm:openai:gpt-6-luna",
+    "observacao_confianca": "estimativa declarada pelo modelo, não calibrada; não é probabilidade de acerto",
+    "prompt_sha256": "a2423da60d1b6f294d02c0d0a2b6ac0b56680a7f9732ead495f5efb4f45a9a25"
+  },
+  "rotulo_ok": true,
+  "revisao_ok": true
+}

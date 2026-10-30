@@ -17,6 +17,9 @@ from src.config import ROOT
 @unittest.skipIf(AppTest is None, "streamlit não instalado")
 class TestApp(unittest.TestCase):
     def setUp(self):
+        from streamlit import cache_resource
+
+        cache_resource.clear()
         self.tmp = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
         base = Path(self.tmp.name)
         self.env = patch.dict(os.environ, {
@@ -28,8 +31,64 @@ class TestApp(unittest.TestCase):
         self.env.start()
 
     def tearDown(self):
+        from streamlit import cache_resource
+
+        cache_resource.clear()
         self.env.stop()
         self.tmp.cleanup()
+
+    def test_sentimentos_preserva_resultados_ao_filtrar_e_orienta_sessao_vazia(self):
+        from src.sentimento import classificar_local
+
+        with patch("src.sentimento.classificar_local", wraps=classificar_local) as classificar:
+            at = AppTest.from_file(str(ROOT / "src" / "app.py"), default_timeout=120).run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertTrue(any("Nenhuma avaliação classificada nesta sessão" in i.value for i in at.info))
+            # O filtro pode ser escolhido antes de carregar os resultados da sessão.
+            next(s for s in at.selectbox if s.label == "Requer revisão").select("sim").run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertTrue(any("Classificar as 12 avaliações" in i.value for i in at.info))
+            next(b for b in at.button if b.label == "Classificar as 12 avaliações").click().run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertEqual(next(m.value for m in at.metric if m.label == "Total (IDs únicos)"), "3")
+            tabela = next(d.value for d in at.dataframe if "metodo" in d.value.columns)
+            self.assertEqual(tabela["id"].tolist(), ["AV10", "AV11", "AV12"])
+            self.assertTrue(tabela["requer_revisao"].all())
+            self.assertEqual(set(tabela["polaridade"]), {"indeterminada"})
+            for filtro, total in (("todas", "12"), ("sim", "3"), ("não", "9")):
+                with self.subTest(filtro=filtro):
+                    next(s for s in at.selectbox if s.label == "Requer revisão").select(filtro).run()
+                    self.assertFalse(at.exception, at.exception)
+                    self.assertEqual(len(at.session_state["sentimentos"]), 12)
+                    self.assertEqual(next(m.value for m in at.metric if m.label == "Total (IDs únicos)"), total)
+            # Há dados na sessão, mas esta combinação realmente não tem correspondências.
+            next(s for s in at.selectbox if s.label == "Requer revisão").select("sim").run()
+            next(s for s in at.multiselect if s.label == "Polaridade").set_value(["positiva"]).run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertTrue(any("Conjunto vazio para os filtros atuais (0/0)" in i.value for i in at.info))
+            self.assertFalse(any("Nenhuma avaliação classificada nesta sessão" in i.value for i in at.info))
+            self.assertEqual(len(at.session_state["sentimentos"]), 12)
+            self.assertEqual(classificar.call_count, 12)  # Alterar filtros não classifica novamente.
+
+    def test_consulta_independente_respeita_limite_zero(self):
+        from testes.d6_apoio import cfg_teste
+
+        cfg = cfg_teste()
+        cfg["guardrails"]["max_chamadas_execucao"] = 0
+        with patch("src.config.carregar", return_value=cfg):
+            at = AppTest.from_file(str(ROOT / "src" / "app.py"), default_timeout=120).run()
+            next(b for b in at.button if b.label == "Indexar acervo (sem duplicar)").click().run()
+            at.sidebar.selectbox[0].select("principal").run()
+            next(t for t in at.text_input if t.label == "Pergunta").set_value(
+                "Qual é o prazo da segunda via da declaração?"
+            ).run()
+            with patch("src.cliente.chave", return_value="token-ficticio"), \
+                    patch("src.cliente.requests.post") as post:
+                next(b for b in at.button if b.label == "Consultar").click().run()
+        self.assertFalse(at.exception, at.exception)
+        post.assert_not_called()
+        self.assertEqual(at.session_state["ultima_consulta"]["status"], "falha")
+        self.assertTrue(any("Orçamento" in e for e in at.session_state["ultima_consulta"]["erros"]))
 
     def test_fluxo_minimo_na_interface(self):
         at = AppTest.from_file(str(ROOT / "src" / "app.py"), default_timeout=120)

@@ -1,0 +1,242 @@
+{
+  "id": "S04",
+  "fonte": "dados/solicitacoes/S04_andamento_transferencia.txt",
+  "modalidade": "texto",
+  "valida": true,
+  "baseline_regras": {
+    "categoria_ok": true,
+    "categoria_esperada": "andamento_processo",
+    "categoria_obtida": "andamento_processo",
+    "campos": {
+      "protocolo": {
+        "esperado": "2026-****77",
+        "obtido": "2026-****77",
+        "ok": true
+      },
+      "data": {
+        "esperado": "20/10/2026",
+        "obtido": "20/10/2026",
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": "Joana Exemplo Ferreira",
+        "obtido": "Joana Exemplo Ferreira",
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [
+          "joana exemplo ferreira"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [
+          "escola tecnica estadual de cuiaba"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [
+          "20/10/2026"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [
+          "2026-****77"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 4,
+    "entidades_esperadas": 4,
+    "entidades_incorretas": 0
+  },
+  "resultado": {
+    "modo": "llm",
+    "ficha": {
+      "versao_schema": "2.0.0",
+      "protocolo": "2026-****77",
+      "data": "20/10/2026",
+      "solicitante": "Joana Exemplo Ferreira",
+      "assunto": "andamento de pedido de transferência de turno",
+      "pedido": "Solicito informações sobre o andamento do meu pedido de transferência de turno, protocolado na Escola Técnica Estadual de Cuiabá. Gostaria de saber como acompanhar a solicitação.",
+      "categoria": "andamento_processo",
+      "entidades": [
+        {
+          "tipo": "pessoa",
+          "valor": "Joana Exemplo Ferreira",
+          "literal": true,
+          "evidencia": "Nome: Joana Exemplo Ferreira"
+        },
+        {
+          "tipo": "protocolo",
+          "valor": "2026-****77",
+          "literal": true,
+          "evidencia": "Protocolo: 2026-****77"
+        },
+        {
+          "tipo": "data",
+          "valor": "20/10/2026",
+          "literal": true,
+          "evidencia": "Data: 20/10/2026"
+        },
+        {
+          "tipo": "orgao",
+          "valor": "Escola Técnica Estadual de Cuiabá",
+          "literal": true,
+          "evidencia": "Escola Técnica Estadual de Cuiabá"
+        }
+      ],
+      "campos_ausentes": [],
+      "requer_revisao": false,
+      "motivos_revisao": []
+    },
+    "validacao": {
+      "versao_schema": "2.0.0",
+      "sintaxe_ok": true,
+      "esquema_ok": true,
+      "regras_ok": true,
+      "valido": true,
+      "erros_sintaxe": [],
+      "erros_esquema": [],
+      "erros_regras": [],
+      "objeto": {
+        "versao_schema": "2.0.0",
+        "protocolo": "2026-****77",
+        "data": "20/10/2026",
+        "solicitante": "Joana Exemplo Ferreira",
+        "assunto": "andamento de pedido de transferência de turno",
+        "pedido": "Solicito informações sobre o andamento do meu pedido de transferência de turno, protocolado na Escola Técnica Estadual de Cuiabá. Gostaria de saber como acompanhar a solicitação.",
+        "categoria": "andamento_processo",
+        "entidades": [
+          {
+            "tipo": "pessoa",
+            "valor": "Joana Exemplo Ferreira",
+            "literal": true,
+            "evidencia": "Nome: Joana Exemplo Ferreira"
+          },
+          {
+            "tipo": "protocolo",
+            "valor": "2026-****77",
+            "literal": true,
+            "evidencia": "Protocolo: 2026-****77"
+          },
+          {
+            "tipo": "data",
+            "valor": "20/10/2026",
+            "literal": true,
+            "evidencia": "Data: 20/10/2026"
+          },
+          {
+            "tipo": "orgao",
+            "valor": "Escola Técnica Estadual de Cuiabá",
+            "literal": true,
+            "evidencia": "Escola Técnica Estadual de Cuiabá"
+          }
+        ],
+        "campos_ausentes": [],
+        "requer_revisao": false,
+        "motivos_revisao": []
+      }
+    },
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "valido": true,
+        "erros": [],
+        "metadados": {
+          "provider": "openai",
+          "modelo": "gpt-6-luna",
+          "duracao_s": 2.749,
+          "tokens_entrada": 867,
+          "tokens_saida": 259,
+          "custo_usd": null,
+          "tentativas": 1,
+          "parametros": {
+            "max_completion_tokens": 1200,
+            "timeout_s": 45,
+            "reasoning_effort": "none"
+          }
+        }
+      }
+    ],
+    "prompt": {
+      "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+      "sha256": "d07372cf372562c1767173170223aac45c65e3603589e94fb085049e607ad6ad"
+    }
+  },
+  "comparacao": {
+    "categoria_ok": true,
+    "categoria_esperada": "andamento_processo",
+    "categoria_obtida": "andamento_processo",
+    "campos": {
+      "protocolo": {
+        "esperado": "2026-****77",
+        "obtido": "2026-****77",
+        "ok": true
+      },
+      "data": {
+        "esperado": "20/10/2026",
+        "obtido": "20/10/2026",
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": "Joana Exemplo Ferreira",
+        "obtido": "Joana Exemplo Ferreira",
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [
+          "joana exemplo ferreira"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [
+          "escola tecnica estadual de cuiaba"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [
+          "20/10/2026"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [
+          "2026-****77"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 4,
+    "entidades_esperadas": 4,
+    "entidades_incorretas": 0
+  }
+}

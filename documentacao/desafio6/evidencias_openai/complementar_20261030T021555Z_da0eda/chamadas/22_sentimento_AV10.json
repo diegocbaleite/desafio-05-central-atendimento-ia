@@ -1,0 +1,27 @@
+{
+  "numero": 22,
+  "etapa": "sentimento",
+  "caso": "AV10",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:43.053150+00:00",
+  "payload_sha256": "4bd4480235eac46ceaec946bf3527c85249f2cddc65346a484eb29946fe91d29",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV10\",\"polaridade\":\"indeterminada\",\"justificativa\":\"Há elogio à atendente e crítica relevante ao sistema e à necessidade de retornar.\",\"requer_revisao\":true,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.436,
+    "tokens_entrada": 394,
+    "tokens_saida": 60,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1457.3
+}

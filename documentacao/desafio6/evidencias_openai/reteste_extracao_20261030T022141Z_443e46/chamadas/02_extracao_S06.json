@@ -1,0 +1,27 @@
+{
+  "numero": 2,
+  "etapa": "extracao",
+  "caso": "S06",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:21:46.920086+00:00",
+  "payload_sha256": "3b878fc411c4753ee7bd0dfd0d029971316a53130e5a776eac6902716eb72937",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\n  \"versao_schema\": \"2.0.0\",\n  \"protocolo\": null,\n  \"data\": null,\n  \"solicitante\": null,\n  \"assunto\": null,\n  \"pedido\": null,\n  \"categoria\": \"revisao\",\n  \"entidades\": [],\n  \"campos_ausentes\": [\n    \"protocolo\",\n    \"data\",\n    \"solicitante\",\n    \"assunto\",\n    \"pedido\"\n  ],\n  \"requer_revisao\": true,\n  \"motivos_revisao\": [\n    \"O objeto do problema mencionado depende de conversa anterior e não pode ser identificado no texto atual.\",\n    \"O assunto e o pedido não podem ser determinados com precisão.\"\n  ]\n}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.322,
+    "tokens_entrada": 1007,
+    "tokens_saida": 166,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2343.0
+}

@@ -5,15 +5,20 @@ projeto:
   casos: "dados/originais/casos.yaml"
 
 llm:
-  provider: "gemini"
-  modelo: "gemini-3.1-flash-lite"
-  temperatura: 0.2
+  provider: "openai"
+  modelo: "gpt-6-luna"
+  temperatura: null              # não enviar parâmetro de amostragem à OpenAI
+  reasoning_effort: "none"       # tarefa de extração/seleção literal, sem raciocínio adicional
   max_tokens: 2400
   timeout_s: 45
   # RF16 (Desafio 6): no máximo UMA repetição por falha transitória (429, 5xx, timeout).
   max_repeticoes: 1
 
 provedores:
+  openai:
+    base_url: "https://api.openai.com/v1"
+    env_chave: "OPENAI_API_KEY"
+
   openrouter:
     base_url: "https://openrouter.ai/api/v1"
     env_chave: "OPENROUTER_API_KEY"
@@ -70,9 +75,10 @@ geracao:
   perfis:
     principal:
       tipo: "llm"
-      provider: "gemini"
-      modelo: "gemini-3.1-flash-lite"
-      temperatura: 0.1
+      provider: "openai"
+      modelo: "gpt-6-luna"
+      temperatura: null
+      reasoning_effort: "none"
       max_tokens: 1200
       saida_estruturada: true   # response_format json_schema; sempre revalidado localmente
     extrativo_local:

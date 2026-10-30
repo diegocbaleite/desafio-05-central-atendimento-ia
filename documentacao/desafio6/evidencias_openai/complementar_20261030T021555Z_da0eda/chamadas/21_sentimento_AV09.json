@@ -1,0 +1,27 @@
+{
+  "numero": 21,
+  "etapa": "sentimento",
+  "caso": "AV09",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:40.979532+00:00",
+  "payload_sha256": "346aa861e9f5d7702d4f3c0bca60cc40d5459d66[TELEFONE]3c19e5f6e6b42",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV09\",\"polaridade\":\"neutra\",\"justificativa\":\"Relata apenas o formato e o meio de entrega, sem expressar avaliação.\",\"requer_revisao\":false,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.047,
+    "tokens_entrada": 386,
+    "tokens_saida": 58,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2065.4
+}

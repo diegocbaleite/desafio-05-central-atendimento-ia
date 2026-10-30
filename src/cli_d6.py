@@ -53,7 +53,10 @@ def executar(a) -> int:
 
             if not a.entrada:
                 raise ValueError('Informe a pergunta: python -m src.main consultar "sua pergunta"')
-            r = responder(a.entrada, indice=_indice(cfg, a.chunking), gerador=criar_gerador(cfg, a.gerador), cfg=cfg, top_k=a.top_k)
+            r = responder(
+                a.entrada, indice=_indice(cfg, a.chunking), gerador=criar_gerador(cfg, a.gerador),
+                cfg=cfg, top_k=a.top_k, arquivo_auditoria=ROOT / cfg["auditoria"]["arquivo"],
+            )
             _imprimir({k: r[k] for k in ("status", "resposta", "fontes", "trechos_recuperados", "quarentena",
                                           "encaminhar_revisao", "motivos_revisao", "gerador", "erros", "latencia_ms")})
             print("Similaridade = 1 - distância de cosseno (maior = mais próximo). Não é garantia de veracidade.")

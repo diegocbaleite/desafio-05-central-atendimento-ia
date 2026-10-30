@@ -12,13 +12,15 @@ from __future__ import annotations
 import hashlib
 import math
 import time
+import unicodedata
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
 from . import guardrails
 from .geracao import cobertura
 from .ingestao import descrever_local
-from .texto import contem, frases, numeros, quantidades, termos
+from .orcamento import Orcamento
+from .texto import frases, numeros, quantidades, termos
 
 STATUS = ("fundamentada", "sem_evidencia_suficiente", "conflito_de_fontes")
 MENSAGEM_ABSTENCAO = (
@@ -56,7 +58,13 @@ def recuperar(indice, pergunta: str, top_k: int, limiar: float) -> dict:
 
 
 def verificar_afirmacoes(afirmacoes: list[dict], trechos: list[dict]) -> list[dict]:
-    """Confere se cada afirmação é sustentada pelos trechos citados (não basta a fonte existir)."""
+    """Aceita frases completas contíguas copiadas de um mesmo trecho citado.
+
+    Sobreposição de termos não prova sentido: remover uma negação pode inverter uma
+    orientação. A comparação conserva palavras, acentos e pontuação; apenas normaliza
+    Unicode e espaços de extração do PDF. Paráfrases seguem para revisão.
+    """
+    literal = lambda s: " ".join(unicodedata.normalize("NFC", s).split())  # noqa: E731
     por_id = {t["chunk_id"]: t for t in trechos}
     verificadas = []
     for a in afirmacoes:
@@ -67,16 +75,33 @@ def verificar_afirmacoes(afirmacoes: list[dict], trechos: list[dict]) -> list[di
         elif len(citados) != len(a["chunk_ids"]):
             motivos.append("cita_trecho_fora_do_contexto")
         texto_fonte = " ".join(t["texto"] for t in citados)
-        if citados and not contem(texto_fonte, a.get("citacao_literal", "")):
+        citacao = literal(a.get("citacao_literal", ""))
+        if citados and (not citacao or not any(citacao in literal(t["texto"]) for t in citados)):
             motivos.append("citacao_literal_nao_encontrada")
         if citados:
             inventados = numeros(a["texto"]) - numeros(texto_fonte)
             if inventados:
                 motivos.append("numero_sem_suporte: " + ", ".join(sorted(inventados)))
-            alvo = set(termos(a["texto"]))
-            if alvo and len(alvo & set(termos(texto_fonte))) / len(alvo) < 0.6:
-                motivos.append("conteudo_sem_suporte")
-        verificadas.append({**a, "sustentada": not motivos, "motivos": motivos})
+            suportam = []
+            for t in citados:
+                unidades = [literal(f) for f in frases(t["texto"])]
+                completas = {
+                    " ".join(unidades[inicio:fim])
+                    for inicio in range(len(unidades))
+                    for fim in range(inicio + 1, len(unidades) + 1)
+                }
+                if literal(a["texto"]) and literal(a["texto"]) in completas:
+                    suportam.append(t)
+            if not suportam:
+                motivos.append("afirmacao_nao_literal_completa")
+            elif not any(citacao in literal(t["texto"]) for t in suportam):
+                motivos.append("citacao_literal_fora_do_trecho_da_afirmacao")
+        verificada = {**a, "sustentada": not motivos, "motivos": motivos}
+        if not motivos:
+            # O primeiro ID é usado na citação exibida. Não atribuir a afirmação
+            # a outro trecho apenas porque ele também foi indicado pelo modelo.
+            verificada["chunk_ids"] = list(dict.fromkeys(t["chunk_id"] for t in suportam))
+        verificadas.append(verificada)
     return verificadas
 
 
@@ -98,23 +123,37 @@ def detectar_conflito(pergunta: str, trechos: list[dict], idf: dict, cobertura_m
             divergencias.append({"unidade": unidade, "itens": itens})
     if not divergencias:
         return {"conflito": False, "resolvido": False, "regra": None, "divergencias": []}
-    metas = {i["trecho"]["metadados"]["doc_id"]: i["trecho"]["metadados"] for d in divergencias for i in d["itens"]}
-    regra = None
-    for doc_id, meta in metas.items():
-        revogados = {x for x in meta.get("substitui", "").split(",") if x}
-        if revogados & (set(metas) - {doc_id}):
-            regra = f"{doc_id} declara substituir {', '.join(sorted(revogados & set(metas)))}"
-    prioridades = {m.get("prioridade", 1) for m in metas.values()}
-    if regra is None and len(prioridades) > 1:
-        maior = max(metas.values(), key=lambda m: m.get("prioridade", 1))
-        regra = f"prioridade explícita: {maior['doc_id']} (prioridade {maior.get('prioridade')})"
+    # Cada divergência precisa ser resolvida. Uma substituição parcial ou um empate
+    # entre as maiores prioridades não autoriza escolher arbitrariamente uma fonte.
+    for d in divergencias:
+        metas = {i["trecho"]["metadados"]["doc_id"]: i["trecho"]["metadados"] for i in d["itens"]}
+        regras, revogados = [], set()
+        for doc_id, meta in metas.items():
+            alvos = {x.strip() for x in meta.get("substitui", "").split(",")} & (set(metas) - {doc_id})
+            if alvos:
+                revogados.update(alvos)
+                regras.append(f"{doc_id} declara substituir {', '.join(sorted(alvos))}")
+        vigentes = set(metas) - revogados
+        maior = max((metas[c].get("prioridade", 1) for c in vigentes), default=None)
+        prevalecem = {c for c in vigentes if metas[c].get("prioridade", 1) == maior}
+        valores = {i["valor"] for i in d["itens"] if i["trecho"]["metadados"]["doc_id"] in prevalecem}
+        d["resolvido"] = len(valores) == 1
+        if d["resolvido"] and vigentes - prevalecem:
+            regras.append(f"prioridade explícita: {', '.join(sorted(prevalecem))} (prioridade {maior})")
+        d["regra"] = "; ".join(regras) if d["resolvido"] else None
+        d["docs_descartados"] = sorted(set(metas) - prevalecem) if d["resolvido"] else []
+    resolvido = all(d["resolvido"] for d in divergencias)
     return {
         "conflito": True,
-        "resolvido": regra is not None,
-        "regra": regra,
+        "resolvido": resolvido,
+        "regra": "; ".join(dict.fromkeys(d["regra"] for d in divergencias)) if resolvido else None,
+        # Defesa conservadora: nenhuma afirmação desses documentos será exibida.
+        "docs_descartados": sorted({c for d in divergencias for c in d["docs_descartados"]}) if resolvido else [],
         "divergencias": [
             {
                 "unidade": d["unidade"],
+                "resolvido": d["resolvido"],
+                "regra": d["regra"],
                 "valores": [
                     {
                         "valor": i["valor"],
@@ -160,6 +199,10 @@ def responder(
     arquivo_auditoria=None,
     id_execucao: str | None = None,
 ) -> dict:
+    # Consultas independentes também têm orçamento. O fluxo integrado fornece o
+    # mesmo objeto para compartilhar o teto entre todas as suas subconsultas.
+    if orcamento is None:
+        orcamento = Orcamento.de_config(cfg)
     r = cfg["recuperacao"]
     top_k = int(top_k or r.get("top_k", 4))
     limiar = float(r.get("limiar_similaridade", 0.35))
@@ -239,6 +282,19 @@ def responder(
             saida["motivos_revisao"].append("afirmação sem suporte removida")
         conflito = detectar_conflito(pergunta, rec["validos"], idf, cob_min)
         saida["conflito"] = conflito
+        descartados = set(conflito.get("docs_descartados", []))
+        if descartados:
+            por_id = {t["chunk_id"]: t["metadados"]["doc_id"] for t in rec["validos"]}
+            mantidas = []
+            for a in sustentadas:
+                if any(por_id[c] in descartados for c in a["chunk_ids"]):
+                    saida["afirmacoes_removidas"].append({
+                        **a, "texto": limpo(a["texto"]), "citacao_literal": limpo(a["citacao_literal"]),
+                        "sustentada": False, "motivos": ["fonte_nao_prevalece_no_conflito"],
+                    })
+                else:
+                    mantidas.append(a)
+            sustentadas = mantidas
         if conflito["conflito"] and not conflito["resolvido"]:
             saida["status"] = "conflito_de_fontes"
             partes = [

@@ -478,9 +478,10 @@ class Avaliacao:
         perguntas = _yaml(GAB / "rag_perguntas.yaml")["perguntas"]
         pasta_rag = ROOT / "resultados" / "rag" / self.id
         linhas = []
+        orcamento = Orcamento.de_config(self.cfg)
         for p in perguntas:
             r = responder(p["pergunta"], indice=self.ix, gerador=self.gerador, cfg=self.cfg,
-                          arquivo_auditoria=self.auditoria, id_execucao=self.id)
+                          arquivo_auditoria=self.auditoria, id_execucao=self.id, orcamento=orcamento)
             salvar_derivado_rag(r, p["id"], pasta_rag)
             docs_citados = sorted({f["doc_id"] for f in r["fontes"]})
             docs_esperados = sorted({f["doc_id"] for f in p["fontes"]})
@@ -502,6 +503,10 @@ class Avaliacao:
                 "fontes": [{k: f[k] for k in ("chunk_id", "local", "trecho")} for f in r["fontes"]],
                 "trechos_recuperados": [{k: t[k] for k in ("posicao", "chunk_id", "similaridade", "distancia_cosseno", "em_quarentena")} for t in r["trechos_recuperados"]],
                 "gerador": r["gerador"].get("perfil"), "gerador_e_llm": r["gerador"].get("e_llm"),
+                "provider": r["gerador"].get("provider"), "modelo": r["gerador"].get("modelo"),
+                "tokens_entrada": r["gerador"].get("tokens_entrada", "indisponível"),
+                "tokens_saida": r["gerador"].get("tokens_saida", "indisponível"),
+                "custo_usd": r["gerador"].get("custo_usd", "indisponível"),
                 "latencia_ms": r["latencia_ms"],
             })
         resp = [l for l in linhas if l["tipo"] == "respondivel"]
@@ -514,7 +519,12 @@ class Avaliacao:
             "fatos_essenciais_nas_respondiveis": proporcao(sum(l["fatos_presentes"]["numerador"] for l in resp), sum(l["fatos_presentes"]["denominador"] for l in resp)),
             "abstencao_correta": proporcao(sum(l["status_ok"] for l in sem), len(sem)),
             "caso_contraditorio": {l["id"]: {"status": l["status_obtido"], "revisao": l["encaminhar_revisao"], "docs": l["docs_citados"]} for l in conf},
-            "observacao": "gerador extrativo copia frases literais: a sustentação de 100% é esperada por construção e NÃO mede um LLM",
+            "observacao": (
+                "perfil LLM: modelo, provedor, tokens e falhas registrados por pergunta; "
+                "o suporte é verificado pela política de frases literais e não comprova generalização"
+                if self.gerador.e_llm else
+                "perfil não-LLM: resultados extrativos ou simulados não comprovam execução de modelo generativo"
+            ),
         }
         self.metricas["rf19"] = metricas
         ev = _gravar(self.pasta, "rf19_rag_oito_perguntas.json", {"gerador": self.gerador.nome, "gerador_e_llm": self.gerador.e_llm, "metricas": metricas, "perguntas": linhas})

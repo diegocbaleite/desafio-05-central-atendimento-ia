@@ -1,0 +1,51 @@
+{
+  "natureza": "cópia sanitizada de evento já registrado; extração somente leitura, sem nova consulta ao modelo",
+  "verificado_em_utc": "2026-10-29T23:59:09.911986+00:00",
+  "fonte": "resultados/logs/auditoria_d6.jsonl",
+  "evento": {
+    "id_evento": "b3babd5a445044aa",
+    "tipo": "consulta_rag",
+    "registrado_em": "2026-10-29T23:58:11.725415+00:00",
+    "id_execucao": null,
+    "inicio": "2026-10-29T23:58:08.559661+00:00",
+    "fim": "2026-10-29T23:58:11.724812+00:00",
+    "latencia_ms": 3165.1,
+    "consulta_minimizada": "Em quanto tempo é emitida a segunda via da declaração de matrícula?",
+    "consulta_sha256": "2a005640c7b2f41b22c3860dc2ed7bbd8a12c063ee3e1033e208854186e4cc0b",
+    "versao_indice": {
+      "colecao": "acervo_A",
+      "versao": "1",
+      "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    },
+    "prompt": "prompts/d6/rag_resposta_v1.md",
+    "gerador": "principal",
+    "gerador_e_llm": true,
+    "chunk_ids_recuperados": [
+      "DOC-02:v2.0:A:p1:s1:c0",
+      "DOC-01:v1.2:A:p0:s3:c0",
+      "DOC-05:v1.0:A:p1:s3:c0",
+      "DOC-02:v2.0:A:p1:s2:c0"
+    ],
+    "chunk_ids_citados": [
+      "DOC-02:v2.0:A:p1:s1:c0"
+    ],
+    "quarentena": [],
+    "status": "fundamentada",
+    "encaminhar_revisao": false,
+    "erros": [],
+    "tokens_entrada": 1119,
+    "tokens_saida": 123,
+    "custo_usd": "indisponível",
+    "orcamento": {
+      "chamadas": 1,
+      "max_chamadas": 30,
+      "tokens": 1242,
+      "max_tokens": 60000,
+      "chamadas_sem_tokens_informados": 0,
+      "motivos": [
+        "openai:gpt-6-luna:tentativa1"
+      ]
+    },
+    "decisao_humana": "não se aplica (consulta)"
+  }
+}

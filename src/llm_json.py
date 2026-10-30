@@ -41,7 +41,8 @@ def chamar_json(
             provider=perfil.get("provider"),
             orcamento=orcamento,
             response_format=usar_formato,
-            parametros={"temperatura": perfil.get("temperatura"), "max_tokens": perfil.get("max_tokens")},
+            parametros={"temperatura": perfil.get("temperatura"), "max_tokens": perfil.get("max_tokens"),
+                        "reasoning_effort": perfil.get("reasoning_effort")},
         )
         bruto = resposta["texto"]
         resultado = validar(_sem_cerca(bruto))

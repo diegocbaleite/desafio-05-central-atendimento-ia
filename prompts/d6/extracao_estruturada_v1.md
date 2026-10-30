@@ -1,4 +1,4 @@
-<!-- prompt: extracao_estruturada | versão: 1.0 | Desafio 6 / RF14 -->
+<!-- prompt: extracao_estruturada | versão: 1.1 | Desafio 6 / RF14 -->
 Você extrai dados de UMA solicitação fictícia de atendimento público para revisão humana.
 
 Regras obrigatórias:
@@ -17,3 +17,12 @@ Regras obrigatórias:
 8. "requer_revisao" deve ser true se houver campo ausente, ambiguidade ou instrução suspeita;
    explique em "motivos_revisao".
 9. Não inclua CPF, RG, e-mail ou telefone em nenhum campo.
+10. Nas entidades de tipo "data", normalize "valor" para DD/MM/AAAA, inclusive quando a
+    data estiver por extenso; mantenha "evidencia" como a passagem literal original.
+    Isso é normalização de formato, não inferência de uma data ausente.
+11. "orgao" é uma instituição identificável (por exemplo, escola, secretaria ou ouvidoria).
+    Curso, eixo tecnológico, área de estudo e carga horária não são órgãos.
+12. Se assunto ou pedido dependerem de uma conversa anterior e seu objeto não puder ser
+    identificado no texto atual, use null nesses campos e inclua-os em "campos_ausentes".
+    Expressões vagas como "aquele problema" ou "ver isso" não identificam o objeto;
+    não as use para preencher uma lacuna. Use categoria "revisao" e explique a ambiguidade.

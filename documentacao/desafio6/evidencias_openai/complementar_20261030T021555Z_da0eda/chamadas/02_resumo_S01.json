@@ -1,0 +1,27 @@
+{
+  "numero": 2,
+  "etapa": "resumo",
+  "caso": "S01",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:02.078056+00:00",
+  "payload_sha256": "1893c677bb5943e3b098d307295eac47e9e92a034304e53cb0c3891117f80d3a",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "Canal: E-mail. Protocolo: 2026-****42. Data: 14/10/2026. Solicitante: Marcos Vinícius de Almeida Santos. Assunto: matrícula no curso Técnico em Enfermagem, eixo Saúde, com 1.200 horas, no turno noturno, com início em 01/02/2027. Pede a efetivação da matrícula e informação sobre os documentos ainda necessários. Declara ciência das condições de cancelamento por faltas nos primeiros dias de aula.",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.259,
+    "tokens_entrada": 393,
+    "tokens_saida": 113,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2273.2
+}

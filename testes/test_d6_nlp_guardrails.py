@@ -41,6 +41,22 @@ class TestNLP(unittest.TestCase):
         self.assertEqual(nlp.fatos_sem_suporte("Prazo de 30 dias.", "Sem prazo informado."), ["30"])
         self.assertEqual(nlp.fatos_sem_suporte("Data: 14/10/2026.", "em 14 de outubro de 2026"), [])
 
+    def test_milhar_em_quantidade_nao_e_numero_inventado(self):
+        for resumo, original in (("Carga de 1.200 horas.", "Carga de 1200 horas."),
+                                  ("Carga de 1200 horas.", "Carga de 1.200 horas."),
+                                  ("Total: 1.200.000 pessoas.", "Total: 1200000 pessoas."),
+                                  ("Carga de 1.200,5 horas.", "Carga de 1200,5 horas.")):
+            with self.subTest(resumo=resumo):
+                self.assertEqual(nlp.fatos_sem_suporte(resumo, original), [])
+
+    def test_milhar_nao_aceita_quantidade_alterada_ou_decimal_diferente(self):
+        self.assertEqual(nlp.fatos_sem_suporte("Carga: 1.200 horas.", "Carga: 120 horas."), ["1200"])
+        self.assertEqual(nlp.fatos_sem_suporte("Carga: 1,2 horas.", "Carga: 1200 horas."), ["1,2"])
+
+    def test_equivalencia_de_milhar_nao_muda_protocolo_ou_versao(self):
+        self.assertEqual(nlp.fatos_sem_suporte("Protocolo: 2026.000123.", "Protocolo: 2026.000124."), ["2026.000123"])
+        self.assertEqual(nlp.fatos_sem_suporte("Versão 1.200.", "Referência 1200."), ["1.200"])
+
 
 class TestGuardrails(unittest.TestCase):
     def setUp(self):

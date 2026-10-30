@@ -1,0 +1,378 @@
+{
+  "id": "20261030T022141Z_443e46",
+  "natureza": "LLM real — reteste direcionado após observar os erros; não é nova rodada completa",
+  "rodada_anterior": "20261030T021555Z_da0eda",
+  "prompt_versao": "1.1",
+  "casos": [
+    "S02",
+    "S06"
+  ],
+  "provider": "openai",
+  "modelo_solicitado": "gpt-6-luna",
+  "orcamento": {
+    "chamadas": 2,
+    "max_chamadas": 3,
+    "tokens": 2849,
+    "max_tokens": 42086,
+    "chamadas_sem_tokens_informados": 0,
+    "motivos": [
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1"
+    ]
+  },
+  "resultados": [
+    {
+      "id": "S02",
+      "valida": true,
+      "resultado": {
+        "modo": "llm",
+        "ficha": {
+          "versao_schema": "2.0.0",
+          "protocolo": "2026-****42",
+          "data": "14/10/2026",
+          "solicitante": "Marcos Vinícius de Almeida Santos",
+          "assunto": "efetivação da minha matrícula no curso Técnico em Infirmagem do Eixo Tecnológico de Saúde, com carga horária de 1200 horas no turno, no turno",
+          "pedido": "Peço que informe em quais os documentos ainda preciso apresentar.",
+          "categoria": "efetivacao_matricula",
+          "entidades": [
+            {
+              "tipo": "protocolo",
+              "valor": "2026-****42",
+              "literal": true,
+              "evidencia": "2026-****42"
+            },
+            {
+              "tipo": "data",
+              "valor": "14/10/2026",
+              "literal": true,
+              "evidencia": "14 de outubro de 2026"
+            },
+            {
+              "tipo": "pessoa",
+              "valor": "Marcos Vinícius de Almeida Santos",
+              "literal": true,
+              "evidencia": "Marcos Vinícius de Almeida Santos"
+            },
+            {
+              "tipo": "data",
+              "valor": "12/08/2008",
+              "literal": true,
+              "evidencia": "12 de agosto de 2008"
+            },
+            {
+              "tipo": "local",
+              "valor": "Cuiabá",
+              "literal": true,
+              "evidencia": "Cuiabá"
+            },
+            {
+              "tipo": "pessoa",
+              "valor": "Lúcia Helena de Almeida Santos",
+              "literal": true,
+              "evidencia": "Lúcia Helena de Almeida Santos"
+            }
+          ],
+          "campos_ausentes": [],
+          "requer_revisao": true,
+          "motivos_revisao": [
+            "O assunto contém a expressão repetida e incompleta «no turno, no turno», sem identificar o turno.",
+            "O pedido de efetivação de matrícula é acompanhado de uma solicitação para informar documentos ainda necessários; a relação de documentos não consta no texto e requer confirmação humana."
+          ]
+        },
+        "validacao": {
+          "versao_schema": "2.0.0",
+          "sintaxe_ok": true,
+          "esquema_ok": true,
+          "regras_ok": true,
+          "valido": true,
+          "erros_sintaxe": [],
+          "erros_esquema": [],
+          "erros_regras": [],
+          "objeto": {
+            "versao_schema": "2.0.0",
+            "protocolo": "2026-****42",
+            "data": "14/10/2026",
+            "solicitante": "Marcos Vinícius de Almeida Santos",
+            "assunto": "efetivação da minha matrícula no curso Técnico em Infirmagem do Eixo Tecnológico de Saúde, com carga horária de 1200 horas no turno, no turno",
+            "pedido": "Peço que informe em quais os documentos ainda preciso apresentar.",
+            "categoria": "efetivacao_matricula",
+            "entidades": [
+              {
+                "tipo": "protocolo",
+                "valor": "2026-****42",
+                "literal": true,
+                "evidencia": "2026-****42"
+              },
+              {
+                "tipo": "data",
+                "valor": "14/10/2026",
+                "literal": true,
+                "evidencia": "14 de outubro de 2026"
+              },
+              {
+                "tipo": "pessoa",
+                "valor": "Marcos Vinícius de Almeida Santos",
+                "literal": true,
+                "evidencia": "Marcos Vinícius de Almeida Santos"
+              },
+              {
+                "tipo": "data",
+                "valor": "12/08/2008",
+                "literal": true,
+                "evidencia": "12 de agosto de 2008"
+              },
+              {
+                "tipo": "local",
+                "valor": "Cuiabá",
+                "literal": true,
+                "evidencia": "Cuiabá"
+              },
+              {
+                "tipo": "pessoa",
+                "valor": "Lúcia Helena de Almeida Santos",
+                "literal": true,
+                "evidencia": "Lúcia Helena de Almeida Santos"
+              }
+            ],
+            "campos_ausentes": [],
+            "requer_revisao": true,
+            "motivos_revisao": [
+              "O assunto contém a expressão repetida e incompleta «no turno, no turno», sem identificar o turno.",
+              "O pedido de efetivação de matrícula é acompanhado de uma solicitação para informar documentos ainda necessários; a relação de documentos não consta no texto e requer confirmação humana."
+            ]
+          }
+        },
+        "tentativas": [
+          {
+            "tentativa": 1,
+            "valido": true,
+            "erros": [],
+            "metadados": {
+              "provider": "openai",
+              "modelo": "gpt-6-luna",
+              "duracao_s": 5.077,
+              "tokens_entrada": 1176,
+              "tokens_saida": 500,
+              "custo_usd": null,
+              "tentativas": 1,
+              "parametros": {
+                "max_completion_tokens": 1200,
+                "timeout_s": 45,
+                "reasoning_effort": "none"
+              }
+            }
+          }
+        ],
+        "prompt": {
+          "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+          "sha256": "3c94edba45dbcaef05b3bf424269863660cab6a983aa4fc65b3330370a7e402f"
+        }
+      },
+      "comparacao": {
+        "categoria_ok": true,
+        "categoria_esperada": "efetivacao_matricula",
+        "categoria_obtida": "efetivacao_matricula",
+        "campos": {
+          "protocolo": {
+            "esperado": "2026-****42",
+            "obtido": "2026-****42",
+            "ok": true
+          },
+          "data": {
+            "esperado": "14/10/2026",
+            "obtido": "14/10/2026",
+            "ok": true
+          },
+          "solicitante": {
+            "esperado": "Marcos Vinícius de Almeida Santos",
+            "obtido": "Marcos Vinícius de Almeida Santos",
+            "ok": true
+          }
+        },
+        "campos_ausentes_ok": true,
+        "entidades": {
+          "pessoa": {
+            "corretas": [
+              "lucia helena de almeida santos",
+              "marcos vinicius de almeida santos"
+            ],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "orgao": {
+            "corretas": [],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "local": {
+            "corretas": [
+              "cuiaba"
+            ],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "data": {
+            "corretas": [
+              "12/08/2008",
+              "14/10/2026"
+            ],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "protocolo": {
+            "corretas": [
+              "2026-****42"
+            ],
+            "omitidas": [],
+            "incorretas": []
+          }
+        },
+        "entidades_corretas": 6,
+        "entidades_esperadas": 6,
+        "entidades_incorretas": 0
+      }
+    },
+    {
+      "id": "S06",
+      "valida": true,
+      "resultado": {
+        "modo": "llm",
+        "ficha": {
+          "versao_schema": "2.0.0",
+          "protocolo": null,
+          "data": null,
+          "solicitante": null,
+          "assunto": null,
+          "pedido": null,
+          "categoria": "revisao",
+          "entidades": [],
+          "campos_ausentes": [
+            "protocolo",
+            "data",
+            "solicitante",
+            "assunto",
+            "pedido"
+          ],
+          "requer_revisao": true,
+          "motivos_revisao": [
+            "O objeto do problema mencionado depende de conversa anterior e não pode ser identificado no texto atual.",
+            "O assunto e o pedido não podem ser determinados com precisão."
+          ]
+        },
+        "validacao": {
+          "versao_schema": "2.0.0",
+          "sintaxe_ok": true,
+          "esquema_ok": true,
+          "regras_ok": true,
+          "valido": true,
+          "erros_sintaxe": [],
+          "erros_esquema": [],
+          "erros_regras": [],
+          "objeto": {
+            "versao_schema": "2.0.0",
+            "protocolo": null,
+            "data": null,
+            "solicitante": null,
+            "assunto": null,
+            "pedido": null,
+            "categoria": "revisao",
+            "entidades": [],
+            "campos_ausentes": [
+              "protocolo",
+              "data",
+              "solicitante",
+              "assunto",
+              "pedido"
+            ],
+            "requer_revisao": true,
+            "motivos_revisao": [
+              "O objeto do problema mencionado depende de conversa anterior e não pode ser identificado no texto atual.",
+              "O assunto e o pedido não podem ser determinados com precisão."
+            ]
+          }
+        },
+        "tentativas": [
+          {
+            "tentativa": 1,
+            "valido": true,
+            "erros": [],
+            "metadados": {
+              "provider": "openai",
+              "modelo": "gpt-6-luna",
+              "duracao_s": 2.322,
+              "tokens_entrada": 1007,
+              "tokens_saida": 166,
+              "custo_usd": null,
+              "tentativas": 1,
+              "parametros": {
+                "max_completion_tokens": 1200,
+                "timeout_s": 45,
+                "reasoning_effort": "none"
+              }
+            }
+          }
+        ],
+        "prompt": {
+          "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+          "sha256": "3c94edba45dbcaef05b3bf424269863660cab6a983aa4fc65b3330370a7e402f"
+        }
+      },
+      "comparacao": {
+        "categoria_ok": true,
+        "categoria_esperada": "revisao",
+        "categoria_obtida": "revisao",
+        "campos": {
+          "protocolo": {
+            "esperado": null,
+            "obtido": null,
+            "ok": true
+          },
+          "data": {
+            "esperado": null,
+            "obtido": null,
+            "ok": true
+          },
+          "solicitante": {
+            "esperado": null,
+            "obtido": null,
+            "ok": true
+          }
+        },
+        "campos_ausentes_ok": true,
+        "entidades": {
+          "pessoa": {
+            "corretas": [],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "orgao": {
+            "corretas": [],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "local": {
+            "corretas": [],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "data": {
+            "corretas": [],
+            "omitidas": [],
+            "incorretas": []
+          },
+          "protocolo": {
+            "corretas": [],
+            "omitidas": [],
+            "incorretas": []
+          }
+        },
+        "entidades_corretas": 0,
+        "entidades_esperadas": 0,
+        "entidades_incorretas": 0
+      }
+    }
+  ],
+  "envio_automatico": false,
+  "decisoes_humanas_criadas": 0,
+  "arquivos_protegidos_alterados": []
+}

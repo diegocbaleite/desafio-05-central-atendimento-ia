@@ -1,0 +1,27 @@
+{
+  "numero": 5,
+  "etapa": "extracao",
+  "caso": "S03",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:11.190629+00:00",
+  "payload_sha256": "2e0d193e338831dc9c2f4ea91b96f599bf5c18e1f60c35d75269f82c6dd03529",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"versao_schema\":\"2.0.0\",\"protocolo\":\"2026.****23\",\"data\":\"02/10/2026\",\"solicitante\":\"Maria Fictícia Albuquerque\",\"assunto\":\"segunda via de certidão\",\"pedido\":\"Solicito segunda via da certidão.\",\"categoria\":\"segunda_via_documento\",\"entidades\":[{\"tipo\":\"pessoa\",\"valor\":\"Maria Fictícia Albuquerque\",\"literal\":true,\"evidencia\":\"Maria Fictícia Albuquerque\"},{\"tipo\":\"protocolo\",\"valor\":\"2026.****23\",\"literal\":true,\"evidencia\":\"2026.****23\"},{\"tipo\":\"data\",\"valor\":\"02/10/2026\",\"literal\":true,\"evidencia\":\"02/10/2026\"}],\"campos_ausentes\":[],\"requer_revisao\":false,\"motivos_revisao\":[]}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.874,
+    "tokens_entrada": 849,
+    "tokens_saida": 187,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2897.6
+}

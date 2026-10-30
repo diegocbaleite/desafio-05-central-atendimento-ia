@@ -1,5 +1,7 @@
 # Resultados da avaliação — Desafio 6 (Desafio Prático 02)
 
+> **Leitura histórica:** este relatório e sua matriz preservam a rodada extrativa de 27/10/2026. Depois dela, o [RAG com OpenAI real](reajuste_rag_openai_2026-10-29.md) foi avaliado e Diego registrou aprovação e pedido de revisão pela interface, com [15 capturas e registros sanitizados](evidencias_humanas/README.md). As menções a ausência de credencial e demonstração humana pendente abaixo descrevem a rodada original, não o estado atual. Ver [fechamento em 29/10/2026](verificacao_fechamento_2026-10-29.md). Os números e as evidências originais não foram substituídos.
+
 Gerado por `scripts/gerar_relatorio_resultados.py` a partir de `documentacao/desafio6/evidencias/` (execução `20261027T194525Z_43f775`, 2026-10-27T19:45:40 UTC, 15.0 s).
 
 > **Natureza das evidências:** gerador `extrativo_local` (LLM: False); embedding local real `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Nenhuma chamada a LLM real foi concluída (sem credencial). Extração e sentimentos usam **regras locais**; trechos marcados como SIMULADO usam respostas fixas. As regras foram escritas conhecendo o conjunto de teste: as métricas são otimistas e não medem generalização.

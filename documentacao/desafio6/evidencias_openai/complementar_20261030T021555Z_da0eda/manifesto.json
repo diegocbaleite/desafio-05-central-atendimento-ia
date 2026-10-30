@@ -1,0 +1,72 @@
+{
+  "id": "20261030T021555Z_da0eda",
+  "data_referencia": "2026-10-29",
+  "inicio_utc": "2026-10-30T02:15:55.840128+00:00",
+  "natureza": "LLM real",
+  "provider": "openai",
+  "modelo_solicitado": "gpt-6-luna",
+  "perfil": {
+    "tipo": "llm",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "temperatura": null,
+    "reasoning_effort": "none",
+    "max_tokens": 1200,
+    "saida_estruturada": true
+  },
+  "limites": {
+    "chamadas": 0,
+    "max_chamadas": 30,
+    "tokens": 0,
+    "max_tokens": 60000,
+    "chamadas_sem_tokens_informados": 0,
+    "motivos": []
+  },
+  "envio_automatico": false,
+  "decisoes_humanas_criadas": 0,
+  "autorizacao": "usuário solicitou explicitamente as validações complementares com LLM real",
+  "entradas": {
+    "extracao": 6,
+    "resumo": 6,
+    "sentimentos": 12,
+    "ataques": 3
+  },
+  "indice": "isolado desta execução; sem reconstruir o índice da interface",
+  "fim_utc": "2026-10-30T02:17:00.536241+00:00",
+  "orcamento_final": {
+    "chamadas": 27,
+    "max_chamadas": 30,
+    "tokens": 17914,
+    "max_tokens": 60000,
+    "chamadas_sem_tokens_informados": 0,
+    "motivos": [
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1",
+      "openai:gpt-6-luna:tentativa1"
+    ]
+  }
+}

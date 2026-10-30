@@ -51,3 +51,5 @@ O pacote é preparado para a equipe submeter. Este trabalho não registra novas 
 ## Conferência do empacotamento
 
 A primeira tentativa de ZIP foi corretamente bloqueada pelo scanner por dois tokens fictícios literais nos testes importados da main. Os valores de teste passaram a ser montados por concatenação, mantendo as mesmas entradas em execução e sem alterar o scanner ou a detecção de segredos da aplicação. Nenhuma credencial real estava nesses casos. O pacote deve passar pelo scanner completo e pela suíte após extração.
+
+A primeira suíte do ZIP extraído revelou que o auxiliar de fixtures aceitava escrever dentro do projeto quando o próprio projeto estava sob `/tmp`. Foi corrigido para recusar qualquer destino dentro da raiz do projeto, mesmo sob o diretório temporário. O teste de proteção existente cobre esse caso na cópia extraída; originais e gabaritos versionados permaneceram intactos.

@@ -60,7 +60,8 @@ def _ficha(protocolo, data, solicitante, assunto, pedido, categoria, *, orgaos=(
 def preparar_dados(raiz: Path) -> Path:
     raiz = Path(raiz).resolve()
     temporaria = Path(tempfile.gettempdir()).resolve()
-    if not raiz.is_relative_to(temporaria) or raiz == temporaria:
+    projeto = Path(__file__).resolve().parents[1]
+    if raiz.is_relative_to(projeto) or not raiz.is_relative_to(temporaria) or raiz == temporaria:
         raise ValueError("Fixtures somente em subdiretorio temporario explicito")
     if raiz.exists() and any(raiz.iterdir()):
         raise FileExistsError("Dados já preparados; é proibido sobrescrever os gabaritos")

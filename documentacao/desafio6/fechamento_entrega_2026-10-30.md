@@ -2,6 +2,12 @@
 
 A retomada partiu da [verificação de 29/10/2026](verificacao_fechamento_2026-10-29.md). As validações reais e as decisões humanas anteriores foram preservadas. Não foram feitas novas chamadas pagas nem registradas decisões pelo agente.
 
+**A revisão das alterações foi concluída em 30/10/2026.** Os arquivos foram versionados no commit local `7816a57`, e o ZIP desse commit foi extraído e conferido: 334 arquivos correspondentes ao conteúdo exportado pelo Git, 210 testes aprovados em 6,748 s, índices A/B recriados e avaliação local com 14 aprovados, T11 parcial e nenhum erro de etapa. Essa revisão deixou de ser uma pendência de fechamento.
+
+## Testes realizados pela equipe
+
+Em **30/10/2026**, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa realizaram testes do projeto, conforme informado por Diego nesta conversa. A participação foi acrescentada ao [registro de uso de IA](uso_da_ia.md), preservando as atribuições dos testes automatizados e das decisões humanas anteriores. Comandos, casos e resultados individuais: **não localizado**.
+
 ## Validação local
 
 - **210 testes aprovados**, em 6,130 s, na árvore de trabalho.

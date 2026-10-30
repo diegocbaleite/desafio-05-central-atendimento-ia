@@ -1,6 +1,6 @@
 # Registro do uso de IA no desenvolvimento — Desafio 6
 
-A responsabilidade pela solução é da equipe (Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa). Este registro descreve o uso de agentes de codificação e as evidências de validação. Em **29/10/2026**, Diego Assunção Leite pediu expressamente que o registro fosse preenchido em seu nome. A confirmação ao final foi redigida pelo agente a seu pedido e abrange Diego; não declara conferência individual por Ayron ou Guilherme.
+A responsabilidade pela solução é da equipe (Diego Assunção Leite, Ayron Brhenno Silva Figueiredo e Guilherme da Silva Lessa). Este registro descreve o uso de agentes de codificação e as evidências de validação. Em **29/10/2026**, Diego Assunção Leite pediu expressamente que o registro fosse preenchido em seu nome. A confirmação de Diego abaixo foi redigida pelo agente a seu pedido. Em **30/10/2026**, Diego informou que Ayron e Guilherme também realizaram testes do projeto e solicitou acrescentar essa participação ao registro.
 
 ## Ferramentas e modelos
 
@@ -67,6 +67,17 @@ Atualização da demonstração e do fechamento em 29/10/2026: Diego registrou p
 
 Eu, **Diego Assunção Leite**, autorizo este registro do uso de IA em meu nome. O projeto recebeu auxílio de agentes de codificação para implementação, correções, testes e documentação. Acompanhei a demonstração da interface e registrei as decisões humanas de aprovação e pedido de revisão identificadas neste documento. As correções que solicitei e autorizei permanecem descritas com suas validações e limitações.
 
-O registro distingue a execução real do RAG, os métodos por regras locais e as simulações de testes. As limitações das validações executadas e o fechamento do pacote continuam indicados na [verificação de fechamento](verificacao_fechamento_2026-10-29.md). Esta confirmação não declara que todos os caminhos foram executados com LLM real, nem substitui a responsabilidade da equipe pela entrega.
+O registro distingue a execução real do RAG, os métodos por regras locais e as simulações de testes. O histórico está na [verificação de 29/10/2026](verificacao_fechamento_2026-10-29.md), e a revisão concluída das alterações e a validação do pacote estão na [conferência da entrega de 30/10/2026](fechamento_entrega_2026-10-30.md). Esta confirmação não declara que todos os caminhos foram executados com LLM real, nem substitui a responsabilidade da equipe pela entrega.
 
-Conteúdo elaborado com auxílio de IA. **Não há confirmação individual registrada neste documento em nome de Ayron ou Guilherme.**
+### Testes de Ayron e Guilherme — 30/10/2026
+
+Conforme informado por Diego nesta conversa, **Ayron Brhenno Silva Figueiredo** e **Guilherme da Silva Lessa** realizaram testes do projeto em **30/10/2026 — America/Cuiaba**. O registro foi acrescentado pelo agente a pedido de Diego.
+
+| Integrante | Participação informada | Data |
+|---|---|---|
+| Ayron Brhenno Silva Figueiredo | Realizou testes do projeto | 30/10/2026 |
+| Guilherme da Silva Lessa | Realizou testes do projeto | 30/10/2026 |
+
+Comandos, casos e resultados individuais desses testes: **não localizado**. Os 210 testes automatizados e as decisões de Diego pela interface mantêm suas atribuições e evidências próprias.
+
+Conteúdo elaborado com auxílio de IA.

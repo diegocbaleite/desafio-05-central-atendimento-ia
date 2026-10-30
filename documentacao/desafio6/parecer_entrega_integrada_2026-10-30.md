@@ -47,3 +47,7 @@ A integridade atual de JSON/PNG não é uma nova decisão humana nem autenticaç
 6. A implementação paralela da main tem outro catálogo. A equipe deve demonstrar a versão indicada no README, sem aplicar as métricas do acervo fictício a documentos diferentes.
 
 O pacote é preparado para a equipe submeter. Este trabalho não registra novas decisões de aprovação em nome de pessoas e não envia arquivos à instituição.
+
+## Conferência do empacotamento
+
+A primeira tentativa de ZIP foi corretamente bloqueada pelo scanner por dois tokens fictícios literais nos testes importados da main. Os valores de teste passaram a ser montados por concatenação, mantendo as mesmas entradas em execução e sem alterar o scanner ou a detecção de segredos da aplicação. Nenhuma credencial real estava nesses casos. O pacote deve passar pelo scanner completo e pela suíte após extração.

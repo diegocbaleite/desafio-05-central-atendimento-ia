@@ -1,0 +1,46 @@
+{
+  "decisoes": [
+    {
+      "minuta_id": "M-S01-a496b82d",
+      "decisao": "aprovar",
+      "status_anterior": "pendente",
+      "status_novo": "aprovada",
+      "operador": "Teste automatizado",
+      "justificativa": "Decisão SIMULADA de teste: conteúdo conferido pelo script",
+      "origem": "simulada_teste",
+      "sha256_minuta": "cc64934b82901e88aa21d0c1d041cc00a1717c144204a356d512b36ee45de56e",
+      "decidida_em": "2026-10-27T19:45:37.626573+00:00",
+      "envio_automatico": false
+    },
+    {
+      "minuta_id": "M-ATQ01-484dbe52",
+      "decisao": "rejeitar",
+      "status_anterior": "pendente",
+      "status_novo": "rejeitada",
+      "operador": "Teste automatizado",
+      "justificativa": "Decisão SIMULADA de teste: entrada com instrução maliciosa",
+      "origem": "simulada_teste",
+      "sha256_minuta": "29e5ec77947b5de4a02a91bb8b740974c03cea244015cc81945c8161fc54acf3",
+      "decidida_em": "2026-10-27T19:45:37.633915+00:00",
+      "envio_automatico": false
+    }
+  ],
+  "segunda_decisao": "recusada: Minuta já está 'aprovada'; gere nova versão para nova decisão",
+  "decisao_sem_justificativa": "recusada: Operador e justificativa são obrigatórios; nenhuma decisão registrada",
+  "estados_apos_reabrir": {
+    "M-S01-a496b82d": "aprovada",
+    "M-ATQ01-484dbe52": "rejeitada"
+  },
+  "contagem": {
+    "estados": {
+      "pendente": 0,
+      "aprovada": 1,
+      "rejeitada": 1,
+      "revisar": 0
+    },
+    "decisoes_por_origem": {
+      "simulada_teste": 2
+    }
+  },
+  "aviso": "decisões com origem 'simulada_teste' NÃO são decisões humanas e não entram em taxas humanas"
+}

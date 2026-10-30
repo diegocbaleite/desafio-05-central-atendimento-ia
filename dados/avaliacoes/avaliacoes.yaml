@@ -1,0 +1,15 @@
+# Doze avaliações FICTÍCIAS de atendimento (texto livre). Rótulos esperados ficam em
+# dados/gabaritos/desafio6/sentimentos.yaml, escritos antes da classificação.
+avaliacoes:
+  - {id: AV01, texto: "Fui muito bem atendida, a servidora explicou tudo com paciência e resolveu meu pedido no mesmo dia."}
+  - {id: AV02, texto: "Atendimento rápido e educado. Recebi a declaração antes do prazo. Obrigado!"}
+  - {id: AV03, texto: "Gostei bastante do novo agendamento pelo portal, foi fácil e eficiente."}
+  - {id: AV04, texto: "Esperei duas horas na fila e no final ninguém soube responder minha dúvida. Péssimo."}
+  - {id: AV05, texto: "Mandei três mensagens e não recebi nenhuma resposta. Total descaso com o cidadão."}
+  - {id: AV06, texto: "O atendente foi grosseiro e meu problema continua sem solução."}
+  - {id: AV07, texto: "Compareci às 9h, apresentei o protocolo e recebi a orientação sobre os documentos."}
+  - {id: AV08, texto: "Fiz o agendamento pelo portal para a próxima terça-feira."}
+  - {id: AV09, texto: "A declaração foi entregue em formato PDF por e-mail."}
+  - {id: AV10, texto: "A atendente foi muito educada, mas o sistema caiu e tive que voltar outro dia."}
+  - {id: AV11, texto: "Parabéns, esperei só três horas para ser atendido. Excelente serviço!"}
+  - {id: AV12, texto: "Sobre aquilo de ontem, tanto faz agora."}

@@ -1,0 +1,27 @@
+{
+  "numero": 7,
+  "etapa": "extracao",
+  "caso": "S04",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:15.759456+00:00",
+  "payload_sha256": "f8ce8536551f6a12b7ef7026e0490210b01fb3fdff65881d46a378206139944f",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"versao_schema\":\"2.0.0\",\"protocolo\":\"2026-****77\",\"data\":\"20/10/2026\",\"solicitante\":\"Joana Exemplo Ferreira\",\"assunto\":\"andamento de pedido de transferência de turno\",\"pedido\":\"Solicito informações sobre o andamento do meu pedido de transferência de turno, protocolado na Escola Técnica Estadual de Cuiabá. Gostaria de saber como acompanhar a solicitação.\",\"categoria\":\"andamento_processo\",\"entidades\":[{\"tipo\":\"pessoa\",\"valor\":\"Joana Exemplo Ferreira\",\"literal\":true,\"evidencia\":\"Nome: Joana Exemplo Ferreira\"},{\"tipo\":\"protocolo\",\"valor\":\"2026-****77\",\"literal\":true,\"evidencia\":\"Protocolo: 2026-****77\"},{\"tipo\":\"data\",\"valor\":\"20/10/2026\",\"literal\":true,\"evidencia\":\"Data: 20/10/2026\"},{\"tipo\":\"orgao\",\"valor\":\"Escola Técnica Estadual de Cuiabá\",\"literal\":true,\"evidencia\":\"Escola Técnica Estadual de Cuiabá\"}],\"campos_ausentes\":[],\"requer_revisao\":false,\"motivos_revisao\":[]}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.749,
+    "tokens_entrada": 867,
+    "tokens_saida": 259,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2769.7
+}

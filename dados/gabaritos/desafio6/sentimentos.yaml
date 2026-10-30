@@ -1,0 +1,23 @@
+versao_gabarito: "1.0"
+regras:
+  positiva: "Avaliação predominantemente favorável ao atendimento, sem crítica relevante."
+  negativa: "Avaliação predominantemente desfavorável (demora, falta de resposta, grosseria, problema não resolvido)."
+  neutra: "Relato factual ou informativo, sem juízo de valor sobre o atendimento."
+  indeterminada: "Não é possível atribuir polaridade com segurança: mistura equilibrada, ironia ou falta de contexto."
+  mista: "Elogio e crítica relevantes na mesma mensagem -> indeterminada + revisão humana (não forçar rótulo)."
+  ironia: "Elogio acompanhado de fato negativo ('parabéns, esperei três horas') -> indeterminada + revisão; o sistema não decide a intenção do autor."
+  falta_de_contexto: "Mensagem que depende de conversa anterior ('aquilo de ontem') -> indeterminada + revisão."
+  limites: "Rótulo descreve o TEXTO, não a pessoa. Não inferir personalidade, diagnóstico, idade, gênero ou outra característica sensível. Confiança declarada por modelo é estimativa não calibrada."
+avaliacoes:
+  AV01: {polaridade: positiva, requer_revisao: false}
+  AV02: {polaridade: positiva, requer_revisao: false}
+  AV03: {polaridade: positiva, requer_revisao: false}
+  AV04: {polaridade: negativa, requer_revisao: false}
+  AV05: {polaridade: negativa, requer_revisao: false}
+  AV06: {polaridade: negativa, requer_revisao: false}
+  AV07: {polaridade: neutra, requer_revisao: false}
+  AV08: {polaridade: neutra, requer_revisao: false}
+  AV09: {polaridade: neutra, requer_revisao: false}
+  AV10: {polaridade: indeterminada, requer_revisao: true, justificativa: "Mista: elogio à atendente e crítica à queda do sistema, de peso comparável."}
+  AV11: {polaridade: indeterminada, requer_revisao: true, justificativa: "Ironia provável: elogio ('Parabéns', 'Excelente') com fato negativo (três horas). Leitor humano tenderia a 'negativa'; pela regra, o sistema não decide sozinho."}
+  AV12: {polaridade: indeterminada, requer_revisao: true, justificativa: "Falta de contexto: 'aquilo de ontem' depende de conversa anterior."}

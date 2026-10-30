@@ -1,0 +1,115 @@
+{
+  "pergunta_sha256": "bd3f0ba5c0bbed44d07bbbdc8f9af8ac92ac866e21740464f5460488d970298a",
+  "status": "sem_evidencia_suficiente",
+  "resposta": "Não há evidência suficiente no acervo para responder com segurança. A consulta foi encaminhada ao operador; nenhuma orientação institucional foi inventada.",
+  "afirmacoes": [],
+  "afirmacoes_removidas": [],
+  "fontes": [],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 3 — Documentos pendentes",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 3 — Documentos pendentes",
+      "trecho": "Quando faltar algum documento no ato da matrícula, a secretaria escolar registra a pendência na ficha e o estudante deve entregar o documento pendente em até 10 dias úteis após a data da matrícula. A matrícula com pendência não entregue nesse prazo fica sujeita a análise da coordenação.",
+      "similaridade": 0.4202,
+      "posicao": 1,
+      "distancia_cosseno": 0.5798,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s2:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 2 — Documentos para efetivação da matrícula",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 2 — Documentos para efetivação da matrícula",
+      "trecho": "Para efetivar a matrícula, o candidato aprovado deve apresentar os seguintes documentos: documento de identidade com foto; CPF; comprovante de residência emitido nos últimos 90 dias; histórico escolar ou certificado de conclusão do ensino médio, ou declaração de matrícula no ensino médio para cursos concomitantes; e uma fotografia 3x4 recente. Candidatos menores de 18 anos devem apresentar também o documento de identidade do responsável legal, que assinará a ficha de matrícula.",
+      "similaridade": 0.3729,
+      "posicao": 2,
+      "distancia_cosseno": 0.6271,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s4:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 4 — Cancelamento por faltas",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 4 — Cancelamento por faltas",
+      "trecho": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+      "similaridade": 0.3612,
+      "posicao": 3,
+      "distancia_cosseno": 0.6388,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 1 — Segunda via de declarações e certidões",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1",
+      "trecho": "A solicitação de segunda via pode ser feita presencialmente na secretaria escolar ou pelo formulário digital fictício. A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. A certidão de conclusão de curso é emitida em até 20 dias úteis.",
+      "similaridade": 0.3156,
+      "posicao": 4,
+      "distancia_cosseno": 0.6844,
+      "em_quarentena": false,
+      "abaixo_limiar": true
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": false,
+    "resolvido": false,
+    "regra": null,
+    "divergencias": []
+  },
+  "encaminhar_revisao": true,
+  "motivos_revisao": [
+    "sem evidência suficiente: abstenção"
+  ],
+  "gerador": {
+    "perfil": "extrativo_local",
+    "e_llm": false,
+    "tipo": "extrativo",
+    "provider": "local",
+    "modelo": "Gerador extrativo local determinístico (não-LLM)",
+    "tokens_entrada": "indisponível",
+    "tokens_saida": "indisponível",
+    "custo_usd": "indisponível",
+    "observacao": "execução local sem provedor: tokens e custo não se aplicam; latência medida"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.4202,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "latencia_ms": 26.3
+}

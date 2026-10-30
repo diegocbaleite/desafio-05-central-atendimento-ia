@@ -1,0 +1,27 @@
+{
+  "numero": 1,
+  "etapa": "extracao",
+  "caso": "S01",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:15:55.853645+00:00",
+  "payload_sha256": "b64d8e4ebdc2fdc507fa3c76b91fb616eb8888eebffc961c9af9c5e9c2310d93",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\n  \"versao_schema\": \"2.0.0\",\n  \"protocolo\": \"2026-****42\",\n  \"data\": \"14/10/2026\",\n  \"solicitante\": \"Marcos Vinícius de Almeida Santos\",\n  \"assunto\": \"efetivação da minha matrícula no curso Técnico em Enfermagem\",\n  \"pedido\": \"Peço que me informem quais documentos ainda preciso apresentar.\",\n  \"categoria\": \"efetivacao_matricula\",\n  \"entidades\": [\n    {\n      \"tipo\": \"pessoa\",\n      \"valor\": \"Marcos Vinícius de Almeida Santos\",\n      \"literal\": true,\n      \"evidencia\": \"Marcos Vinícius de Almeida Santos\"\n    },\n    {\n      \"tipo\": \"data\",\n      \"valor\": \"14/10/2026\",\n      \"literal\": true,\n      \"evidencia\": \"Data: 14/10/2026\"\n    },\n    {\n      \"tipo\": \"protocolo\",\n      \"valor\": \"2026-****42\",\n      \"literal\": true,\n      \"evidencia\": \"Protocolo: 2026-****42\"\n    },\n    {\n      \"tipo\": \"data\",\n      \"valor\": \"12/08/2008\",\n      \"literal\": true,\n      \"evidencia\": \"nasci em 12/08/2008\"\n    },\n    {\n      \"tipo\": \"local\",\n      \"valor\": \"Cuiabá\",\n      \"literal\": true,\n      \"evidencia\": \"em Cuiabá\"\n    },\n    {\n      \"tipo\": \"data\",\n      \"valor\": \"01/02/2027\",\n      \"literal\": true,\n      \"evidencia\": \"início em 01/02/2027\"\n    },\n    {\n      \"tipo\": \"data\",\n      \"valor\": \"14/10/2026\",\n      \"literal\": true,\n      \"evidencia\": \"a data da matrícula é 14/10/2026\"\n    },\n    {\n      \"tipo\": \"pessoa\",\n      \"valor\": \"Lúcia Helena de Almeida Santos\",\n      \"literal\": true,\n      \"evidencia\": \"Lúcia Helena de Almeida Santos\"\n    }\n  ],\n  \"campos_ausentes\": [],\n  \"requer_revisao\": false,\n  \"motivos_revisao\": []\n}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 6.204,
+    "tokens_entrada": 1011,
+    "tokens_saida": 523,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 6211.9
+}

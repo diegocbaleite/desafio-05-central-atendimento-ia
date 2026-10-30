@@ -1,0 +1,27 @@
+{
+  "numero": 12,
+  "etapa": "resumo",
+  "caso": "S06",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:27.182322+00:00",
+  "payload_sha256": "35256f3f3adf74677440764a3665998183e41f2ef31f1545e452d8c1700b87a8",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "Protocolo: não localizado. Data: não localizada. Solicitante: não localizado. Assunto: problema relacionado a um documento, sem detalhes. Pedido: verificar a situação, pois a pessoa já enviou mensagem e não recebeu retorno.",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.449,
+    "tokens_entrada": 203,
+    "tokens_saida": 52,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1454.0
+}

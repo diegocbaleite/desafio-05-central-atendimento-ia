@@ -1,0 +1,192 @@
+{
+  "id": "S06",
+  "fonte": "dados/solicitacoes/S06_ambigua.txt",
+  "modalidade": "texto",
+  "valida": true,
+  "baseline_regras": {
+    "categoria_ok": true,
+    "categoria_esperada": "revisao",
+    "categoria_obtida": "revisao",
+    "campos": {
+      "protocolo": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "data": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 0,
+    "entidades_esperadas": 0,
+    "entidades_incorretas": 0
+  },
+  "resultado": {
+    "modo": "llm",
+    "ficha": {
+      "versao_schema": "2.0.0",
+      "protocolo": null,
+      "data": null,
+      "solicitante": null,
+      "assunto": "problema do documento",
+      "pedido": "ver isso pra mim",
+      "categoria": "revisao",
+      "entidades": [],
+      "campos_ausentes": [
+        "protocolo",
+        "data",
+        "solicitante"
+      ],
+      "requer_revisao": true,
+      "motivos_revisao": [
+        "Protocolo, data e solicitante não localizados.",
+        "Pedido ambíguo: não é possível identificar qual problema relacionado ao documento deve ser resolvido.",
+        "Instrução suspeita ou mudança de regra não identificada."
+      ]
+    },
+    "validacao": {
+      "versao_schema": "2.0.0",
+      "sintaxe_ok": true,
+      "esquema_ok": true,
+      "regras_ok": true,
+      "valido": true,
+      "erros_sintaxe": [],
+      "erros_esquema": [],
+      "erros_regras": [],
+      "objeto": {
+        "versao_schema": "2.0.0",
+        "protocolo": null,
+        "data": null,
+        "solicitante": null,
+        "assunto": "problema do documento",
+        "pedido": "ver isso pra mim",
+        "categoria": "revisao",
+        "entidades": [],
+        "campos_ausentes": [
+          "protocolo",
+          "data",
+          "solicitante"
+        ],
+        "requer_revisao": true,
+        "motivos_revisao": [
+          "Protocolo, data e solicitante não localizados.",
+          "Pedido ambíguo: não é possível identificar qual problema relacionado ao documento deve ser resolvido.",
+          "Instrução suspeita ou mudança de regra não identificada."
+        ]
+      }
+    },
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "valido": true,
+        "erros": [],
+        "metadados": {
+          "provider": "openai",
+          "modelo": "gpt-6-luna",
+          "duracao_s": 2.792,
+          "tokens_entrada": 821,
+          "tokens_saida": 140,
+          "custo_usd": null,
+          "tentativas": 1,
+          "parametros": {
+            "max_completion_tokens": 1200,
+            "timeout_s": 45,
+            "reasoning_effort": "none"
+          }
+        }
+      }
+    ],
+    "prompt": {
+      "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+      "sha256": "d07372cf372562c1767173170223aac45c65e3603589e94fb085049e607ad6ad"
+    }
+  },
+  "comparacao": {
+    "categoria_ok": true,
+    "categoria_esperada": "revisao",
+    "categoria_obtida": "revisao",
+    "campos": {
+      "protocolo": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "data": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": null,
+        "obtido": null,
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": false,
+    "entidades": {
+      "pessoa": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 0,
+    "entidades_esperadas": 0,
+    "entidades_incorretas": 0
+  }
+}

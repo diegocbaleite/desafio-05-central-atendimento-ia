@@ -1,0 +1,262 @@
+{
+  "natureza": "recorte sanitizado de eventos já persistidos da demonstração manual; leitura sem criar eventos ou decisões",
+  "verificado_em_utc": "2026-10-30T00:48:54.325400+00:00",
+  "fonte": "resultados/logs/auditoria_d6.jsonl",
+  "sha256_fonte_na_extracao": "060f198090860e8cbe4682c2b04afc1253510fbb26bcc75134052aaf1ed137d0",
+  "total_eventos_na_fonte": 16,
+  "criterio_selecao": "sete eventos identificados de UI-001, UI-002 e da consulta independente de 23:58 UTC; não é o histórico completo",
+  "ids_selecionados": [
+    "ef4c9b0741794691",
+    "bc796ffeada54e5e",
+    "9ab9e472571545e9",
+    "9ae22144ca734449",
+    "9fef272e3a9a4137",
+    "a3ba916a7a2d4575",
+    "b3babd5a445044aa"
+  ],
+  "eventos": [
+    {
+      "id_evento": "ef4c9b0741794691",
+      "tipo": "consulta_rag",
+      "registrado_em": "2026-10-29T22:50:42.526355+00:00",
+      "id_execucao": null,
+      "inicio": "2026-10-29T22:50:38.699839+00:00",
+      "fim": "2026-10-29T22:50:42.525933+00:00",
+      "latencia_ms": 3826.0,
+      "consulta_minimizada": "Solicito segunda via da certidão",
+      "consulta_sha256": "1daafa64bd4eedba0f5f83c45e1d9fb12e9bdd2b1af55a4000061a46588a0e57",
+      "versao_indice": {
+        "colecao": "acervo_A",
+        "versao": "1",
+        "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+      },
+      "prompt": "prompts/d6/rag_resposta_v1.md",
+      "gerador": "principal",
+      "gerador_e_llm": true,
+      "chunk_ids_recuperados": [
+        "DOC-02:v2.0:A:p1:s1:c0",
+        "DOC-01:v1.2:A:p0:s2:c0",
+        "DOC-04:v1.0:A:p1:s1:c0",
+        "DOC-04:v1.0:A:p2:s4:c0"
+      ],
+      "chunk_ids_citados": [],
+      "quarentena": [],
+      "status": "sem_evidencia_suficiente",
+      "encaminhar_revisao": true,
+      "erros": [],
+      "tokens_entrada": 1167,
+      "tokens_saida": 169,
+      "custo_usd": "indisponível",
+      "orcamento": {
+        "chamadas": 1,
+        "max_chamadas": 30,
+        "tokens": 1336,
+        "max_tokens": 60000,
+        "chamadas_sem_tokens_informados": 0,
+        "motivos": [
+          "openai:gpt-6-luna:tentativa1"
+        ]
+      },
+      "decisao_humana": "não se aplica (consulta)"
+    },
+    {
+      "id_evento": "bc796ffeada54e5e",
+      "tipo": "solicitacao_processada",
+      "registrado_em": "2026-10-29T22:50:42.532052+00:00",
+      "id_execucao": null,
+      "caso_id": "UI-001",
+      "modalidade": "texto",
+      "inicio": "2026-10-29T22:50:38.659898+00:00",
+      "fim": "2026-10-29T22:50:42.531771+00:00",
+      "latencia_ms": 3871.8,
+      "sha256_entrada": "cbea860496b41e78f3ba5ef4476fcf7603655be25d5cd14c8bf19cd8cf6d7382",
+      "versao_schema": "2.0.0",
+      "estruturacao_modo": "regras",
+      "estruturacao_valida": true,
+      "decisao_entrada": "permitir",
+      "motivos": [
+        "consulta 1/1: afirmação sem suporte removida",
+        "consulta 1/1: sem evidência suficiente: abstenção"
+      ],
+      "categoria": "segunda_via_documento",
+      "status_rag": "sem_evidencia_suficiente",
+      "chunk_ids": [],
+      "gerador": "principal",
+      "minuta_id": "M-UI-001-6ee39a04",
+      "status_minuta": "pendente",
+      "orcamento": {
+        "chamadas": 1,
+        "max_chamadas": 30,
+        "tokens": 1336,
+        "max_tokens": 60000,
+        "chamadas_sem_tokens_informados": 0,
+        "motivos": [
+          "openai:gpt-6-luna:tentativa1"
+        ]
+      },
+      "decisao_humana": "pendente"
+    },
+    {
+      "id_evento": "9ab9e472571545e9",
+      "tipo": "decisao_humana",
+      "registrado_em": "2026-10-29T23:20:21.541790+00:00",
+      "minuta_id": "M-UI-001-6ee39a04",
+      "decisao_humana": "revisar",
+      "status_novo": "revisar",
+      "origem": "humana_interface",
+      "sha256_minuta": "34ea969547aa7bd0e06a04c240c3f5f7d208ee4737d3fcd3212b6d2ee3197b95",
+      "operador_informado": true
+    },
+    {
+      "id_evento": "9ae22144ca734449",
+      "tipo": "consulta_rag",
+      "registrado_em": "2026-10-29T23:27:59.067268+00:00",
+      "id_execucao": null,
+      "inicio": "2026-10-29T23:27:55.856275+00:00",
+      "fim": "2026-10-29T23:27:59.067019+00:00",
+      "latencia_ms": 3210.7,
+      "consulta_minimizada": "Em quanto tempo é emitida a segunda via da declaração de matrícula?",
+      "consulta_sha256": "2a005640c7b2f41b22c3860dc2ed7bbd8a12c063ee3e1033e208854186e4cc0b",
+      "versao_indice": {
+        "colecao": "acervo_A",
+        "versao": "1",
+        "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+      },
+      "prompt": "prompts/d6/rag_resposta_v1.md",
+      "gerador": "principal",
+      "gerador_e_llm": true,
+      "chunk_ids_recuperados": [
+        "DOC-02:v2.0:A:p1:s1:c0",
+        "DOC-01:v1.2:A:p0:s3:c0",
+        "DOC-05:v1.0:A:p1:s3:c0",
+        "DOC-02:v2.0:A:p1:s2:c0"
+      ],
+      "chunk_ids_citados": [
+        "DOC-02:v2.0:A:p1:s1:c0"
+      ],
+      "quarentena": [],
+      "status": "fundamentada",
+      "encaminhar_revisao": false,
+      "erros": [],
+      "tokens_entrada": 1132,
+      "tokens_saida": 123,
+      "custo_usd": "indisponível",
+      "orcamento": {
+        "chamadas": 1,
+        "max_chamadas": 30,
+        "tokens": 1255,
+        "max_tokens": 60000,
+        "chamadas_sem_tokens_informados": 0,
+        "motivos": [
+          "openai:gpt-6-luna:tentativa1"
+        ]
+      },
+      "decisao_humana": "não se aplica (consulta)"
+    },
+    {
+      "id_evento": "9fef272e3a9a4137",
+      "tipo": "solicitacao_processada",
+      "registrado_em": "2026-10-29T23:27:59.073868+00:00",
+      "id_execucao": null,
+      "caso_id": "UI-002",
+      "modalidade": "texto",
+      "inicio": "2026-10-29T23:27:55.775815+00:00",
+      "fim": "2026-10-29T23:27:59.073655+00:00",
+      "latencia_ms": 3297.8,
+      "sha256_entrada": "69ddee2a2d58fcaf6a951693c6ba4f6733bf8503a2d930693e43e277a5d0923c",
+      "versao_schema": "2.0.0",
+      "estruturacao_modo": "regras",
+      "estruturacao_valida": true,
+      "decisao_entrada": "permitir",
+      "motivos": [],
+      "categoria": "segunda_via_documento",
+      "status_rag": "fundamentada",
+      "chunk_ids": [
+        "DOC-02:v2.0:A:p1:s1:c0"
+      ],
+      "gerador": "principal",
+      "minuta_id": "M-UI-002-02774ae6",
+      "status_minuta": "pendente",
+      "orcamento": {
+        "chamadas": 1,
+        "max_chamadas": 30,
+        "tokens": 1255,
+        "max_tokens": 60000,
+        "chamadas_sem_tokens_informados": 0,
+        "motivos": [
+          "openai:gpt-6-luna:tentativa1"
+        ]
+      },
+      "decisao_humana": "pendente"
+    },
+    {
+      "id_evento": "a3ba916a7a2d4575",
+      "tipo": "decisao_humana",
+      "registrado_em": "2026-10-29T23:54:12.386455+00:00",
+      "minuta_id": "M-UI-002-02774ae6",
+      "decisao_humana": "aprovar",
+      "status_novo": "aprovada",
+      "origem": "humana_interface",
+      "sha256_minuta": "7a50f63deea70afe5464d86bc82efad373083900b9dfe198e22adae11160446e",
+      "operador_informado": true
+    },
+    {
+      "id_evento": "b3babd5a445044aa",
+      "tipo": "consulta_rag",
+      "registrado_em": "2026-10-29T23:58:11.725415+00:00",
+      "id_execucao": null,
+      "inicio": "2026-10-29T23:58:08.559661+00:00",
+      "fim": "2026-10-29T23:58:11.724812+00:00",
+      "latencia_ms": 3165.1,
+      "consulta_minimizada": "Em quanto tempo é emitida a segunda via da declaração de matrícula?",
+      "consulta_sha256": "2a005640c7b2f41b22c3860dc2ed7bbd8a12c063ee3e1033e208854186e4cc0b",
+      "versao_indice": {
+        "colecao": "acervo_A",
+        "versao": "1",
+        "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+      },
+      "prompt": "prompts/d6/rag_resposta_v1.md",
+      "gerador": "principal",
+      "gerador_e_llm": true,
+      "chunk_ids_recuperados": [
+        "DOC-02:v2.0:A:p1:s1:c0",
+        "DOC-01:v1.2:A:p0:s3:c0",
+        "DOC-05:v1.0:A:p1:s3:c0",
+        "DOC-02:v2.0:A:p1:s2:c0"
+      ],
+      "chunk_ids_citados": [
+        "DOC-02:v2.0:A:p1:s1:c0"
+      ],
+      "quarentena": [],
+      "status": "fundamentada",
+      "encaminhar_revisao": false,
+      "erros": [],
+      "tokens_entrada": 1119,
+      "tokens_saida": 123,
+      "custo_usd": "indisponível",
+      "orcamento": {
+        "chamadas": 1,
+        "max_chamadas": 30,
+        "tokens": 1242,
+        "max_tokens": 60000,
+        "chamadas_sem_tokens_informados": 0,
+        "motivos": [
+          "openai:gpt-6-luna:tentativa1"
+        ]
+      },
+      "decisao_humana": "não se aplica (consulta)"
+    }
+  ],
+  "ids_testes_limite_zero_preservados_na_fonte": [
+    "5a0583ee06c94275",
+    "f8a866a31efb4baf",
+    "cb2b843f4d074d95",
+    "fd0ee56a9ae04593",
+    "bf21f2f178744471",
+    "bd04e97a77934978",
+    "8f7d6e30d3d74a7c",
+    "dd416b529f624837"
+  ],
+  "nota_testes": "O histórico completo também contém testes com embedding hash-bow-teste-v1 e orçamento máximo 0. São bloqueios anteriores a chamadas ao LLM; não são falhas de chamadas reais da demonstração. O log original foi preservado.",
+  "envio_automatico": false
+}

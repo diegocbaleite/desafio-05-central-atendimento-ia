@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -33,6 +34,50 @@ def gravar_json(caminho, valor):
     Path(caminho).write_text(
         json.dumps(valor, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+
+
+_PROTOCOLO_LOG = re.compile(r"\b(20\d{2})([.-])\d{4}(\d{2})\b")
+
+
+def mascarar(texto: str, segredos=()) -> str:
+    """Minimiza identificadores (CPF, e-mail, telefone, protocolo) e remove segredos."""
+    from .seguranca import minimizar
+
+    for segredo in segredos:
+        if segredo:
+            texto = texto.replace(segredo, "[SEGREDO REMOVIDO]")
+    texto = minimizar(texto)
+    return _PROTOCOLO_LOG.sub(r"\1\2****\3", texto)
+
+
+def sanitizar(valor, segredos=()):
+    if isinstance(valor, str):
+        return mascarar(valor, segredos)
+    if isinstance(valor, dict):
+        return {k: sanitizar(v, segredos) for k, v in valor.items()}
+    if isinstance(valor, (list, tuple)):
+        return [sanitizar(v, segredos) for v in valor]
+    return valor
+
+
+def registrar_d6(tipo, arquivo=None, segredos=(), **campos):
+    """Evento de auditoria do Desafio 6 (RF21): JSONL sanitizado, sem credenciais.
+
+    Campos usuais: id_execucao, inicio, fim, latencia_ms, versao_schema, prompt,
+    versao_indice, consulta_minimizada, chunk_ids, status, erros, tokens, custo,
+    decisao_humana. Métricas não fornecidas pelo provedor ficam como "indisponível".
+    """
+    destino = Path(arquivo) if arquivo else ROOT / "resultados" / "logs" / "auditoria_d6.jsonl"
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    evento = {
+        "id_evento": uuid.uuid4().hex[:16],
+        "tipo": tipo,
+        "registrado_em": datetime.now(timezone.utc).isoformat(),
+        **sanitizar(campos, segredos),
+    }
+    with destino.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(evento, ensure_ascii=False, default=str) + "\n")
+    return evento
 
 
 def registrar(execucao, caso, etapa, **campos):

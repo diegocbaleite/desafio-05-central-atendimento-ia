@@ -1,0 +1,137 @@
+{
+  "data_local": "2026-10-30",
+  "timezone": "America/Cuiaba",
+  "natureza": "verificacao tecnica local; sem novas chamadas LLM reais",
+  "python": "3.14.7",
+  "testes_arvore": {
+    "executados": 210,
+    "aprovados": 210,
+    "segundos": 6.13
+  },
+  "integridade": {
+    "arquivos_protegidos": 35,
+    "alterados": [],
+    "png_validos": 15,
+    "evidencias_json_jsonl_validas": true
+  },
+  "reproducao": {
+    "tipo": "copia limpa dos arquivos candidatos em pasta temporaria fora do repositorio",
+    "ambiente_virtual_novo": false,
+    "dependencias_reutilizadas": true,
+    "cache_embedding_reutilizado": true,
+    "rede_huggingface_offline": true,
+    "testes": {
+      "executados": 210,
+      "aprovados": 210,
+      "segundos": 9.405
+    },
+    "comandos": [
+      {
+        "nome": "dependencias",
+        "comando": [
+          "python",
+          "-m",
+          "pip",
+          "install",
+          "--dry-run",
+          "--no-index",
+          "-r",
+          "requirements.txt"
+        ],
+        "codigo_saida": 0,
+        "segundos": 0.664
+      },
+      {
+        "nome": "testes",
+        "comando": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "testes",
+          "-t",
+          "."
+        ],
+        "codigo_saida": 0,
+        "segundos": 10.76
+      },
+      {
+        "nome": "verificar",
+        "comando": [
+          "python",
+          "-m",
+          "src.main",
+          "verificar"
+        ],
+        "codigo_saida": 0,
+        "segundos": 0.261
+      },
+      {
+        "nome": "indexar",
+        "comando": [
+          "python",
+          "-m",
+          "src.main",
+          "indexar"
+        ],
+        "codigo_saida": 0,
+        "segundos": 7.046
+      },
+      {
+        "nome": "status_indice",
+        "comando": [
+          "python",
+          "-m",
+          "src.main",
+          "status-indice"
+        ],
+        "codigo_saida": 0,
+        "segundos": 1.338
+      },
+      {
+        "nome": "avaliar",
+        "comando": [
+          "python",
+          "-m",
+          "src.main",
+          "avaliar",
+          "--gerador",
+          "extrativo_local"
+        ],
+        "codigo_saida": 0,
+        "segundos": 13.663
+      }
+    ],
+    "indice": {
+      "estado": "ok",
+      "embedding_modelo": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "dimensao": 384,
+      "trechos": 25,
+      "documentos_indexados": [
+        "DOC-01",
+        "DOC-02",
+        "DOC-03",
+        "DOC-04",
+        "DOC-05",
+        "DOC-06",
+        "DOC-07"
+      ]
+    },
+    "trechos_A": 25,
+    "trechos_B": 26,
+    "avaliacao": {
+      "id": "20261030T134626Z_93582b",
+      "gerador": "extrativo_local (nao-LLM)",
+      "matriz_situacao": {
+        "aprovado": 14,
+        "parcial": 1
+      },
+      "erros_de_etapa": [],
+      "decisoes_do_avaliador": "simuladas; nao alteram as evidencias humanas"
+    }
+  },
+  "envio_automatico": false,
+  "novas_chamadas_pagas": 0,
+  "decisoes_humanas_criadas": 0
+}

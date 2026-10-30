@@ -1,0 +1,20 @@
+{
+  "duplicata": {
+    "total": 12,
+    "ids_removidos": [
+      "AV01"
+    ]
+  },
+  "filtro_positiva": {
+    "total": 3,
+    "acuracia": "3/3 (100,0%)"
+  },
+  "filtro_sem_resultado": {
+    "total": 0,
+    "positiva": "0/0 — conjunto vazio (indefinido)"
+  },
+  "lista_vazia": {
+    "total": 0,
+    "acuracia": "0/0 — conjunto vazio (indefinido)"
+  }
+}

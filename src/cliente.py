@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from copy import deepcopy
 from typing import Any
 
 import requests
@@ -30,22 +31,62 @@ def _erro_provedor(data: Any, segredo: str = "") -> str:
     return "Campos de resposta inesperados: " + chaves
 
 
-def _payload(mensagens: list[dict[str, Any]], modelo: str, conf: dict,
-             provider: str | None = None) -> dict:
+def _schema_openai(schema: dict) -> dict:
+    """Adapta somente o esquema de transporte; a validação local mantém o contrato.
+
+    O subconjunto da API usa enum para constantes e não aplica uniqueItems.
+    Essa última regra continua sendo verificada localmente, inclusive na correção.
+    """
+    s = deepcopy(schema)
+    for chave_ in ("$schema", "$id", "uniqueItems"):
+        s.pop(chave_, None)
+    if "const" in s:
+        s["enum"] = [s.pop("const")]
+    if "enum" in s and "type" not in s:
+        tipos = {str: "string", bool: "boolean", int: "integer", float: "number", type(None): "null"}
+        encontrados = list(dict.fromkeys(tipos[type(v)] for v in s["enum"]))
+        s["type"] = encontrados[0] if len(encontrados) == 1 else encontrados
+    for grupo in ("properties", "$defs", "definitions"):
+        if grupo in s:
+            s[grupo] = {k: _schema_openai(v) for k, v in s[grupo].items()}
+    if isinstance(s.get("items"), dict):
+        s["items"] = _schema_openai(s["items"])
+    for grupo in ("anyOf", "oneOf", "allOf"):
+        if grupo in s:
+            s[grupo] = [_schema_openai(v) for v in s[grupo]]
+    return s
+
+
+def _payload(
+    mensagens: list[dict[str, Any]],
+    modelo: str,
+    conf: dict,
+    response_format: dict | None = None,
+    provider: str | None = None,
+) -> dict:
+    if isinstance(response_format, str) and provider is None:
+        provider, response_format = response_format, None
+    limite = "max_completion_tokens" if provider == "openai" else "max_tokens"
     payload = {
         "model": modelo,
         "messages": mensagens,
-        "temperature": conf["temperatura"],
-        "max_tokens": conf["max_tokens"],
+        limite: conf["max_tokens"],
     }
+    if conf.get("temperatura") is not None:
+        payload["temperature"] = conf["temperatura"]
     if provider == "openai":
-        payload["max_completion_tokens"] = payload.pop("max_tokens")
         payload["store"] = False
         if modelo.startswith(("gpt-5", "gpt-6", "o1", "o3", "o4")):
             esforco = conf.get("reasoning_effort", "low")
             payload["reasoning_effort"] = esforco
             if esforco != "none":
-                payload.pop("temperature")
+                payload.pop("temperature", None)
+    if response_format:
+        # Saída restrita por esquema (OpenAI-compatible); o resultado é revalidado localmente.
+        payload["response_format"] = deepcopy(response_format)
+        if provider == "openai" and response_format.get("type") == "json_schema":
+            formato = payload["response_format"]["json_schema"]
+            formato["schema"] = _schema_openai(formato["schema"])
     return payload
 
 
@@ -95,11 +136,21 @@ def conversar(
     mensagens: list[dict[str, Any]],
     modelo: str | None = None,
     provider: str | None = None,
+    orcamento=None,
+    response_format: dict | None = None,
+    parametros: dict | None = None,
 ) -> dict[str, Any]:
+    """Uma chamada de chat com no máximo `llm.max_repeticoes` repetições transitórias.
+
+    `orcamento` (src.orcamento.Orcamento) é consultado antes de CADA requisição HTTP;
+    `parametros` sobrescreve temperatura/max_tokens do perfil de geração.
+    """
     cfg = carregar()
-    conf = cfg["llm"]
+    conf = dict(cfg["llm"])
+    conf.update({k: v for k, v in (parametros or {}).items() if v is not None})
     provider = provider or conf["provider"]
     modelo = modelo or conf["modelo"]
+    tentativas_max = 1 + int(conf.get("max_repeticoes", 1))
     if provider == "mock":
         return {
             "texto": "MINUTA SIMULADA: revisar informações e confirmar dados disponíveis.",
@@ -123,12 +174,14 @@ def conversar(
     inicio = time.monotonic()
     ultimo_erro = None
     espera = 0.0
-    for tentativa in range(3):
+    for tentativa in range(tentativas_max):
+        if orcamento is not None:
+            orcamento.reservar(f"{provider}:{modelo}:tentativa{tentativa + 1}")
         try:
             resposta = requests.post(
                 perfil["base_url"].rstrip("/") + "/chat/completions",
                 headers={"Authorization": "Bearer " + token},
-                json=_payload(mensagens, modelo, conf, provider),
+                json=_payload(mensagens, modelo, conf, response_format, provider=provider),
                 timeout=conf["timeout_s"],
             )
         except (requests.Timeout, requests.ConnectionError) as exc:
@@ -167,23 +220,24 @@ def conversar(
                 ):
                     ultimo_erro = "Provedor: " + _erro_provedor(dados, token)
                     espera = min(20, 2**tentativa)
-                    if tentativa < 2:
+                    if tentativa < tentativas_max - 1:
                         time.sleep(espera)
                         continue
                     break
                 resultado = _interpretar_sucesso(
                     dados, provider, modelo, conf, inicio, tentativa, token
                 )
-                resultado["parametros"] = {
-                    k: v for k, v in _payload(mensagens, modelo, conf, provider).items()
-                    if k not in {"model", "messages"}
-                }
+                resultado["parametros"] = {k: v for k, v in _payload(mensagens, modelo, conf, response_format, provider=provider).items() if k not in {"model", "messages"}}
                 resultado["parametros"]["timeout_s"] = conf["timeout_s"]
+                if orcamento is not None:
+                    orcamento.consumir_tokens(
+                        resultado["tokens_entrada"], resultado["tokens_saida"]
+                    )
                 return resultado
-        if tentativa < 2:
+        if tentativa < tentativas_max - 1:
             time.sleep(espera)
     raise ErroAPI(
-        "Provedor temporariamente indisponível após 3 tentativas: "
+        f"Provedor temporariamente indisponível após {tentativas_max} tentativas: "
         + str(ultimo_erro)
     )
 
@@ -195,12 +249,12 @@ def _interpretar_sucesso(
     conf: dict,
     inicio: float,
     tentativa: int,
-    segredo: str = "",
+    token: str = "",
 ) -> dict[str, Any]:
     if not isinstance(dados, dict):
         raise ErroAPI("HTTP 200 sem objeto JSON na resposta")
     if "choices" not in dados:
-        raise ErroAPI("HTTP 200 sem choices: " + _erro_provedor(dados, segredo))
+        raise ErroAPI("HTTP 200 sem choices: " + _erro_provedor(dados, token))
     try:
         escolha = dados["choices"][0]
         texto = escolha["message"].get("content")
@@ -213,6 +267,14 @@ def _interpretar_sucesso(
             "pode ter esgotado o limite de tokens de raciocínio"
         )
     uso = dados.get("usage") or {}
+    parametros = {
+        "max_completion_tokens" if provider == "openai" else "max_tokens": conf["max_tokens"],
+        "timeout_s": conf["timeout_s"],
+    }
+    if conf.get("temperatura") is not None:
+        parametros["temperature"] = conf["temperatura"]
+    if provider == "openai" and conf.get("reasoning_effort") is not None:
+        parametros["reasoning_effort"] = conf["reasoning_effort"]
     return {
         "texto": texto.strip(),
         "provider": provider,
@@ -222,9 +284,5 @@ def _interpretar_sucesso(
         "tokens_saida": uso.get("completion_tokens"),
         "custo_usd": uso.get("cost", dados.get("cost")),
         "tentativas": tentativa + 1,
-        "parametros": {
-            "temperature": conf["temperatura"],
-            "max_tokens": conf["max_tokens"],
-            "timeout_s": conf["timeout_s"],
-        },
+        "parametros": parametros,
     }

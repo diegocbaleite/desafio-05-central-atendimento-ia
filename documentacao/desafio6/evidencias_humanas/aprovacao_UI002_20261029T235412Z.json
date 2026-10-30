@@ -1,0 +1,23 @@
+{
+  "natureza": "evidência de decisão humana já registrada; extração somente leitura, sem produzir decisão pelo agente",
+  "verificado_em_utc": "2026-10-29T23:56:44.059929+00:00",
+  "fonte": "resultados/revisao/revisoes.sqlite3",
+  "minuta_id": "M-UI-002-02774ae6",
+  "caso_id": "UI-002",
+  "estado_verificado": "aprovada",
+  "sha256_minuta": "7a50f63deea70afe5464d86bc82efad373083900b9dfe198e22adae11160446e",
+  "conteudo_confere_com_hash": true,
+  "decisoes": [
+    {
+      "decisao": "aprovar",
+      "status_anterior": "pendente",
+      "status_novo": "aprovada",
+      "operador": "Diego",
+      "justificativa": "Conferi os dados da solicitação e a orientação no DOC-02 v2.0, seção 1, página 1. A minuta está adequada à demonstração fictícia.",
+      "origem": "humana_interface",
+      "sha256_minuta": "7a50f63deea70afe5464d86bc82efad373083900b9dfe198e22adae11160446e",
+      "decidida_em": "2026-10-29T23:54:12.382759+00:00"
+    }
+  ],
+  "envio_automatico": false
+}

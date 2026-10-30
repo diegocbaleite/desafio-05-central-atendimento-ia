@@ -1,0 +1,27 @@
+{
+  "numero": 15,
+  "etapa": "sentimento",
+  "caso": "AV03",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:31.976010+00:00",
+  "payload_sha256": "1bc1d133a3049fd064cce2ea92f1bf5635bbc500bdeb0812cfd03ff59c481163",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV03\",\"polaridade\":\"positiva\",\"justificativa\":\"Elogia claramente o novo agendamento pelo portal como fácil e eficiente.\",\"requer_revisao\":false,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.456,
+    "tokens_entrada": 390,
+    "tokens_saida": 57,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1488.1
+}

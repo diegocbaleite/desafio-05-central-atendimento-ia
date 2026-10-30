@@ -1,0 +1,137 @@
+{
+  "pergunta_sha256": "2a005640c7b2f41b22c3860dc2ed7bbd8a12c063ee3e1033e208854186e4cc0b",
+  "status": "fundamentada",
+  "resposta": "A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. [DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1]",
+  "afirmacoes": [
+    {
+      "texto": "A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação.",
+      "chunk_ids": [
+        "DOC-02:v2.0:A:p1:s1:c0"
+      ],
+      "citacao_literal": "A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação.",
+      "cobertura": 0.78,
+      "sustentada": true,
+      "motivos": []
+    }
+  ],
+  "afirmacoes_removidas": [],
+  "fontes": [
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 1 — Segunda via de declarações e certidões",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1",
+      "trecho": "A solicitação de segunda via pode ser feita presencialmente na secretaria escolar ou pelo formulário digital fictício. A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. A certidão de conclusão de curso é emitida em até 20 dias úteis.",
+      "similaridade": 0.7399
+    }
+  ],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 1 — Segunda via de declarações e certidões",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1",
+      "trecho": "A solicitação de segunda via pode ser feita presencialmente na secretaria escolar ou pelo formulário digital fictício. A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. A certidão de conclusão de curso é emitida em até 20 dias úteis.",
+      "similaridade": 0.7399,
+      "posicao": 1,
+      "distancia_cosseno": 0.2601,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 3 — Documentos pendentes",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 3 — Documentos pendentes",
+      "trecho": "Quando faltar algum documento no ato da matrícula, a secretaria escolar registra a pendência na ficha e o estudante deve entregar o documento pendente em até 10 dias úteis após a data da matrícula. A matrícula com pendência não entregue nesse prazo fica sujeita a análise da coordenação.",
+      "similaridade": 0.5487,
+      "posicao": 2,
+      "distancia_cosseno": 0.4513,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-05:v1.0:A:p1:s3:c0",
+      "doc_id": "DOC-05",
+      "titulo": "Circular nº 07/2026 — Prazos de Resposta",
+      "versao": "1.0",
+      "secao": "Seção 3 — Data de registro",
+      "pagina": 1,
+      "local": "DOC-05 v1.0, Seção 3 — Data de registro, p. 1",
+      "trecho": "A data de registro da manifestação é a data em que o cidadão recebe o número de protocolo.",
+      "similaridade": 0.5119,
+      "posicao": 3,
+      "distancia_cosseno": 0.4881,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 2 — Transferência de turno",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 2 — Transferência de turno, p. 1",
+      "trecho": "O pedido de transferência de turno deve ser protocolado na secretaria escolar em até 15 dias corridos após o início das aulas e depende da existência de vaga no turno pretendido.",
+      "similaridade": 0.5076,
+      "posicao": 4,
+      "distancia_cosseno": 0.4924,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": false,
+    "resolvido": false,
+    "regra": null,
+    "divergencias": []
+  },
+  "encaminhar_revisao": false,
+  "motivos_revisao": [],
+  "gerador": {
+    "perfil": "extrativo_local",
+    "e_llm": false,
+    "tipo": "extrativo",
+    "provider": "local",
+    "modelo": "Gerador extrativo local determinístico (não-LLM)",
+    "tokens_entrada": "indisponível",
+    "tokens_saida": "indisponível",
+    "custo_usd": "indisponível",
+    "observacao": "execução local sem provedor: tokens e custo não se aplicam; latência medida"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.7399,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "resposta_livre_do_gerador_nao_exibida": "A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. [DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1]",
+  "latencia_ms": 24.3
+}

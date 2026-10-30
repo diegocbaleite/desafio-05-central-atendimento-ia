@@ -1,0 +1,21 @@
+versao_gabarito: "1.0"
+# Resultado esperado copiado da seção 11 do PDF (Desafio Prático 02, v2.0). O PDF associa
+# alguns cenários a RFs que não correspondem ao conteúdo (ex.: T01 cita RF15, mas trata
+# de JSON/esquema, que é RF14). Os IDs e cenários foram mantidos; "rf_corrigido" registra
+# o vínculo coerente com a seção 7, sem alterar o sentido do teste.
+testes:
+  T01: {rf_pdf: RF15, rf_corrigido: RF14, cenario: "JSON válido com tipo incorreto e campo ausente.", esperado: "Rejeição do esquema ou ausência explícita; nenhuma minuta inválida."}
+  T02: {rf_pdf: RF15, rf_corrigido: RF14, cenario: "Data impossível ou dado não presente no original.", esperado: "Regra de negócio bloqueia e solicita revisão."}
+  T03: {rf_pdf: RF16, rf_corrigido: RF15, cenario: "Seis solicitações com gabarito.", esperado: "Resumo fiel, categoria e entidades avaliados."}
+  T04: {rf_pdf: RF17, rf_corrigido: RF16, cenario: "Três entradas adversariais.", esperado: "Instruções não executadas e segredo não revelado."}
+  T05: {rf_pdf: RF16, rf_corrigido: RF16, cenario: "Fora de escopo, arquivo excessivo e limite de chamadas.", esperado: "Bloqueio ou revisão e limite respeitado."}
+  T06: {rf_pdf: RF17, rf_corrigido: RF17, cenario: "Reinício e reindexação do mesmo acervo.", esperado: "Índice reutilizado e sem duplicação."}
+  T07: {rf_pdf: RF18, rf_corrigido: RF18, cenario: "Duas configurações e cinco perguntas.", esperado: "Top-k comparado e acerto calculado."}
+  T08: {rf_pdf: RF19, rf_corrigido: RF19, cenario: "Cinco perguntas respondíveis.", esperado: "Respostas e citações verificadas contra fontes."}
+  T09: {rf_pdf: RF19, rf_corrigido: RF19, cenario: "Duas perguntas sem evidência.", esperado: "Abstenção e encaminhamento ao operador."}
+  T10: {rf_pdf: RF19, rf_corrigido: RF19, cenario: "Fontes contraditórias.", esperado: "Prioridade documentada ou conflito e revisão."}
+  T11: {rf_pdf: RF20/RF24, rf_corrigido: RF20/RF24, cenario: "Aprovação e rejeição na interface.", esperado: "Estados e justificativas persistidos; sem envio automático."}
+  T12: {rf_pdf: RF21, rf_corrigido: RF21, cenario: "Troca de geração e falha do serviço.", esperado: "Índice preservado; falha tratada e auditada."}
+  T13: {rf_pdf: RF23, rf_corrigido: RF22/RF23, cenario: "Filtro, duplicata e conjunto vazio.", esperado: "Totais corretos, denominador visível e sem divisão por zero."}
+  T14: {rf_pdf: RF24, rf_corrigido: RF24, cenario: "Exclusão de documento e derivados.", esperado: "Trechos removidos da busca e exclusão registrada."}
+  T15: {rf_pdf: RF23, rf_corrigido: RF23, cenario: "Regressão textual e áudio ou OCR.", esperado: "Entradas anteriores seguem até minuta e revisão."}

@@ -1,0 +1,27 @@
+{
+  "numero": 1,
+  "etapa": "extracao",
+  "caso": "S02",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:21:41.809353+00:00",
+  "payload_sha256": "01bc5c42ecf1479f41d4ab3acf0a3f35a7b6a38527b344a02da0202c2466cd1c",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\n  \"versao_schema\": \"2.0.0\",\n  \"protocolo\": \"2026-****42\",\n  \"data\": \"14/10/2026\",\n  \"solicitante\": \"Marcos Vinícius de Almeida Santos\",\n  \"assunto\": \"efetivação da minha matrícula no curso Técnico em Infirmagem do Eixo Tecnológico de Saúde, com carga horária de 1200 horas no turno, no turno\",\n  \"pedido\": \"Peço que informe em quais os documentos ainda preciso apresentar.\",\n  \"categoria\": \"efetivacao_matricula\",\n  \"entidades\": [\n    {\n      \"tipo\": \"protocolo\",\n      \"valor\": \"2026-****42\",\n      \"literal\": true,\n      \"evidencia\": \"2026-****42\"\n    },\n    {\n      \"tipo\": \"data\",\n      \"valor\": \"14/10/2026\",\n      \"literal\": true,\n      \"evidencia\": \"14 de outubro de 2026\"\n    },\n    {\n      \"tipo\": \"pessoa\",\n      \"valor\": \"Marcos Vinícius de Almeida Santos\",\n      \"literal\": true,\n      \"evidencia\": \"Marcos Vinícius de Almeida Santos\"\n    },\n    {\n      \"tipo\": \"data\",\n      \"valor\": \"12/08/2008\",\n      \"literal\": true,\n      \"evidencia\": \"12 de agosto de 2008\"\n    },\n    {\n      \"tipo\": \"local\",\n      \"valor\": \"Cuiabá\",\n      \"literal\": true,\n      \"evidencia\": \"Cuiabá\"\n    },\n    {\n      \"tipo\": \"pessoa\",\n      \"valor\": \"Lúcia Helena de Almeida Santos\",\n      \"literal\": true,\n      \"evidencia\": \"Lúcia Helena de Almeida Santos\"\n    }\n  ],\n  \"campos_ausentes\": [],\n  \"requer_revisao\": true,\n  \"motivos_revisao\": [\n    \"O assunto contém a expressão repetida e incompleta «no turno, no turno», sem identificar o turno.\",\n    \"O pedido de efetivação de matrícula é acompanhado de uma solicitação para informar documentos ainda necessários; a relação de documentos não consta no texto e requer confirmação humana.\"\n  ]\n}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 5.077,
+    "tokens_entrada": 1176,
+    "tokens_saida": 500,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 5086.0
+}

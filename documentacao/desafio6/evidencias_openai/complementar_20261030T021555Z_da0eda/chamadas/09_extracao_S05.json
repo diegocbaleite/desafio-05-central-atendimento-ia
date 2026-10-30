@@ -1,0 +1,27 @@
+{
+  "numero": 9,
+  "etapa": "extracao",
+  "caso": "S05",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:20.307930+00:00",
+  "payload_sha256": "8cd5fb0d24a57f307969d1b134dc1788cd884151d811cbc0c888482a8d5ca118",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"versao_schema\":\"2.0.0\",\"protocolo\":null,\"data\":null,\"solicitante\":null,\"assunto\":\"agendamento\",\"pedido\":\"Quero agendar um atendimento, mas não sei o número do protocolo.\",\"categoria\":\"agendamento\",\"entidades\":[],\"campos_ausentes\":[\"protocolo\",\"data\",\"solicitante\"],\"requer_revisao\":true,\"motivos_revisao\":[\"Campos ausentes: protocolo, data e solicitante.\"]}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.378,
+    "tokens_entrada": 812,
+    "tokens_saida": 113,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2384.6
+}

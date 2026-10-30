@@ -1,0 +1,138 @@
+{
+  "pergunta_sha256": "020f995514bf1888c77b5e391fca36b5ada7fcce636ca32f2b4d702e51a5d993",
+  "status": "fundamentada",
+  "resposta": "O atendimento presencial deve ser agendado com antecedência mínima de 2 dias úteis, pelo portal de serviços fictício ou pela central telefônica fictícia. [DOC-04 v1.0, Seção 1 — Antecedência do agendamento, p. 1]",
+  "afirmacoes": [
+    {
+      "texto": "O atendimento presencial deve ser agendado com antecedência mínima de 2 dias úteis, pelo portal de serviços fictício ou pela central telefônica fictícia.",
+      "chunk_ids": [
+        "DOC-04:v1.0:A:p1:s1:c0"
+      ],
+      "citacao_literal": "O atendimento presencial deve ser agendado com antecedência mínima de 2 dias úteis, pelo portal de serviços fictício ou pela central telefônica fictícia.",
+      "sustentada": true,
+      "motivos": []
+    }
+  ],
+  "afirmacoes_removidas": [],
+  "fontes": [
+    {
+      "chunk_id": "DOC-04:v1.0:A:p1:s1:c0",
+      "doc_id": "DOC-04",
+      "titulo": "Norma de Agendamento do Atendimento Presencial",
+      "versao": "1.0",
+      "secao": "Seção 1 — Antecedência do agendamento",
+      "pagina": 1,
+      "local": "DOC-04 v1.0, Seção 1 — Antecedência do agendamento, p. 1",
+      "trecho": "O atendimento presencial deve ser agendado com antecedência mínima de 2 dias úteis, pelo portal de serviços fictício ou pela central telefônica fictícia.",
+      "similaridade": 0.695
+    }
+  ],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-04:v1.0:A:p1:s1:c0",
+      "doc_id": "DOC-04",
+      "titulo": "Norma de Agendamento do Atendimento Presencial",
+      "versao": "1.0",
+      "secao": "Seção 1 — Antecedência do agendamento",
+      "pagina": 1,
+      "local": "DOC-04 v1.0, Seção 1 — Antecedência do agendamento, p. 1",
+      "trecho": "O atendimento presencial deve ser agendado com antecedência mínima de 2 dias úteis, pelo portal de serviços fictício ou pela central telefônica fictícia.",
+      "similaridade": 0.695,
+      "posicao": 1,
+      "distancia_cosseno": 0.305,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-07:v1.0:A:p0:s1:c0",
+      "doc_id": "DOC-07",
+      "titulo": "Comunicado Interno — Atendimento em Ponto Facultativo",
+      "versao": "1.0",
+      "secao": "Seção 1 — Comunicado",
+      "pagina": null,
+      "local": "DOC-07 v1.0, Seção 1 — Comunicado",
+      "trecho": "Nos dias de ponto facultativo, o atendimento presencial poderá ter horário reduzido, divulgado previamente no portal de serviços fictício.",
+      "similaridade": 0.5564,
+      "posicao": 2,
+      "distancia_cosseno": 0.4436,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-04:v1.0:A:p1:s2:c0",
+      "doc_id": "DOC-04",
+      "titulo": "Norma de Agendamento do Atendimento Presencial",
+      "versao": "1.0",
+      "secao": "Seção 2 — Horário do atendimento",
+      "pagina": 1,
+      "local": "DOC-04 v1.0, Seção 2 — Horário do atendimento, p. 1",
+      "trecho": "O atendimento presencial agendado ocorre de segunda a sexta-feira, das 8h às 17h, exceto feriados.",
+      "similaridade": 0.5247,
+      "posicao": 3,
+      "distancia_cosseno": 0.4753,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-03:v3.1:A:p0:s2:c0",
+      "doc_id": "DOC-03",
+      "titulo": "Guia de Atendimento ao Cidadão — Protocolo e Manifestações",
+      "versao": "3.1",
+      "secao": "Seção 2 — Acompanhamento do andamento",
+      "pagina": null,
+      "local": "DOC-03 v3.1, Seção 2 — Acompanhamento do andamento",
+      "trecho": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+      "similaridade": 0.5146,
+      "posicao": 4,
+      "distancia_cosseno": 0.4854,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": false,
+    "resolvido": false,
+    "regra": null,
+    "divergencias": []
+  },
+  "encaminhar_revisao": false,
+  "motivos_revisao": [],
+  "gerador": {
+    "perfil": "principal",
+    "e_llm": true,
+    "tipo": "llm",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "tokens_entrada": 1068,
+    "tokens_saida": 134,
+    "custo_usd": "indisponível",
+    "tentativas_json": 1,
+    "prompt": "prompts/d6/rag_resposta_v1.md",
+    "prompt_sha256": "5e98572c5ff622c887df448b3cb56fc5dadf09a0c448ea308aef09d30519ea73"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.695,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "resposta_livre_do_gerador_nao_exibida": "Agende com pelo menos 2 dias úteis de antecedência.",
+  "latencia_ms": 2363.6
+}

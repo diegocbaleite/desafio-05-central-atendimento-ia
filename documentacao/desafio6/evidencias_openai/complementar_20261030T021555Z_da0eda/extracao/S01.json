@@ -1,0 +1,296 @@
+{
+  "id": "S01",
+  "fonte": "dados/originais/entrada_texto.txt",
+  "modalidade": "texto",
+  "valida": true,
+  "baseline_regras": {
+    "categoria_ok": true,
+    "categoria_esperada": "efetivacao_matricula",
+    "categoria_obtida": "efetivacao_matricula",
+    "campos": {
+      "protocolo": {
+        "esperado": "2026-****42",
+        "obtido": "2026-****42",
+        "ok": true
+      },
+      "data": {
+        "esperado": "14/10/2026",
+        "obtido": "14/10/2026",
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": "Marcos Vinícius de Almeida Santos",
+        "obtido": "Marcos Vinícius de Almeida Santos",
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [
+          "lucia helena de almeida santos",
+          "marcos vinicius de almeida santos"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [
+          "cuiaba"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [
+          "01/02/2027",
+          "12/08/2008",
+          "14/10/2026"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [
+          "2026-****42"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 7,
+    "entidades_esperadas": 7,
+    "entidades_incorretas": 0
+  },
+  "resultado": {
+    "modo": "llm",
+    "ficha": {
+      "versao_schema": "2.0.0",
+      "protocolo": "2026-****42",
+      "data": "14/10/2026",
+      "solicitante": "Marcos Vinícius de Almeida Santos",
+      "assunto": "efetivação da minha matrícula no curso Técnico em Enfermagem",
+      "pedido": "Peço que me informem quais documentos ainda preciso apresentar.",
+      "categoria": "efetivacao_matricula",
+      "entidades": [
+        {
+          "tipo": "pessoa",
+          "valor": "Marcos Vinícius de Almeida Santos",
+          "literal": true,
+          "evidencia": "Marcos Vinícius de Almeida Santos"
+        },
+        {
+          "tipo": "data",
+          "valor": "14/10/2026",
+          "literal": true,
+          "evidencia": "Data: 14/10/2026"
+        },
+        {
+          "tipo": "protocolo",
+          "valor": "2026-****42",
+          "literal": true,
+          "evidencia": "Protocolo: 2026-****42"
+        },
+        {
+          "tipo": "data",
+          "valor": "12/08/2008",
+          "literal": true,
+          "evidencia": "nasci em 12/08/2008"
+        },
+        {
+          "tipo": "local",
+          "valor": "Cuiabá",
+          "literal": true,
+          "evidencia": "em Cuiabá"
+        },
+        {
+          "tipo": "data",
+          "valor": "01/02/2027",
+          "literal": true,
+          "evidencia": "início em 01/02/2027"
+        },
+        {
+          "tipo": "data",
+          "valor": "14/10/2026",
+          "literal": true,
+          "evidencia": "a data da matrícula é 14/10/2026"
+        },
+        {
+          "tipo": "pessoa",
+          "valor": "Lúcia Helena de Almeida Santos",
+          "literal": true,
+          "evidencia": "Lúcia Helena de Almeida Santos"
+        }
+      ],
+      "campos_ausentes": [],
+      "requer_revisao": false,
+      "motivos_revisao": []
+    },
+    "validacao": {
+      "versao_schema": "2.0.0",
+      "sintaxe_ok": true,
+      "esquema_ok": true,
+      "regras_ok": true,
+      "valido": true,
+      "erros_sintaxe": [],
+      "erros_esquema": [],
+      "erros_regras": [],
+      "objeto": {
+        "versao_schema": "2.0.0",
+        "protocolo": "2026-****42",
+        "data": "14/10/2026",
+        "solicitante": "Marcos Vinícius de Almeida Santos",
+        "assunto": "efetivação da minha matrícula no curso Técnico em Enfermagem",
+        "pedido": "Peço que me informem quais documentos ainda preciso apresentar.",
+        "categoria": "efetivacao_matricula",
+        "entidades": [
+          {
+            "tipo": "pessoa",
+            "valor": "Marcos Vinícius de Almeida Santos",
+            "literal": true,
+            "evidencia": "Marcos Vinícius de Almeida Santos"
+          },
+          {
+            "tipo": "data",
+            "valor": "14/10/2026",
+            "literal": true,
+            "evidencia": "Data: 14/10/2026"
+          },
+          {
+            "tipo": "protocolo",
+            "valor": "2026-****42",
+            "literal": true,
+            "evidencia": "Protocolo: 2026-****42"
+          },
+          {
+            "tipo": "data",
+            "valor": "12/08/2008",
+            "literal": true,
+            "evidencia": "nasci em 12/08/2008"
+          },
+          {
+            "tipo": "local",
+            "valor": "Cuiabá",
+            "literal": true,
+            "evidencia": "em Cuiabá"
+          },
+          {
+            "tipo": "data",
+            "valor": "01/02/2027",
+            "literal": true,
+            "evidencia": "início em 01/02/2027"
+          },
+          {
+            "tipo": "data",
+            "valor": "14/10/2026",
+            "literal": true,
+            "evidencia": "a data da matrícula é 14/10/2026"
+          },
+          {
+            "tipo": "pessoa",
+            "valor": "Lúcia Helena de Almeida Santos",
+            "literal": true,
+            "evidencia": "Lúcia Helena de Almeida Santos"
+          }
+        ],
+        "campos_ausentes": [],
+        "requer_revisao": false,
+        "motivos_revisao": []
+      }
+    },
+    "tentativas": [
+      {
+        "tentativa": 1,
+        "valido": true,
+        "erros": [],
+        "metadados": {
+          "provider": "openai",
+          "modelo": "gpt-6-luna",
+          "duracao_s": 6.204,
+          "tokens_entrada": 1011,
+          "tokens_saida": 523,
+          "custo_usd": null,
+          "tentativas": 1,
+          "parametros": {
+            "max_completion_tokens": 1200,
+            "timeout_s": 45,
+            "reasoning_effort": "none"
+          }
+        }
+      }
+    ],
+    "prompt": {
+      "arquivo": "prompts/d6/extracao_estruturada_v1.md",
+      "sha256": "d07372cf372562c1767173170223aac45c65e3603589e94fb085049e607ad6ad"
+    }
+  },
+  "comparacao": {
+    "categoria_ok": true,
+    "categoria_esperada": "efetivacao_matricula",
+    "categoria_obtida": "efetivacao_matricula",
+    "campos": {
+      "protocolo": {
+        "esperado": "2026-****42",
+        "obtido": "2026-****42",
+        "ok": true
+      },
+      "data": {
+        "esperado": "14/10/2026",
+        "obtido": "14/10/2026",
+        "ok": true
+      },
+      "solicitante": {
+        "esperado": "Marcos Vinícius de Almeida Santos",
+        "obtido": "Marcos Vinícius de Almeida Santos",
+        "ok": true
+      }
+    },
+    "campos_ausentes_ok": true,
+    "entidades": {
+      "pessoa": {
+        "corretas": [
+          "lucia helena de almeida santos",
+          "marcos vinicius de almeida santos"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "orgao": {
+        "corretas": [],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "local": {
+        "corretas": [
+          "cuiaba"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "data": {
+        "corretas": [
+          "01/02/2027",
+          "12/08/2008",
+          "14/10/2026"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      },
+      "protocolo": {
+        "corretas": [
+          "2026-****42"
+        ],
+        "omitidas": [],
+        "incorretas": []
+      }
+    },
+    "entidades_corretas": 7,
+    "entidades_esperadas": 7,
+    "entidades_incorretas": 0
+  }
+}

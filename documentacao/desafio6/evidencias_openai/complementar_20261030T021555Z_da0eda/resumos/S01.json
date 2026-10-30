@@ -1,0 +1,49 @@
+{
+  "id": "S01",
+  "executado": true,
+  "resumo": "Canal: E-mail. Protocolo: 2026-****42. Data: 14/10/2026. Solicitante: Marcos Vinícius de Almeida Santos. Assunto: matrícula no curso Técnico em Enfermagem, eixo Saúde, com 1.200 horas, no turno noturno, com início em 01/02/2027. Pede a efetivação da matrícula e informação sobre os documentos ainda necessários. Declara ciência das condições de cancelamento por faltas nos primeiros dias de aula.",
+  "metadados": {
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.259,
+    "tokens_entrada": 393,
+    "tokens_saida": 113,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    },
+    "prompt": "prompts/d6/resumo_v1.md",
+    "prompt_sha256": "ee21c87806ea22af504c35471d17b726d7ee75da06f75ddfb741005f2891ddfb"
+  },
+  "palavras_brutas": 56,
+  "truncado_pelo_produto": false,
+  "avaliacao": {
+    "fatos": [
+      {
+        "fato": "pede efetivação da matrícula",
+        "presente": true
+      },
+      {
+        "fato": "curso Técnico em Enfermagem",
+        "presente": true
+      },
+      {
+        "fato": "pergunta quais documentos faltam",
+        "presente": true
+      },
+      {
+        "fato": "protocolo 2026-****42",
+        "presente": true
+      }
+    ],
+    "fatos_omitidos": [],
+    "fatos_sem_suporte": [
+      "1.200"
+    ],
+    "resumo_palavras": 56,
+    "resumo_dentro_limite": true
+  }
+}

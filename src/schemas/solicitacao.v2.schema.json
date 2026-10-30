@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "solicitacao.v2.0.0",
+  "title": "Contrato de extração de solicitação — Desafio 6 (RF14)",
+  "description": "Ausência = null + nome em campos_ausentes. A interface exibe 'não localizado'. Conformidade ao esquema não garante veracidade: regras de negócio em src/contrato.py conferem os valores com o original.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "versao_schema",
+    "protocolo",
+    "data",
+    "solicitante",
+    "assunto",
+    "pedido",
+    "categoria",
+    "entidades",
+    "campos_ausentes",
+    "requer_revisao",
+    "motivos_revisao"
+  ],
+  "properties": {
+    "versao_schema": {"const": "2.0.0"},
+    "protocolo": {"type": ["string", "null"], "pattern": "^20\\d{2}[.-]\\d{6}$"},
+    "data": {"type": ["string", "null"], "pattern": "^\\d{2}/\\d{2}/\\d{4}$"},
+    "solicitante": {"type": ["string", "null"], "minLength": 3, "maxLength": 120},
+    "assunto": {"type": ["string", "null"], "minLength": 1, "maxLength": 200},
+    "pedido": {"type": ["string", "null"], "minLength": 1, "maxLength": 1200},
+    "categoria": {
+      "enum": [
+        "segunda_via_documento",
+        "andamento_processo",
+        "atualizacao_cadastral",
+        "agendamento",
+        "reclamacao",
+        "efetivacao_matricula",
+        "outros",
+        "revisao"
+      ]
+    },
+    "entidades": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tipo", "valor", "literal", "evidencia"],
+        "properties": {
+          "tipo": {"enum": ["pessoa", "orgao", "local", "data", "protocolo"]},
+          "valor": {"type": "string", "minLength": 1},
+          "literal": {"type": "boolean"},
+          "evidencia": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "campos_ausentes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["protocolo", "data", "solicitante", "assunto", "pedido"]}
+    },
+    "requer_revisao": {"type": "boolean"},
+    "motivos_revisao": {"type": "array", "items": {"type": "string"}}
+  }
+}

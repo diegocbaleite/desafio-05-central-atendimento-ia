@@ -1,0 +1,26 @@
+{
+  "fora_de_escopo": {
+    "decisao": "bloquear",
+    "motivos": [
+      {
+        "codigo": "fora_de_escopo",
+        "camada": "escopo",
+        "decisao": "bloquear",
+        "detalhe": "sem relação com os serviços de atendimento do acervo"
+      }
+    ],
+    "sinais": {
+      "escopo_lexico": false,
+      "similaridade_acervo": 0.0824,
+      "padroes_injecao": 0
+    }
+  },
+  "arquivo_excessivo": "rejeitado: Arquivo acima do limite de 2 MiB",
+  "tipo_nao_permitido": "rejeitado: Formato não permitido: .xlsx",
+  "limite_chamadas": {
+    "resultado": "interrompido: Orçamento de chamadas esgotado (1/1)",
+    "chamadas_realizadas": 1,
+    "maximo": 1,
+    "natureza": "transporte simulado; a correção de esquema seria a 2ª chamada"
+  }
+}

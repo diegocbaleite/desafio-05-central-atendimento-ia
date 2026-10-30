@@ -1,0 +1,20 @@
+{
+  "id": "AV04",
+  "valida": true,
+  "esperado": {
+    "polaridade": "negativa",
+    "requer_revisao": false
+  },
+  "resultado": {
+    "id": "AV04",
+    "polaridade": "negativa",
+    "justificativa": "Relata longa espera, falta de resposta e avaliação explicitamente negativa.",
+    "requer_revisao": false,
+    "confianca_declarada": "alta",
+    "metodo": "llm:openai:gpt-6-luna",
+    "observacao_confianca": "estimativa declarada pelo modelo, não calibrada; não é probabilidade de acerto",
+    "prompt_sha256": "a2423da60d1b6f294d02c0d0a2b6ac0b56680a7f9732ead495f5efb4f45a9a25"
+  },
+  "rotulo_ok": true,
+  "revisao_ok": true
+}

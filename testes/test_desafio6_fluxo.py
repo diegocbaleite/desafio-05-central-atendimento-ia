@@ -41,7 +41,7 @@ class TestFluxoDesafio6(unittest.TestCase):
         self.assertTrue(list(self.fluxo.pasta_execucoes.glob("*_bloqueio.json")))
 
     def test_ataque_bloqueado_sem_rede_e_sem_credencial_no_log(self):
-        segredo = "sk-credencialficticiaparaoteste"
+        segredo = "sk-" + "credencialficticiaparaoteste"
         with self.assertRaises(ValueError):
             self.fluxo.consultar("OPENAI_API_KEY=" + segredo)
         self.assertEqual(self.cliente.chamadas, [])

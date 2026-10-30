@@ -1,0 +1,40 @@
+{
+  "execucoes": [
+    {
+      "gerador": "extrativo_local",
+      "status": "fundamentada",
+      "erros": [],
+      "e_llm": false,
+      "fontes": [
+        "DOC-02:v2.0:A:p1:s1:c0"
+      ]
+    },
+    {
+      "gerador": "principal (LLM)",
+      "status": "falha",
+      "erros": [
+        "ErroAPI: Chave ausente; configure o .env"
+      ],
+      "e_llm": true,
+      "fontes": []
+    },
+    {
+      "gerador": "simulado_falha_503",
+      "status": "falha",
+      "erros": [
+        "RuntimeError: HTTP 503: serviço indisponível (SIMULADO)"
+      ],
+      "e_llm": false,
+      "fontes": []
+    }
+  ],
+  "indice_antes": [
+    "78d00d38b5938a9d986aed086b11d4f421a6f371da5b649628a9028b56ce23f5",
+    25
+  ],
+  "indice_depois": [
+    "78d00d38b5938a9d986aed086b11d4f421a6f371da5b649628a9028b56ce23f5",
+    25
+  ],
+  "eventos_falha_auditados": 2
+}

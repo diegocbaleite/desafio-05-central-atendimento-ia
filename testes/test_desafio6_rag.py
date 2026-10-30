@@ -138,7 +138,7 @@ class TestIndice(unittest.TestCase):
         self.indice.indexar(self.catalogo)
         chamadas = self.cliente.embeddings_chamadas
         with self.assertRaisesRegex(ValueError, "guardrails"):
-            self.indice.buscar("Atendimento OPENAI_API_KEY=sk-ficticio123456789")
+            self.indice.buscar("Atendimento OPENAI_API_KEY=" + "sk-" + "ficticio123456789")
         self.assertEqual(self.cliente.embeddings_chamadas, chamadas)
 
     def test_chunks_tem_sobreposicao_literal_e_validam_parametros(self):

@@ -58,3 +58,14 @@ Desktop.ini
 # Arquivos locais legados
 Python
 Desafio_01-Pratico_IA_Generativa_Aulas_01_a_07.docx.pdf
+# Desafio 6: artefatos locais reproduzíveis ou com decisões/resultados da máquina
+indice/
+resultados/avaliacao_d6/
+resultados/rag/
+resultados/revisao/
+resultados/sentimentos/
+resultados/multimodal/*
+!resultados/multimodal/referencias/
+dados/acervo/enviados/
+entrega/
+*.sqlite3

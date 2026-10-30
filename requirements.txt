@@ -4,5 +4,8 @@ jsonschema>=4.20,<5
 python-dotenv>=1,<2
 pillow>=10,<13
 pytesseract>=0.3.10,<0.4
+# Desafio 6 (RF14–RF24)
 pypdf>=6,<7
+fastembed>=0.7,<1
+chromadb>=1.0,<2
 streamlit>=1.50,<2

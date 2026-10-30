@@ -1,0 +1,27 @@
+{
+  "numero": 10,
+  "etapa": "resumo",
+  "caso": "S05",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:22.696953+00:00",
+  "payload_sha256": "41e3180885e3ecd81282688883d1d7720fb95eb4e1bd67744de6cc38ae437faa",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "Canal: texto curto fictício. Data: não localizado. Solicitante: não localizado. Assunto: agendamento. Pedido: agendar um atendimento; a pessoa não sabe o número do protocolo. Protocol: não localizado.",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.678,
+    "tokens_entrada": 194,
+    "tokens_saida": 50,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1683.5
+}

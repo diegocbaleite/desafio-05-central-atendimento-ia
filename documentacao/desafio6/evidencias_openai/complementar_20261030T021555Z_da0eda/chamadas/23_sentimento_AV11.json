@@ -1,0 +1,27 @@
+{
+  "numero": 23,
+  "etapa": "sentimento",
+  "caso": "AV11",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:44.519922+00:00",
+  "payload_sha256": "038ebc0bf8ea7abb9abb19792f20bff3afcbb1af52770b764b3e7f436d84201f",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV11\",\"polaridade\":\"indeterminada\",\"justificativa\":\"Elogios aparentes acompanham uma espera de três horas, indicando provável ironia; requer revisão.\",\"requer_revisao\":true,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 2.424,
+    "tokens_entrada": 391,
+    "tokens_saida": 64,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 2448.4
+}

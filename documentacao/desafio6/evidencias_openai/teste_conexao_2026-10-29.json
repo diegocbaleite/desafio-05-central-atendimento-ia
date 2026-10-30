@@ -1,0 +1,28 @@
+{
+  "data_utc": "2026-10-29T22:07:42.831911+00:00",
+  "natureza": "teste real de conexão; mensagem técnica fictícia, sem acervo",
+  "provider": "openai",
+  "modelo_solicitado": "gpt-6-luna",
+  "status": "sucesso",
+  "modelo_retornado": "gpt-6-luna",
+  "texto": "{\"status\":\"ok\"}",
+  "tokens_entrada": 55,
+  "tokens_saida": 13,
+  "duracao_s": 2.846,
+  "parametros": {
+    "max_completion_tokens": 64,
+    "timeout_s": 45,
+    "reasoning_effort": "none"
+  },
+  "orcamento": {
+    "chamadas": 1,
+    "max_chamadas": 1,
+    "tokens": 68,
+    "max_tokens": 1000,
+    "chamadas_sem_tokens_informados": 0,
+    "motivos": [
+      "openai:gpt-6-luna:tentativa1"
+    ]
+  },
+  "limite_da_evidencia": "Comprova autenticação, conexão, modelo e JSON restrito; não é avaliação do RAG com acervo nem revisão humana."
+}

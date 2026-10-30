@@ -1,0 +1,138 @@
+{
+  "pergunta_sha256": "a2eba08543103bafb340fb52660d119835c66ca51f8a3a0338a7dd2d9a77a696",
+  "status": "fundamentada",
+  "resposta": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante. [DOC-01 v1.2, Seção 4 — Cancelamento por faltas]",
+  "afirmacoes": [
+    {
+      "texto": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+      "chunk_ids": [
+        "DOC-01:v1.2:A:p0:s4:c0"
+      ],
+      "citacao_literal": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+      "sustentada": true,
+      "motivos": []
+    }
+  ],
+  "afirmacoes_removidas": [],
+  "fontes": [
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s4:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 4 — Cancelamento por faltas",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 4 — Cancelamento por faltas",
+      "trecho": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+      "similaridade": 0.7334
+    }
+  ],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s4:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 4 — Cancelamento por faltas",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 4 — Cancelamento por faltas",
+      "trecho": "A matrícula será automaticamente cancelada se o estudante faltar, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+      "similaridade": 0.7334,
+      "posicao": 1,
+      "distancia_cosseno": 0.2666,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 3 — Documentos pendentes",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 3 — Documentos pendentes",
+      "trecho": "Quando faltar algum documento no ato da matrícula, a secretaria escolar registra a pendência na ficha e o estudante deve entregar o documento pendente em até 10 dias úteis após a data da matrícula. A matrícula com pendência não entregue nesse prazo fica sujeita a análise da coordenação.",
+      "similaridade": 0.6273,
+      "posicao": 2,
+      "distancia_cosseno": 0.3727,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-04:v1.0:A:p2:s3:c0",
+      "doc_id": "DOC-04",
+      "titulo": "Norma de Agendamento do Atendimento Presencial",
+      "versao": "1.0",
+      "secao": "Seção 3 — Remarcação e cancelamento",
+      "pagina": 2,
+      "local": "DOC-04 v1.0, Seção 3 — Remarcação e cancelamento, p. 2",
+      "trecho": "O agendamento pode ser remarcado ou cancelado até 24 horas antes do horário marcado. A ausência sem cancelamento impede novo agendamento por 7 dias corridos.",
+      "similaridade": 0.5354,
+      "posicao": 3,
+      "distancia_cosseno": 0.4646,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 2 — Transferência de turno",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 2 — Transferência de turno, p. 1",
+      "trecho": "O pedido de transferência de turno deve ser protocolado na secretaria escolar em até 15 dias corridos após o início das aulas e depende da existência de vaga no turno pretendido.",
+      "similaridade": 0.4561,
+      "posicao": 4,
+      "distancia_cosseno": 0.5439,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": false,
+    "resolvido": false,
+    "regra": null,
+    "divergencias": []
+  },
+  "encaminhar_revisao": false,
+  "motivos_revisao": [],
+  "gerador": {
+    "perfil": "principal",
+    "e_llm": true,
+    "tipo": "llm",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "tokens_entrada": 1134,
+    "tokens_saida": 237,
+    "custo_usd": "indisponível",
+    "tentativas_json": 1,
+    "prompt": "prompts/d6/rag_resposta_v1.md",
+    "prompt_sha256": "5e98572c5ff622c887df448b3cb56fc5dadf09a0c448ea308aef09d30519ea73"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.7334,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "resposta_livre_do_gerador_nao_exibida": "A matrícula é cancelada automaticamente quando o estudante falta, sem justificativa comprovada, nos dois primeiros dias de aula consecutivos ou em três dias de aula, consecutivos ou não, dentro dos dez primeiros dias de aula. A justificativa deve ser entregue na secretaria escolar acompanhada de comprovante.",
+  "latencia_ms": 2784.0
+}

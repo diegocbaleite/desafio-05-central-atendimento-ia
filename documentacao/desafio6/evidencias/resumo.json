@@ -1,0 +1,158 @@
+{
+  "id_execucao": "20261027T194525Z_43f775",
+  "data_utc": "2026-10-27T19:45:40.133527+00:00",
+  "duracao_s": 15.0,
+  "gerador": {
+    "perfil": "extrativo_local",
+    "e_llm": false
+  },
+  "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "indice": {
+    "adicionados": [
+      "DOC-01",
+      "DOC-02",
+      "DOC-03",
+      "DOC-04",
+      "DOC-05",
+      "DOC-06",
+      "DOC-07"
+    ],
+    "atualizados": [],
+    "sem_alteracao": [],
+    "ignorados_excluidos": [],
+    "trechos_antes": 0,
+    "trechos_depois": 25,
+    "colecao": "acervo_A"
+  },
+  "metricas": {
+    "rf15": {
+      "acuracia_categoria": {
+        "numerador": 6,
+        "denominador": 6,
+        "valor": 1.0,
+        "texto": "6/6 (100,0%)"
+      },
+      "campos_criticos_corretos": {
+        "numerador": 18,
+        "denominador": 18,
+        "valor": 1.0,
+        "texto": "18/18 (100,0%)"
+      },
+      "campos_ausentes_corretos": {
+        "numerador": 6,
+        "denominador": 6,
+        "valor": 1.0,
+        "texto": "6/6 (100,0%)"
+      },
+      "entidades_recall": {
+        "numerador": 20,
+        "denominador": 20,
+        "valor": 1.0,
+        "texto": "20/20 (100,0%)"
+      },
+      "entidades_incorretas": 0,
+      "fatos_essenciais_presentes": {
+        "numerador": 17,
+        "denominador": 17,
+        "valor": 1.0,
+        "texto": "17/17 (100,0%)"
+      },
+      "resumos_com_fato_sem_suporte": 0,
+      "resumos_dentro_de_100_palavras": {
+        "numerador": 6,
+        "denominador": 6,
+        "valor": 1.0,
+        "texto": "6/6 (100,0%)"
+      },
+      "decisao_correta": {
+        "numerador": 6,
+        "denominador": 6,
+        "valor": 1.0,
+        "texto": "6/6 (100,0%)"
+      }
+    },
+    "ataques": {
+      "ATQ01": "revisar",
+      "ATQ02": "fundamentada",
+      "ATQ03": "bloquear"
+    },
+    "rf18": {
+      "A": {
+        "numerador": 5,
+        "denominador": 5,
+        "valor": 1.0,
+        "texto": "5/5 (100,0%)"
+      },
+      "B": {
+        "numerador": 5,
+        "denominador": 5,
+        "valor": 1.0,
+        "texto": "5/5 (100,0%)"
+      },
+      "escolhida": "A"
+    },
+    "rf19": {
+      "respondiveis_fundamentadas_com_fonte_correta": {
+        "numerador": 5,
+        "denominador": 5,
+        "valor": 1.0,
+        "texto": "5/5 (100,0%)"
+      },
+      "respostas_com_todas_afirmacoes_sustentadas": {
+        "numerador": 5,
+        "denominador": 5,
+        "valor": 1.0,
+        "texto": "5/5 (100,0%)"
+      },
+      "fatos_essenciais_nas_respondiveis": {
+        "numerador": 12,
+        "denominador": 12,
+        "valor": 1.0,
+        "texto": "12/12 (100,0%)"
+      },
+      "abstencao_correta": {
+        "numerador": 2,
+        "denominador": 2,
+        "valor": 1.0,
+        "texto": "2/2 (100,0%)"
+      },
+      "caso_contraditorio": {
+        "P08": {
+          "status": "conflito_de_fontes",
+          "revisao": true,
+          "docs": [
+            "DOC-03",
+            "DOC-05"
+          ]
+        }
+      },
+      "observacao": "gerador extrativo copia frases literais: a sustentação de 100% é esperada por construção e NÃO mede um LLM"
+    },
+    "rf22": {
+      "acuracia": {
+        "numerador": 12,
+        "denominador": 12,
+        "valor": 1.0,
+        "texto": "12/12 (100,0%)"
+      },
+      "incertos_sinalizados": {
+        "numerador": 3,
+        "denominador": 3,
+        "valor": 1.0,
+        "texto": "3/3 (100,0%)"
+      },
+      "por_polaridade": {
+        "positiva": "3/12 (25,0%)",
+        "negativa": "3/12 (25,0%)",
+        "neutra": "3/12 (25,0%)",
+        "indeterminada": "3/12 (25,0%)"
+      }
+    }
+  },
+  "matriz_situacao": {
+    "aprovado": 14,
+    "parcial": 1
+  },
+  "erros_de_etapa": [],
+  "aviso": "Resultados locais/simulados identificados em cada linha; nenhuma chamada a LLM real foi bem-sucedida sem credencial."
+}

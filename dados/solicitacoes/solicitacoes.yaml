@@ -1,0 +1,9 @@
+# Seis solicitações fictícias do Desafio 6: quatro completas, uma incompleta e uma ambígua.
+# Entradas reaproveitadas do Desafio 01 são lidas sem modificação (texto, transcrição STT conferida).
+solicitacoes:
+  - {id: S01, tipo: completa, modalidade: texto, arquivo: dados/originais/entrada_texto.txt, reaproveitada_de: T01}
+  - {id: S02, tipo: completa, modalidade: audio, arquivo: resultados/multimodal/referencias/referencia_audio_conferida.txt, reaproveitada_de: A01, observacao: "transcrição STT preservada do Desafio 01 (áudio dados/originais/entrada_audio.mp3); não houve nova transcrição"}
+  - {id: S03, tipo: completa, modalidade: texto, arquivo: testes/fixtures/completa.txt, reaproveitada_de: fixture completa}
+  - {id: S04, tipo: completa, modalidade: texto, arquivo: dados/solicitacoes/S04_andamento_transferencia.txt}
+  - {id: S05, tipo: incompleta, modalidade: texto, arquivo: testes/fixtures/lacunas.txt, reaproveitada_de: X02}
+  - {id: S06, tipo: ambigua, modalidade: texto, arquivo: dados/solicitacoes/S06_ambigua.txt}

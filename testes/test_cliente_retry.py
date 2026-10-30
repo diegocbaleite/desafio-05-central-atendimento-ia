@@ -50,8 +50,9 @@ class TestRateLimit(unittest.TestCase):
             json=lambda: {"error":{"code":429,"message":"Provider returned error"}})
         with self.assertRaisesRegex(ErroAPI,"429"):
             conversar([{"role":"user","content":"teste"}],provider="openrouter")
-        self.assertEqual(post.call_count,3)
-        self.assertEqual(sleep.call_count,2)
+        # Desafio 6 / RF16: no máximo uma repetição (antes eram 3 tentativas).
+        self.assertEqual(post.call_count,2)
+        self.assertEqual(sleep.call_count,1)
 
     @patch("src.cliente.chave", return_value="token-de-teste")
     @patch("src.cliente.time.sleep")

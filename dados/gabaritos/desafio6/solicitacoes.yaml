@@ -1,0 +1,124 @@
+versao_gabarito: "1.0"
+categorias_documentadas:
+  segunda_via_documento: "Pedido de segunda via de certidão, declaração ou documento"
+  andamento_processo: "Consulta de andamento ou acompanhamento de solicitação/processo"
+  atualizacao_cadastral: "Alteração de dados cadastrais"
+  agendamento: "Agendar, remarcar ou cancelar atendimento"
+  reclamacao: "Registro de reclamação sobre serviço ou atendimento"
+  efetivacao_matricula: "Efetivação de matrícula e documentos relacionados"
+  outros: "Pedido identificável, porém fora das categorias acima"
+  revisao: "Pedido ambíguo ou sem objeto identificável; exige leitura humana antes de classificar"
+decisoes:
+  permitir: "Entrada no escopo, ficha válida e sem campo crítico ausente; minuta segue como PENDENTE"
+  revisar: "Minuta pode ser preparada, mas exige atenção humana específica (lacuna, ambiguidade, STT/OCR, suspeita)"
+  bloquear: "Nenhuma minuta é gerada (estrutura inválida, fora de escopo, ataque ou segredo)"
+solicitacoes:
+  S01:
+    protocolo: "2026-000142"
+    data: "14/10/2026"
+    solicitante: "Marcos Vinícius de Almeida Santos"
+    assunto_contem: ["matrícula"]
+    pedido_contem: ["efetivação", "documentos"]
+    categoria: efetivacao_matricula
+    campos_ausentes: []
+    entidades:
+      pessoa: ["Marcos Vinícius de Almeida Santos", "Lúcia Helena de Almeida Santos"]
+      orgao: []
+      local: ["Cuiabá"]
+      data: ["14/10/2026", "12/08/2008", "01/02/2027"]
+      protocolo: ["2026-000142"]
+    fatos_essenciais:
+      - {fato: "pede efetivação da matrícula", termos: ["matrícula", "matricula"]}
+      - {fato: "curso Técnico em Enfermagem", termos: ["Enfermagem"]}
+      - {fato: "pergunta quais documentos faltam", termos: ["documentos"]}
+      - {fato: "protocolo 2026-000142", termos: ["2026-000142"]}
+    decisao: permitir
+    justificativa: "Texto completo com rótulos de protocolo e data; assunto não rotulado, derivado do pedido."
+  S02:
+    protocolo: "2026-000142"
+    data: "14/10/2026"
+    solicitante: "Marcos Vinícius de Almeida Santos"
+    assunto_contem: ["matrícula"]
+    pedido_contem: ["efetivação", "documentos"]
+    categoria: efetivacao_matricula
+    campos_ausentes: []
+    entidades:
+      pessoa: ["Marcos Vinícius de Almeida Santos", "Lúcia Helena de Almeida Santos"]
+      orgao: []
+      local: ["Cuiabá"]
+      data: ["14/10/2026", "12/08/2008"]
+      protocolo: ["2026-000142"]
+    fatos_essenciais:
+      - {fato: "pede efetivação da matrícula", termos: ["matrícula", "matricula"]}
+      - {fato: "pergunta quais documentos faltam", termos: ["documentos"]}
+      - {fato: "protocolo 2026-000142", termos: ["2026-000142"]}
+    decisao: revisar
+    justificativa: "Origem STT (data falada por extenso e erros como 'Infirmagem'); campos críticos exigem conferência humana."
+  S03:
+    protocolo: "2026.000123"
+    data: "02/10/2026"
+    solicitante: "Maria Fictícia Albuquerque"
+    assunto_contem: ["segunda via"]
+    pedido_contem: ["segunda via"]
+    categoria: segunda_via_documento
+    campos_ausentes: []
+    entidades:
+      pessoa: ["Maria Fictícia Albuquerque"]
+      orgao: []
+      local: []
+      data: ["02/10/2026"]
+      protocolo: ["2026.000123"]
+    fatos_essenciais:
+      - {fato: "segunda via", termos: ["segunda via"]}
+      - {fato: "certidão", termos: ["certidão", "certidao"]}
+      - {fato: "protocolo 2026.000123", termos: ["2026.000123"]}
+    decisao: permitir
+    justificativa: "Formulário com todos os rótulos."
+  S04:
+    protocolo: "2026-000377"
+    data: "20/10/2026"
+    solicitante: "Joana Exemplo Ferreira"
+    assunto_contem: ["transferência de turno"]
+    pedido_contem: ["andamento"]
+    categoria: andamento_processo
+    campos_ausentes: []
+    entidades:
+      pessoa: ["Joana Exemplo Ferreira"]
+      orgao: ["Escola Técnica Estadual de Cuiabá"]
+      local: []
+      data: ["20/10/2026"]
+      protocolo: ["2026-000377"]
+    fatos_essenciais:
+      - {fato: "consulta de andamento", termos: ["andamento"]}
+      - {fato: "transferência de turno", termos: ["transferência de turno", "transferencia de turno"]}
+      - {fato: "protocolo 2026-000377", termos: ["2026-000377"]}
+    decisao: permitir
+    justificativa: "Pedido de andamento; o objeto (transferência de turno) não muda a categoria."
+  S05:
+    protocolo: null
+    data: null
+    solicitante: null
+    assunto_contem: ["agendamento"]
+    pedido_contem: ["agendar"]
+    categoria: agendamento
+    campos_ausentes: [protocolo, data, solicitante]
+    entidades: {pessoa: [], orgao: [], local: [], data: [], protocolo: []}
+    fatos_essenciais:
+      - {fato: "quer agendar atendimento", termos: ["agendar", "agendamento"]}
+      - {fato: "não sabe o número do protocolo", termos: ["protocolo"]}
+    decisao: revisar
+    justificativa: "Incompleta: sem protocolo, data e solicitante; ausências devem aparecer como null e 'não localizado'."
+  S06:
+    protocolo: null
+    data: null
+    solicitante: null
+    assunto_contem: []
+    pedido_contem: []
+    categoria: revisao
+    campos_ausentes: [protocolo, data, solicitante, assunto, pedido]
+    entidades: {pessoa: [], orgao: [], local: [], data: [], protocolo: []}
+    fatos_essenciais:
+      - {fato: "problema com documento não especificado", termos: ["documento"]}
+      - {fato: "não recebeu retorno anterior", termos: ["retorn", "ninguém", "ninguem"]}
+    decisao: revisar
+    justificativa: "Ambígua: 'aquele problema do documento' não identifica pedido, documento nem protocolo; não completar por suposição."

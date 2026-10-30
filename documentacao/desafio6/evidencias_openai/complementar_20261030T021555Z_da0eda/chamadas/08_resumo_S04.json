@@ -1,0 +1,27 @@
+{
+  "numero": 8,
+  "etapa": "resumo",
+  "caso": "S04",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:18.537873+00:00",
+  "payload_sha256": "0e53b58a39fdd08039744b71c5cb0e92cb8db639f01139bdfd2ced431dc7277c",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "Protocolo 2026-****77, de 20/10/2026, recebido por formulário digital fictício. Solicitante: Joana Exemplo Ferreira. Assunto: andamento de pedido de transferência de turno. Solicita informações sobre o andamento do pedido protocolado na Escola Técnica Estadual de Cuiabá e orientações sobre como acompanhar a solicitação.",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.76,
+    "tokens_entrada": 249,
+    "tokens_saida": 78,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1765.0
+}

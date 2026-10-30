@@ -1,0 +1,43 @@
+{
+  "id": "S03",
+  "executado": true,
+  "resumo": "Solicitação pelo formulário digital fictício, protocolo 2026.****23, em 02/10/2026. Solicitante: Maria Fictícia Albuquerque. Assunto: segunda via de certidão. Pedido: emissão de segunda via da certidão.",
+  "metadados": {
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.628,
+    "tokens_entrada": 231,
+    "tokens_saida": 57,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    },
+    "prompt": "prompts/d6/resumo_v1.md",
+    "prompt_sha256": "ee21c87806ea22af504c35471d17b726d7ee75da06f75ddfb741005f2891ddfb"
+  },
+  "palavras_brutas": 25,
+  "truncado_pelo_produto": false,
+  "avaliacao": {
+    "fatos": [
+      {
+        "fato": "segunda via",
+        "presente": true
+      },
+      {
+        "fato": "certidão",
+        "presente": true
+      },
+      {
+        "fato": "protocolo 2026.****23",
+        "presente": true
+      }
+    ],
+    "fatos_omitidos": [],
+    "fatos_sem_suporte": [],
+    "resumo_palavras": 25,
+    "resumo_dentro_limite": true
+  }
+}

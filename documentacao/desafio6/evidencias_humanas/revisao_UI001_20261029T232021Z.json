@@ -1,0 +1,23 @@
+{
+  "natureza": "evidência de decisão humana já registrada; extração somente leitura, sem produzir decisão pelo agente",
+  "verificado_em_utc": "2026-10-29T23:23:48.676182+00:00",
+  "fonte": "resultados/revisao/revisoes.sqlite3",
+  "minuta_id": "M-UI-001-6ee39a04",
+  "caso_id": "UI-001",
+  "estado_verificado": "revisar",
+  "sha256_minuta": "34ea969547aa7bd0e06a04c240c3f5f7d208ee4737d3fcd3212b6d2ee3197b95",
+  "conteudo_confere_com_hash": true,
+  "decisoes": [
+    {
+      "decisao": "revisar",
+      "status_anterior": "pendente",
+      "status_novo": "revisar",
+      "operador": "Diego",
+      "justificativa": "A minuta ficou sem orientação fundamentada. Solicito complementação e conferência das fontes.",
+      "origem": "humana_interface",
+      "sha256_minuta": "34ea969547aa7bd0e06a04c240c3f5f7d208ee4737d3fcd3212b6d2ee3197b95",
+      "decidida_em": "2026-10-29T23:20:21.533604+00:00"
+    }
+  ],
+  "envio_automatico": false
+}

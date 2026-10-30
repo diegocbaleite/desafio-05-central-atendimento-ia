@@ -1,0 +1,69 @@
+# Acervo institucional FICTÍCIO do Desafio 6 (Desafio Prático 02).
+# Metadados declarados ANTES da indexação. prioridade: número maior prevalece somente
+# quando os dois documentos estão vigentes; substitui: lista explícita de documentos revogados.
+# Sem prioridade diferente nem substituição explícita, divergência = conflito -> revisão humana.
+documentos:
+  - id: DOC-01
+    titulo: Manual de Matrícula das Escolas Técnicas Fictícias
+    versao: "1.2"
+    tema: secretaria_escolar
+    formato: txt
+    arquivo: dados/acervo/DOC-01_manual_matricula.txt
+    vigencia_inicio: "2026-07-01"
+    prioridade: 1
+    substitui: []
+  - id: DOC-02
+    titulo: Perguntas Frequentes da Secretaria Escolar
+    versao: "2.0"
+    tema: secretaria_escolar
+    formato: pdf
+    arquivo: dados/acervo/DOC-02_faq_secretaria_escolar.pdf
+    vigencia_inicio: "2026-07-01"
+    prioridade: 1
+    substitui: []
+  - id: DOC-03
+    titulo: Guia de Atendimento ao Cidadão — Protocolo e Manifestações
+    versao: "3.1"
+    tema: atendimento_cidadao
+    formato: txt
+    arquivo: dados/acervo/DOC-03_guia_protocolo_manifestacoes.txt
+    vigencia_inicio: "2026-03-01"
+    prioridade: 1
+    substitui: []
+  - id: DOC-04
+    titulo: Norma de Agendamento do Atendimento Presencial
+    versao: "1.0"
+    tema: atendimento_cidadao
+    formato: pdf
+    arquivo: dados/acervo/DOC-04_norma_agendamento.pdf
+    vigencia_inicio: "2026-03-01"
+    prioridade: 1
+    substitui: []
+  - id: DOC-05
+    titulo: Circular nº 07/2026 — Prazos de Resposta
+    versao: "1.0"
+    tema: atendimento_cidadao
+    formato: pdf
+    arquivo: dados/acervo/DOC-05_circular_prazos_resposta.pdf
+    vigencia_inicio: "2026-03-01"
+    prioridade: 1
+    substitui: []
+  - id: DOC-06
+    titulo: Política de Privacidade e Retenção de Dados do Atendimento
+    versao: "1.0"
+    tema: privacidade
+    formato: txt
+    arquivo: dados/acervo/DOC-06_politica_privacidade_retencao.txt
+    vigencia_inicio: "2026-03-01"
+    prioridade: 1
+    substitui: []
+  - id: DOC-07
+    titulo: Comunicado Interno — Atendimento em Ponto Facultativo
+    versao: "1.0"
+    tema: atendimento_cidadao
+    formato: txt
+    arquivo: dados/acervo/DOC-07_comunicado_ponto_facultativo.txt
+    vigencia_inicio: "2026-10-01"
+    prioridade: 1
+    substitui: []
+    adversarial: true

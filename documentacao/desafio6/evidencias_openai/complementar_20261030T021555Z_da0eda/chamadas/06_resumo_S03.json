@@ -1,0 +1,27 @@
+{
+  "numero": 6,
+  "etapa": "resumo",
+  "caso": "S03",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:14.099038+00:00",
+  "payload_sha256": "52f37bbeef565515e589c631429d5cceb0b3369613095a7015c3fd1441037b31",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "Solicitação pelo formulário digital fictício, protocolo 2026.****23, em 02/10/2026. Solicitante: Maria Fictícia Albuquerque. Assunto: segunda via de certidão. Pedido: emissão de segunda via da certidão.",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.628,
+    "tokens_entrada": 231,
+    "tokens_saida": 57,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1650.2
+}

@@ -1,0 +1,27 @@
+{
+  "numero": 17,
+  "etapa": "sentimento",
+  "caso": "AV05",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:35.111921+00:00",
+  "payload_sha256": "e093d0446331a3d4e077c6844bb4ff9bd4796a07f228683e2924238afd8e9d0f",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV05\",\"polaridade\":\"negativa\",\"justificativa\":\"Relata ausência de resposta e expressa crítica explícita como “total descaso”.\",\"requer_revisao\":false,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.318,
+    "tokens_entrada": 394,
+    "tokens_saida": 60,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1339.3
+}

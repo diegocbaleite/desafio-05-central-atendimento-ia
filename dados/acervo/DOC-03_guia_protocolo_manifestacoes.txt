@@ -1,0 +1,17 @@
+SECRETARIA FICTÍCIA DE SERVIÇOS AO CIDADÃO — DOCUMENTO FICTÍCIO PARA FINS DIDÁTICOS
+Documento: DOC-03
+Título: Guia de Atendimento ao Cidadão — Protocolo e Manifestações
+Versão: 3.1
+Vigência: a partir de 01/03/2026
+
+Seção 1 — Número de protocolo
+Toda solicitação registrada recebe um número de protocolo no formato AAAA-NNNNNN, em que AAAA corresponde ao ano do registro. O cidadão deve guardar esse número para acompanhar a solicitação.
+
+Seção 2 — Acompanhamento do andamento
+O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.
+
+Seção 3 — Prazo de resposta a manifestações
+Reclamações, sugestões e elogios registrados na ouvidoria fictícia recebem resposta em até 15 dias úteis, contados da data do registro.
+
+Seção 4 — Respostas ao cidadão
+Toda resposta institucional é revisada por servidor responsável antes de ser encaminhada. Nenhuma resposta é enviada automaticamente ao cidadão.

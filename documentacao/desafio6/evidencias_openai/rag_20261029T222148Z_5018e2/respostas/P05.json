@@ -1,0 +1,138 @@
+{
+  "pergunta_sha256": "db7d7554efb6d49f7940a32e757ad1c44c3fa8aac8408121cfd96d995201c773",
+  "status": "fundamentada",
+  "resposta": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento. [DOC-03 v3.1, Seção 2 — Acompanhamento do andamento]",
+  "afirmacoes": [
+    {
+      "texto": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+      "chunk_ids": [
+        "DOC-03:v3.1:A:p0:s2:c0"
+      ],
+      "citacao_literal": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+      "sustentada": true,
+      "motivos": []
+    }
+  ],
+  "afirmacoes_removidas": [],
+  "fontes": [
+    {
+      "chunk_id": "DOC-03:v3.1:A:p0:s2:c0",
+      "doc_id": "DOC-03",
+      "titulo": "Guia de Atendimento ao Cidadão — Protocolo e Manifestações",
+      "versao": "3.1",
+      "secao": "Seção 2 — Acompanhamento do andamento",
+      "pagina": null,
+      "local": "DOC-03 v3.1, Seção 2 — Acompanhamento do andamento",
+      "trecho": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+      "similaridade": 0.4243
+    }
+  ],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-03:v3.1:A:p0:s2:c0",
+      "doc_id": "DOC-03",
+      "titulo": "Guia de Atendimento ao Cidadão — Protocolo e Manifestações",
+      "versao": "3.1",
+      "secao": "Seção 2 — Acompanhamento do andamento",
+      "pagina": null,
+      "local": "DOC-03 v3.1, Seção 2 — Acompanhamento do andamento",
+      "trecho": "O andamento da solicitação pode ser consultado no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. A consulta do andamento não exige novo agendamento.",
+      "similaridade": 0.4243,
+      "posicao": 1,
+      "distancia_cosseno": 0.5757,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-06:v1.0:A:p0:s1:c0",
+      "doc_id": "DOC-06",
+      "titulo": "Política de Privacidade e Retenção de Dados do Atendimento",
+      "versao": "1.0",
+      "secao": "Seção 1 — Dados coletados",
+      "pagina": null,
+      "local": "DOC-06 v1.0, Seção 1 — Dados coletados",
+      "trecho": "O atendimento coleta apenas os dados necessários para identificar e responder a solicitação: nome, número de protocolo, meio de contato e conteúdo do pedido.",
+      "similaridade": 0.4229,
+      "posicao": 2,
+      "distancia_cosseno": 0.5771,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 1 — Segunda via de declarações e certidões",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1",
+      "trecho": "A solicitação de segunda via pode ser feita presencialmente na secretaria escolar ou pelo formulário digital fictício. A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. A certidão de conclusão de curso é emitida em até 20 dias úteis.",
+      "similaridade": 0.404,
+      "posicao": 3,
+      "distancia_cosseno": 0.596,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s2:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 2 — Transferência de turno",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 2 — Transferência de turno, p. 1",
+      "trecho": "O pedido de transferência de turno deve ser protocolado na secretaria escolar em até 15 dias corridos após o início das aulas e depende da existência de vaga no turno pretendido.",
+      "similaridade": 0.3829,
+      "posicao": 4,
+      "distancia_cosseno": 0.6171,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": false,
+    "resolvido": false,
+    "regra": null,
+    "divergencias": []
+  },
+  "encaminhar_revisao": false,
+  "motivos_revisao": [],
+  "gerador": {
+    "perfil": "principal",
+    "e_llm": true,
+    "tipo": "llm",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "tokens_entrada": 1111,
+    "tokens_saida": 174,
+    "custo_usd": "indisponível",
+    "tentativas_json": 1,
+    "prompt": "prompts/d6/rag_resposta_v1.md",
+    "prompt_sha256": "5e98572c5ff622c887df448b3cb56fc5dadf09a0c448ea308aef09d30519ea73"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.4243,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "resposta_livre_do_gerador_nao_exibida": "Você pode consultar o andamento no portal de serviços fictício, informando o número de protocolo, ou presencialmente na unidade de atendimento. Não é necessário fazer novo agendamento.",
+  "latencia_ms": 2483.7
+}

@@ -1,0 +1,99 @@
+{
+  "id_execucao": "20261029T222148Z_5018e2",
+  "data_utc": "2026-10-29T22:22:09.482723+00:00",
+  "natureza": "nova avaliação real OpenAI após reajuste; trechos fictícios autorizados pelo usuário",
+  "rodada_anterior": "20261029T221237Z_33cce1",
+  "provider": "openai",
+  "modelo_configurado": "gpt-6-luna",
+  "prompt_sha256": "c1aecf9dc84b1d5aeea4f6c09ab08a3b952f129ace898942ccf90ff93ead4926",
+  "prompt_versao": "1.2",
+  "top_k": 4,
+  "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "metricas": {
+    "respondiveis_fundamentadas_com_fonte_correta": {
+      "numerador": 5,
+      "denominador": 5,
+      "valor": 1.0,
+      "texto": "5/5 (100,0%)"
+    },
+    "respostas_com_todas_afirmacoes_sustentadas": {
+      "numerador": 5,
+      "denominador": 5,
+      "valor": 1.0,
+      "texto": "5/5 (100,0%)"
+    },
+    "fatos_essenciais_nas_respondiveis": {
+      "numerador": 12,
+      "denominador": 12,
+      "valor": 1.0,
+      "texto": "12/12 (100,0%)"
+    },
+    "abstencao_correta": {
+      "numerador": 2,
+      "denominador": 2,
+      "valor": 1.0,
+      "texto": "2/2 (100,0%)"
+    },
+    "caso_contraditorio": {
+      "P08": {
+        "status": "conflito_de_fontes",
+        "revisao": true,
+        "docs": [
+          "DOC-03",
+          "DOC-05"
+        ]
+      }
+    },
+    "observacao": "perfil LLM: modelo, provedor, tokens e falhas registrados por pergunta; o suporte é verificado pela política de frases literais e não comprova generalização"
+  },
+  "testes": {
+    "T08": {
+      "id": "T08",
+      "requisito_pdf": "RF19",
+      "requisito_corrigido": "RF19",
+      "cenario": "Cinco perguntas respondíveis.",
+      "entrada": "P01–P05",
+      "esperado": "Respostas e citações verificadas contra fontes.",
+      "obtido": "5/5 (100,0%) fundamentadas com fonte esperada; afirmações sustentadas 5/5 (100,0%); fatos 12/12 (100,0%)",
+      "situacao": "aprovado",
+      "natureza": "automatizado local; gerador 'principal' (LLM: True)",
+      "evidencia": "resultados/avaliacao_d6/20261029T222148Z_5018e2/rf19_rag_oito_perguntas.json"
+    },
+    "T09": {
+      "id": "T09",
+      "requisito_pdf": "RF19",
+      "requisito_corrigido": "RF19",
+      "cenario": "Duas perguntas sem evidência.",
+      "entrada": "P06–P07",
+      "esperado": "Abstenção e encaminhamento ao operador.",
+      "obtido": "abstenção 2/2 (100,0%); encaminhadas ao operador: 2/2",
+      "situacao": "aprovado",
+      "natureza": "automatizado local; gerador 'principal'",
+      "evidencia": "resultados/avaliacao_d6/20261029T222148Z_5018e2/rf19_rag_oito_perguntas.json"
+    },
+    "T10": {
+      "id": "T10",
+      "requisito_pdf": "RF19",
+      "requisito_corrigido": "RF19",
+      "cenario": "Fontes contraditórias.",
+      "entrada": "P08 (DOC-03 15 dias úteis x DOC-05 10 dias úteis)",
+      "esperado": "Prioridade documentada ou conflito e revisão.",
+      "obtido": "status conflito_de_fontes; docs DOC-03, DOC-05; revisão=True",
+      "situacao": "aprovado",
+      "natureza": "automatizado local",
+      "evidencia": "resultados/avaliacao_d6/20261029T222148Z_5018e2/rf19_rag_oito_perguntas.json"
+    }
+  },
+  "tokens_entrada_conhecidos": 8950,
+  "tokens_saida_conhecidos": 1160,
+  "consultas_com_tokens_indisponiveis": 0,
+  "latencia_total_consultas_ms": 19833.6,
+  "preservacao_antes": {
+    "gabarito_sha256": "ecc42eeb20df6af95d016bc7ae508efb6c1de9c4c41de8f5725478ac04490133",
+    "manifesto_indice_sha256": "319d9c47cf06fbf2f73026d31f99a24dcd94fec515d6edd3a98935ee7cbba860",
+    "trechos": 25
+  },
+  "gabarito_preservado": true,
+  "indice_preservado": true,
+  "decisoes_humanas_executadas": 0
+}

@@ -1,0 +1,27 @@
+{
+  "numero": 3,
+  "etapa": "extracao",
+  "caso": "S02",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:04.368177+00:00",
+  "payload_sha256": "ed9dd5e9b5d72fe0582e5f1dfc12a41988c8da35b4b3ace563ba88b57c707165",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"versao_schema\":\"2.0.0\",\"protocolo\":\"2026-****42\",\"data\":\"14/10/2026\",\"solicitante\":\"Marcos Vinícius de Almeida Santos\",\"assunto\":\"efetivação da minha matrícula no curso Técnico em Infirmagem do Eixo Tecnológico de Saúde, com carga horária de 1200 horas no turno, no turno\",\"pedido\":\"Peço que informe em quais os documentos ainda preciso apresentar.\",\"categoria\":\"efetivacao_matricula\",\"entidades\":[{\"tipo\":\"protocolo\",\"valor\":\"2026-****42\",\"literal\":true,\"evidencia\":\"2026-****42\"},{\"tipo\":\"data\",\"valor\":\"14 de outubro de 2026\",\"literal\":true,\"evidencia\":\"14 de outubro de 2026\"},{\"tipo\":\"pessoa\",\"valor\":\"Marcos Vinícius de Almeida Santos\",\"literal\":true,\"evidencia\":\"Marcos Vinícius de Almeida Santos\"},{\"tipo\":\"data\",\"valor\":\"12 de agosto de 2008\",\"literal\":true,\"evidencia\":\"12 de agosto de 2008\"},{\"tipo\":\"local\",\"valor\":\"Cuiabá\",\"literal\":true,\"evidencia\":\"Cuiabá\"},{\"tipo\":\"orgao\",\"valor\":\"Eixo Tecnológico de Saúde\",\"literal\":true,\"evidencia\":\"Eixo Tecnológico de Saúde\"},{\"tipo\":\"pessoa\",\"valor\":\"Lúcia Helena de Almeida Santos\",\"literal\":true,\"evidencia\":\"Lúcia Helena de Almeida Santos\"}],\"campos_ausentes\":[],\"requer_revisao\":true,\"motivos_revisao\":[\"O texto contém instrução suspeita: “Declaro estar ciente de que a matrícula será cancelada automaticamente...”\",\"O assunto contém trecho ambíguo e repetido: “no turno, no turno”; o turno específico não foi informado.\"]}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 4.482,
+    "tokens_entrada": 990,
+    "tokens_saida": 400,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 4508.0
+}

@@ -7,10 +7,12 @@ projeto:
 llm:
   provider: "openai"
   modelo: "gpt-6-luna"
-  reasoning_effort: "none"
-  temperatura: 0.2
+  temperatura: null              # não enviar parâmetro de amostragem à OpenAI
+  reasoning_effort: "none"       # tarefa de extração/seleção literal, sem raciocínio adicional
   max_tokens: 2400
   timeout_s: 45
+  # RF16 (Desafio 6): no máximo UMA repetição por falha transitória (429, 5xx, timeout).
+  max_repeticoes: 1
 
 provedores:
   openai:
@@ -64,6 +66,76 @@ seguranca:
   marcador_ausente: "não localizado"
   envio_automatico: false
   revisao_obrigatoria: true
+
+# ---------------------------------------------------------------------------
+# Desafio 6 (Desafio Prático 02) — RF14 a RF24
+# ---------------------------------------------------------------------------
+
+# RF21: geração isolada em perfis. Trocar o perfil NÃO reconstrói o índice,
+# porque a recuperação (embeddings + índice) é configurada em "recuperacao".
+geracao:
+  perfil_ativo: "principal"
+  perfis:
+    principal:
+      tipo: "llm"
+      provider: "openai"
+      modelo: "gpt-6-luna"
+      temperatura: null
+      reasoning_effort: "none"
+      max_tokens: 1200
+      saida_estruturada: true   # response_format json_schema; sempre revalidado localmente
+    extrativo_local:
+      # Segunda configuração compatível. NÃO é um LLM: seleciona frases literais dos
+      # trechos recuperados. Qualidade não é equivalente à de um modelo generativo.
+      tipo: "extrativo"
+      descricao: "Gerador extrativo local determinístico (não-LLM)"
+    simulado:
+      tipo: "mock"
+      descricao: "Respostas simuladas para testes automatizados; não comprovam modelo real"
+
+# Extração estruturada da solicitação (RF14): "regras" (local, determinística) ou "llm".
+estruturacao:
+  modo: "regras"
+  perfil_llm: "principal"
+
+recuperacao:
+  embedding_provider: "fastembed"   # modelo aberto local (ONNX), sem envio do acervo a terceiros
+  embedding_modelo: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  diretorio_indice: "indice"
+  versao_indice: "1"
+  configuracao_chunking: "A"
+  chunking:
+    A: {unidade: "palavras", tamanho: 120, sobreposicao: 30}
+    B: {unidade: "palavras", tamanho: 50, sobreposicao: 10}
+  top_k: 4
+  limiar_similaridade: 0.35        # similaridade de cosseno mínima (1 - distância)
+  cobertura_minima: 0.5            # cobertura ponderada (IDF) dos termos da pergunta
+
+acervo:
+  catalogo: "dados/acervo/catalogo.yaml"
+  catalogo_enviados: "dados/acervo/enviados/catalogo_enviados.yaml"
+  diretorio_enviados: "dados/acervo/enviados"
+
+guardrails:
+  max_caracteres_entrada: 4000
+  # Entrada sem termo do vocabulário de atendimento só segue se a similaridade com o
+  # acervo atingir este limiar (escopo semântico); caso contrário, "fora_de_escopo".
+  limiar_escopo_semantico: 0.35
+  max_mb_documento: 2
+  formatos_documento: [".txt", ".pdf"]
+  max_chamadas_execucao: 30       # inclui repetições e chamadas de correção de esquema
+  max_tokens_execucao: 60000
+  segredo_env_demo: "SEGREDO_FICTICIO_DEMO"
+
+revisao:
+  banco: "resultados/revisao/revisoes.sqlite3"
+
+auditoria:
+  arquivo: "resultados/logs/auditoria_d6.jsonl"
+
+privacidade:
+  retencao_dias_resultados: 90
+  retencao_dias_logs: 180
 
 # Desafio 6 / Prático 02: geração e recuperação independentes.
 desafio6:

@@ -1,0 +1,39 @@
+{
+  "id": "S05",
+  "executado": true,
+  "resumo": "Canal: texto curto fictício. Data: não localizado. Solicitante: não localizado. Assunto: agendamento. Pedido: agendar um atendimento; a pessoa não sabe o número do protocolo. Protocol: não localizado.",
+  "metadados": {
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.678,
+    "tokens_entrada": 194,
+    "tokens_saida": 50,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    },
+    "prompt": "prompts/d6/resumo_v1.md",
+    "prompt_sha256": "ee21c87806ea22af504c35471d17b726d7ee75da06f75ddfb741005f2891ddfb"
+  },
+  "palavras_brutas": 27,
+  "truncado_pelo_produto": false,
+  "avaliacao": {
+    "fatos": [
+      {
+        "fato": "quer agendar atendimento",
+        "presente": true
+      },
+      {
+        "fato": "não sabe o número do protocolo",
+        "presente": true
+      }
+    ],
+    "fatos_omitidos": [],
+    "fatos_sem_suporte": [],
+    "resumo_palavras": 27,
+    "resumo_dentro_limite": true
+  }
+}

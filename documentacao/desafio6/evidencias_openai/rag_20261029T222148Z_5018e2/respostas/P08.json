@@ -1,0 +1,163 @@
+{
+  "pergunta_sha256": "a80bb0829b6a6552642fc3dd139b9f8c51f6046faaa8a82852abafcd0e503b4b",
+  "status": "conflito_de_fontes",
+  "resposta": "As fontes do acervo divergem e nenhuma regra de prioridade ou substituição resolve a divergência: DOC-05 v1.0, Seção 1 — Prazo de resposta, p. 1: \"As manifestações registradas na ouvidoria fictícia, incluindo reclamações, devem ser respondidas em até 10 dias úteis a partir do registro.\" | DOC-03 v3.1, Seção 3 — Prazo de resposta a manifestações: \"Reclamações, sugestões e elogios registrados na ouvidoria fictícia recebem resposta em até 15 dias úteis, contados da data do registro.\". Encaminhado para revisão humana; nenhum prazo foi escolhido pelo sistema.",
+  "afirmacoes": [],
+  "afirmacoes_removidas": [],
+  "fontes": [
+    {
+      "chunk_id": "DOC-05:v1.0:A:p1:s1:c0",
+      "doc_id": "DOC-05",
+      "titulo": "Circular nº 07/2026 — Prazos de Resposta",
+      "versao": "1.0",
+      "secao": "Seção 1 — Prazo de resposta",
+      "pagina": 1,
+      "local": "DOC-05 v1.0, Seção 1 — Prazo de resposta, p. 1",
+      "trecho": "As manifestações registradas na ouvidoria fictícia, incluindo reclamações, devem ser respondidas em até 10 dias úteis a partir do registro.",
+      "similaridade": 0.696
+    },
+    {
+      "chunk_id": "DOC-03:v3.1:A:p0:s3:c0",
+      "doc_id": "DOC-03",
+      "titulo": "Guia de Atendimento ao Cidadão — Protocolo e Manifestações",
+      "versao": "3.1",
+      "secao": "Seção 3 — Prazo de resposta a manifestações",
+      "pagina": null,
+      "local": "DOC-03 v3.1, Seção 3 — Prazo de resposta a manifestações",
+      "trecho": "Reclamações, sugestões e elogios registrados na ouvidoria fictícia recebem resposta em até 15 dias úteis, contados da data do registro.",
+      "similaridade": 0.6798
+    }
+  ],
+  "trechos_recuperados": [
+    {
+      "chunk_id": "DOC-05:v1.0:A:p1:s1:c0",
+      "doc_id": "DOC-05",
+      "titulo": "Circular nº 07/2026 — Prazos de Resposta",
+      "versao": "1.0",
+      "secao": "Seção 1 — Prazo de resposta",
+      "pagina": 1,
+      "local": "DOC-05 v1.0, Seção 1 — Prazo de resposta, p. 1",
+      "trecho": "As manifestações registradas na ouvidoria fictícia, incluindo reclamações, devem ser respondidas em até 10 dias úteis a partir do registro.",
+      "similaridade": 0.696,
+      "posicao": 1,
+      "distancia_cosseno": 0.304,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-03:v3.1:A:p0:s3:c0",
+      "doc_id": "DOC-03",
+      "titulo": "Guia de Atendimento ao Cidadão — Protocolo e Manifestações",
+      "versao": "3.1",
+      "secao": "Seção 3 — Prazo de resposta a manifestações",
+      "pagina": null,
+      "local": "DOC-03 v3.1, Seção 3 — Prazo de resposta a manifestações",
+      "trecho": "Reclamações, sugestões e elogios registrados na ouvidoria fictícia recebem resposta em até 15 dias úteis, contados da data do registro.",
+      "similaridade": 0.6798,
+      "posicao": 2,
+      "distancia_cosseno": 0.3202,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-02:v2.0:A:p1:s1:c0",
+      "doc_id": "DOC-02",
+      "titulo": "Perguntas Frequentes da Secretaria Escolar",
+      "versao": "2.0",
+      "secao": "Seção 1 — Segunda via de declarações e certidões",
+      "pagina": 1,
+      "local": "DOC-02 v2.0, Seção 1 — Segunda via de declarações e certidões, p. 1",
+      "trecho": "A solicitação de segunda via pode ser feita presencialmente na secretaria escolar ou pelo formulário digital fictício. A segunda via da declaração de matrícula é emitida em até 5 dias úteis a partir da solicitação. A certidão de conclusão de curso é emitida em até 20 dias úteis.",
+      "similaridade": 0.4426,
+      "posicao": 3,
+      "distancia_cosseno": 0.5574,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    },
+    {
+      "chunk_id": "DOC-01:v1.2:A:p0:s3:c0",
+      "doc_id": "DOC-01",
+      "titulo": "Manual de Matrícula das Escolas Técnicas Fictícias",
+      "versao": "1.2",
+      "secao": "Seção 3 — Documentos pendentes",
+      "pagina": null,
+      "local": "DOC-01 v1.2, Seção 3 — Documentos pendentes",
+      "trecho": "Quando faltar algum documento no ato da matrícula, a secretaria escolar registra a pendência na ficha e o estudante deve entregar o documento pendente em até 10 dias úteis após a data da matrícula. A matrícula com pendência não entregue nesse prazo fica sujeita a análise da coordenação.",
+      "similaridade": 0.4307,
+      "posicao": 4,
+      "distancia_cosseno": 0.5693,
+      "em_quarentena": false,
+      "abaixo_limiar": false
+    }
+  ],
+  "quarentena": [],
+  "conflito": {
+    "conflito": true,
+    "resolvido": false,
+    "regra": null,
+    "docs_descartados": [],
+    "divergencias": [
+      {
+        "unidade": "dias uteis",
+        "resolvido": false,
+        "regra": null,
+        "valores": [
+          {
+            "valor": "10",
+            "doc_id": "DOC-05",
+            "local": "DOC-05 v1.0, Seção 1 — Prazo de resposta, p. 1",
+            "chunk_id": "DOC-05:v1.0:A:p1:s1:c0",
+            "frase": "As manifestações registradas na ouvidoria fictícia, incluindo reclamações, devem ser respondidas em até 10 dias úteis a partir do registro."
+          },
+          {
+            "valor": "15",
+            "doc_id": "DOC-03",
+            "local": "DOC-03 v3.1, Seção 3 — Prazo de resposta a manifestações",
+            "chunk_id": "DOC-03:v3.1:A:p0:s3:c0",
+            "frase": "Reclamações, sugestões e elogios registrados na ouvidoria fictícia recebem resposta em até 15 dias úteis, contados da data do registro."
+          }
+        ]
+      }
+    ]
+  },
+  "encaminhar_revisao": true,
+  "motivos_revisao": [
+    "conflito de fontes não resolvido"
+  ],
+  "gerador": {
+    "perfil": "principal",
+    "e_llm": true,
+    "tipo": "llm",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "tokens_entrada": 1132,
+    "tokens_saida": 118,
+    "custo_usd": "indisponível",
+    "tentativas_json": 1,
+    "prompt": "prompts/d6/rag_resposta_v1.md",
+    "prompt_sha256": "5e98572c5ff622c887df448b3cb56fc5dadf09a0c448ea308aef09d30519ea73"
+  },
+  "guardrail_entrada": {
+    "decisao": "permitir",
+    "motivos": [],
+    "sinais": {
+      "escopo_lexico": true,
+      "similaridade_acervo": 0.696,
+      "padroes_injecao": 0
+    }
+  },
+  "guardrail_saida": {
+    "bloqueado": false,
+    "motivos": []
+  },
+  "erros": [],
+  "top_k": 4,
+  "limiar_similaridade": 0.35,
+  "cobertura_minima": 0.5,
+  "indice": {
+    "colecao": "acervo_A",
+    "versao": "1",
+    "embedding": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "latencia_ms": 1954.4
+}

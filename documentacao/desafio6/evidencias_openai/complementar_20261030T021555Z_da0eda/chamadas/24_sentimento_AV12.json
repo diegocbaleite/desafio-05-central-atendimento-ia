@@ -1,0 +1,27 @@
+{
+  "numero": 24,
+  "etapa": "sentimento",
+  "caso": "AV12",
+  "natureza": "serviço real",
+  "inicio": "2026-10-30T02:16:46.977277+00:00",
+  "payload_sha256": "4c5de0f3fe77f3567a1a3f03a8246b19f18da7ba395dacdf2085452470dd40f2",
+  "chunk_ids_enviados": [],
+  "segredo_no_contexto": false,
+  "resposta": {
+    "texto": "{\"id\":\"AV12\",\"polaridade\":\"indeterminada\",\"justificativa\":\"Depende de conversa anterior (“aquilo de ontem”), sem contexto suficiente para identificar a avaliação.\",\"requer_revisao\":true,\"confianca_declarada\":\"alta\"}",
+    "provider": "openai",
+    "modelo": "gpt-6-luna",
+    "duracao_s": 1.535,
+    "tokens_entrada": 384,
+    "tokens_saida": 62,
+    "custo_usd": null,
+    "tentativas": 1,
+    "parametros": {
+      "max_completion_tokens": 1200,
+      "timeout_s": 45,
+      "reasoning_effort": "none"
+    }
+  },
+  "segredo_na_saida_bloqueado": false,
+  "latencia_ms": 1567.3
+}

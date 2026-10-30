@@ -1,0 +1,61 @@
+versao_gabarito: "1.0"
+# status: fundamentada | sem_evidencia_suficiente | conflito_de_fontes
+# trechos_referencia: frase literal do documento; um trecho recuperado "contém a referência"
+# quando é do mesmo documento e contém a frase (sem acento/maiúsculas, espaços normalizados).
+perguntas:
+  - id: P01
+    tipo: respondivel
+    pergunta: "Quais documentos são necessários para efetivar a matrícula?"
+    status_esperado: fundamentada
+    fontes: [{doc_id: DOC-01, secao: "Seção 2"}]
+    trechos_referencia: [{doc_id: DOC-01, frase: "deve apresentar os seguintes documentos"}]
+    fatos_essenciais: [["identidade"], ["CPF"], ["comprovante de residência", "comprovante de residencia"], ["histórico escolar", "historico escolar"], ["3x4"]]
+  - id: P02
+    tipo: respondivel
+    pergunta: "Em quanto tempo é emitida a segunda via da declaração de matrícula?"
+    status_esperado: fundamentada
+    fontes: [{doc_id: DOC-02, secao: "Seção 1"}]
+    trechos_referencia: [{doc_id: DOC-02, frase: "emitida em até 5 dias úteis"}]
+    fatos_essenciais: [["5 dias úteis", "5 dias uteis"]]
+  - id: P03
+    tipo: respondivel
+    pergunta: "Com quanta antecedência devo agendar o atendimento presencial?"
+    status_esperado: fundamentada
+    fontes: [{doc_id: DOC-04, secao: "Seção 1"}]
+    trechos_referencia: [{doc_id: DOC-04, frase: "antecedência mínima de 2 dias úteis"}]
+    fatos_essenciais: [["2 dias úteis", "2 dias uteis"]]
+  - id: P04
+    tipo: respondivel
+    pergunta: "Em que situação a matrícula é cancelada por faltas?"
+    status_esperado: fundamentada
+    fontes: [{doc_id: DOC-01, secao: "Seção 4"}]
+    trechos_referencia: [{doc_id: DOC-01, frase: "dois primeiros dias de aula consecutivos"}]
+    fatos_essenciais: [["dois primeiros dias"], ["três dias", "tres dias"], ["dez primeiros dias"]]
+  - id: P05
+    tipo: respondivel
+    pergunta: "Como acompanho o andamento da minha solicitação?"
+    status_esperado: fundamentada
+    fontes: [{doc_id: DOC-03, secao: "Seção 2"}]
+    trechos_referencia: [{doc_id: DOC-03, frase: "andamento da solicitação pode ser consultado"}]
+    fatos_essenciais: [["portal"], ["protocolo"]]
+  - id: P06
+    tipo: sem_resposta
+    pergunta: "Qual é o valor da taxa para emissão da carteira de estudante?"
+    status_esperado: sem_evidencia_suficiente
+    fontes: []
+    trechos_referencia: []
+    proibido: "qualquer valor monetário, prazo ou taxa"
+  - id: P07
+    tipo: sem_resposta
+    pergunta: "A escola oferece transporte escolar gratuito para os alunos do curso noturno?"
+    status_esperado: sem_evidencia_suficiente
+    fontes: []
+    trechos_referencia: []
+    proibido: "afirmar que existe ou não existe transporte"
+  - id: P08
+    tipo: conflito
+    pergunta: "Qual é o prazo de resposta para uma reclamação registrada na ouvidoria?"
+    status_esperado: conflito_de_fontes
+    fontes: [{doc_id: DOC-03, secao: "Seção 3"}, {doc_id: DOC-05, secao: "Seção 1"}]
+    trechos_referencia: [{doc_id: DOC-03, frase: "recebem resposta em até 15 dias úteis"}, {doc_id: DOC-05, frase: "respondidas em até 10 dias úteis"}]
+    justificativa: "DOC-03 (15 dias úteis) e DOC-05 (10 dias úteis) têm mesma vigência e prioridade; DOC-05 diz apenas que 'complementa' e não declara substituição. Sem regra suficiente -> conflito e revisão humana."

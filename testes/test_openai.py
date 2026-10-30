@@ -33,7 +33,7 @@ class TestOpenAI(unittest.TestCase):
         self.assertNotIn("max_tokens", payload)
         self.assertEqual(payload["max_completion_tokens"], 2400)
         self.assertEqual(payload["reasoning_effort"], "none")
-        self.assertEqual(payload["temperature"], 0.2)
+        self.assertNotIn("temperature", payload)
         self.assertIs(payload["store"], False)
         self.assertEqual(resultado["tokens_entrada"], 20)
         self.assertIsNone(resultado["custo_usd"])
@@ -77,9 +77,9 @@ class TestOpenAI(unittest.TestCase):
                 with patch.object(cliente, "chave", return_value="token-ficticio"), \
                      patch.object(cliente.requests, "post", side_effect=efeito) as post, \
                      patch.object(cliente.time, "sleep"):
-                    with self.assertRaisesRegex(cliente.ErroAPI, "3 tentativas"):
+                    with self.assertRaisesRegex(cliente.ErroAPI, "2 tentativas"):
                         cliente.conversar([])
-                    self.assertEqual(post.call_count, 3)
+                    self.assertEqual(post.call_count, 2)
 
     def test_catalogo_consulta_conta_sem_geracao(self):
         resposta = Mock(ok=True, json=lambda: {"data": [{"id": "b"}, {"id": "a"}, {"id": "a"}]})

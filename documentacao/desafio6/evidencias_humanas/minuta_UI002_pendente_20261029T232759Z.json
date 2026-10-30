@@ -1,0 +1,26 @@
+{
+  "natureza": "snapshot de minuta fundamentada pendente, lido sem alterar o banco; não é decisão humana",
+  "verificado_em_utc": "2026-10-29T23:30:58.569915+00:00",
+  "fonte": "resultados/revisao/revisoes.sqlite3",
+  "minuta": {
+    "id": "M-UI-002-02774ae6",
+    "caso_id": "UI-002",
+    "criada_em": "2026-10-29T23:27:59.070171+00:00",
+    "status": "pendente",
+    "sha256": "7a50f63deea70afe5464d86bc82efad373083900b9dfe198e22adae11160446e",
+    "gerador": "principal",
+    "metadados": {
+      "decisao_entrada": "permitir",
+      "status_rag": "fundamentada",
+      "chunk_ids": [
+        "DOC-02:v2.0:A:p1:s1:c0"
+      ],
+      "versao_schema": "2.0.0",
+      "sha256_entrada": "69ddee2a2d58fcaf6a951693c6ba4f6733bf8503a2d930693e43e277a5d0923c",
+      "gerador_e_llm": true
+    },
+    "conteudo_confere_com_hash": true,
+    "decisoes": []
+  },
+  "envio_automatico": false
+}

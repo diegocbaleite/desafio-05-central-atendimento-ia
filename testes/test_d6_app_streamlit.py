@@ -107,9 +107,9 @@ class TestApp(unittest.TestCase):
         self.assertFalse(at.exception, at.exception)
         self.assertTrue(any("PENDENTE" in m.value for m in at.markdown))
         # Decisão humana pela aba Revisão (operador + justificativa obrigatórios).
-        at.sidebar.text_input[0].set_value("Operadora de Teste").run()
+        at.text_input(key="operador_revisao").set_value("Operadora de Teste")
         justificativa = next(t for t in at.text_area if t.label.startswith("Justificativa"))
-        justificativa.set_value("Conferido com o original no teste da interface").run()
+        justificativa.set_value("Conferido com o original no teste da interface")
         next(b for b in at.button if b.label == "Registrar decisão humana").click().run()
         self.assertFalse(at.exception, at.exception)
         self.assertTrue(any("Nada foi enviado" in s.value for s in at.success))
@@ -118,6 +118,47 @@ class TestApp(unittest.TestCase):
         repo = RepositorioRevisao(os.environ["D6_BANCO_REVISAO"])
         decisoes = repo.contagem()["decisoes_por_origem"]
         self.assertEqual(decisoes, {"humana_interface": 1})
+
+    def test_revisao_orienta_campos_invalidos_e_envia_formulario_completo(self):
+        from src.revisao import RepositorioRevisao
+
+        repo = RepositorioRevisao(os.environ["D6_BANCO_REVISAO"])
+        mid = repo.criar_minuta("TESTE-REV", "# MINUTA FICTÍCIA — NÃO ENVIADA", gerador="extrativo_local")
+        at = AppTest.from_file(str(ROOT / "src" / "app.py"), default_timeout=120).run()
+        self.assertFalse(at.exception, at.exception)
+        self.assertFalse(at.sidebar.text_input)
+        self.assertIn("3 caracteres", at.text_input(key="operador_revisao").help)
+        self.assertIn("5 caracteres", next(t for t in at.text_area if t.label.startswith("Justificativa")).help)
+
+        for operador, justificativa, campo in (
+            ("   ", "Conferido com a fonte fictícia", "operador (mínimo de 3 caracteres)"),
+            ("Operadora de Teste", " ok ", "justificativa (mínimo de 5 caracteres)"),
+        ):
+            with self.subTest(campo=campo):
+                at.text_input(key="operador_revisao").set_value(operador)
+                next(t for t in at.text_area if t.label.startswith("Justificativa")).set_value(justificativa)
+                next(b for b in at.button if b.label == "Registrar decisão humana").click().run()
+                self.assertFalse(at.exception, at.exception)
+                self.assertTrue(any(campo in e.value for e in at.error))
+                self.assertEqual(repo.obter(mid)["status"], "pendente")
+                self.assertEqual(repo.historico(mid), [])
+                self.assertFalse(Path(os.environ["D6_ARQUIVO_AUDITORIA"]).exists())
+
+        at.text_input(key="operador_revisao").set_value("Operadora de Teste")
+        next(t for t in at.text_area if t.label.startswith("Justificativa")).set_value("Conferido com a fonte fictícia")
+        next(r for r in at.radio if r.label == "Decisão").set_value("revisar")
+        next(b for b in at.button if b.label == "Registrar decisão humana").click().run()
+        self.assertFalse(at.exception, at.exception)
+        self.assertTrue(any("Nada foi enviado" in s.value for s in at.success))
+        historico = repo.historico(mid)
+        self.assertEqual(len(historico), 1)
+        self.assertEqual(historico[0]["operador"], "Operadora de Teste")
+        self.assertEqual(historico[0]["justificativa"], "Conferido com a fonte fictícia")
+        self.assertEqual(repo.obter(mid)["status"], "revisar")
+        auditoria = Path(os.environ["D6_ARQUIVO_AUDITORIA"]).read_text(encoding="utf-8")
+        self.assertIn("decisao_humana", auditoria)
+        self.assertNotIn("Operadora de Teste", auditoria)
+        self.assertNotIn("Conferido com a fonte fictícia", auditoria)
 
 
 if __name__ == "__main__":

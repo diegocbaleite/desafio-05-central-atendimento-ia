@@ -106,7 +106,6 @@ def main():
         rotulos = list(cfg["recuperacao"]["chunking"])
         rotulo = st.selectbox("Chunking", rotulos, index=rotulos.index(cfg["recuperacao"]["configuracao_chunking"]))
         top_k = st.slider("top-k", 1, 10, int(cfg["recuperacao"]["top_k"]))
-        operador = st.text_input("Operador responsável (obrigatório para decidir)")
         st.divider()
         st.markdown("🔒 **Nenhuma resposta é enviada automaticamente.** Aprovar = liberar para envio manual.")
     from src.geracao import criar_gerador
@@ -331,9 +330,18 @@ def main():
                 st.markdown("**Histórico de decisões**")
                 st.dataframe([{k: h[k] for k in ("decidida_em", "decisao", "status_anterior", "status_novo", "operador", "justificativa", "origem")} for h in hist])
             if m["status"] in ("pendente", "revisar"):
-                decisao = st.radio("Decisão", ["aprovar", "rejeitar", "revisar"], horizontal=True)
-                justificativa = st.text_area("Justificativa (obrigatória)")
-                if st.button("Registrar decisão humana"):
+                with st.form(f"revisao_{escolha}"):
+                    operador = st.text_input(
+                        "Operador responsável (obrigatório para decidir)", key="operador_revisao",
+                        help="Informe pelo menos 3 caracteres, desconsiderando espaços no início e no fim.",
+                    )
+                    decisao = st.radio("Decisão", ["aprovar", "rejeitar", "revisar"], horizontal=True)
+                    justificativa = st.text_area(
+                        "Justificativa (obrigatória)",
+                        help="Informe pelo menos 5 caracteres, desconsiderando espaços no início e no fim.",
+                    )
+                    registrar = st.form_submit_button("Registrar decisão humana")
+                if registrar:
                     try:
                         reg = repo.registrar_decisao(escolha, decisao, operador, justificativa, "humana_interface")
                         from src.auditoria import registrar_d6

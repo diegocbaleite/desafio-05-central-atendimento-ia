@@ -64,6 +64,34 @@ class TestRevisao(unittest.TestCase):
         self.assertEqual(c["decisoes_por_origem"], {"simulada_teste": 1, "humana_interface": 1})
         self.assertEqual(c["estados"]["aprovada"], 1)
 
+    def test_campos_curtos_informam_limites_sem_registrar_decisao(self):
+        for operador, justificativa, faltas in (
+            ("   ", "   ", ("operador (mínimo de 3 caracteres)", "justificativa (mínimo de 5 caracteres)")),
+            (" AB ", "Conferido", ("operador (mínimo de 3 caracteres)",)),
+            ("Operadora Teste", " ok ", ("justificativa (mínimo de 5 caracteres)",)),
+        ):
+            with self.subTest(operador=operador, justificativa=justificativa):
+                with self.assertRaises(ValueError) as erro:
+                    self.repo.registrar_decisao(self.mid, "aprovar", operador, justificativa, "simulada_teste")
+                for falta in faltas:
+                    self.assertIn(falta, str(erro.exception))
+                self.assertEqual(self.repo.obter(self.mid)["status"], "pendente")
+                self.assertEqual(self.repo.historico(self.mid), [])
+
+        registro = self.repo.registrar_decisao(self.mid, "revisar", " Ana ", " Teste ", "simulada_teste")
+        self.assertEqual(registro["operador"], "Ana")
+        self.assertEqual(registro["justificativa"], "Teste")
+        self.assertFalse(registro["envio_automatico"])
+
+    def test_banco_pode_ser_movido_apos_revisao_sem_conexao_aberta(self):
+        self.repo.registrar_decisao(self.mid, "revisar", "Teste", "Conferir fontes", "simulada_teste")
+        self.assertEqual(len(self.repo.listar()), 1)
+        self.assertEqual(len(self.repo.historico(self.mid)), 1)
+        self.assertEqual(self.repo.contagem()["estados"]["revisar"], 1)
+        movido = self.banco.with_name("movido.sqlite3")
+        self.banco.rename(movido)
+        self.assertEqual(RepositorioRevisao(movido).obter(self.mid)["status"], "revisar")
+
 
 class TestMetricasSentimento(unittest.TestCase):
     def test_proporcao_e_vazio(self):

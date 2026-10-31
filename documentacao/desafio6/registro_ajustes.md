@@ -94,3 +94,15 @@ Regressões em `testes/test_rf14_coerencia_literal.py`: inversão de negação n
 Avaliação local após a correção: execução `20261030T163407Z_61ba4f`, embedding real local e gerador extrativo, 14 aprovados/T11 parcial e nenhum erro de etapa; seis categorias e 18 campos críticos corretos. Não representa chamada LLM real. Originais, gabaritos, evidências históricas e decisões humanas permaneceram intactos. Nenhuma nova chamada paga ou decisão humana foi produzida; nenhum ZIP foi gerado.
 
 Validação final desta correção: **330 testes aprovados em 23,138 s**, sintaxe e `python -m src.main verificar` sem erro; envio automático desativado e chaves ausentes. Os 163 arquivos protegidos da revisão mantiveram seus hashes.
+
+## 18. Preenchimento da decisão humana na aba Revisão — 31/10/2026
+
+Relato: ao registrar uma decisão, a interface exibia “Operador e justificativa são obrigatórios; nenhuma decisão registrada”. A leitura do código identificou o operador na barra lateral, separado da justificativa na aba Revisão, e limites não informados de três e cinco caracteres, respectivamente, após remover espaços das extremidades. Não foi identificada falha de persistência de valores válidos.
+
+Correção em `src/app.py`: operador, decisão e justificativa ficam juntos em um formulário da aba Revisão; o botão envia os valores em conjunto e os campos informam os limites. O formulário pertence à minuta selecionada. `src/revisao.py` mantém os critérios existentes e passa a indicar qual campo precisa ser preenchido, incluindo seu tamanho mínimo. Nenhum campo humano é preenchido automaticamente.
+
+Regressões em `testes/test_d6_app_streamlit.py` e `testes/test_d6_revisao_sentimento_pipeline.py`: campos vazios, espaços e valores curtos não criam histórico nem alteram a minuta; limites exatos são aceitos; o envio conjunto do formulário registra uma única decisão no banco temporário e não inclui operador/justificativa na auditoria geral. Os testes novos falharam antes da correção e passaram depois. São exercícios automatizados com dados fictícios em diretórios temporários, sem comprovar participação humana real nem produzir decisões no banco da demonstração.
+
+A primeira execução completa rodou 332 testes: 330 passaram e dois de RF14 falharam na limpeza do banco temporário com `WinError 32`. O contexto de `sqlite3.Connection` confirmava/desfazia a transação, mas não fechava a conexão. `_conexao` passou a fechá-la em `finally`, preservando a transação existente. Acrescentada regressão de mover/reabrir o banco após operações de revisão; os dois testes de RF14 também cobrem a exclusão do banco temporário no Windows.
+
+Validação final: **333 testes aprovados em 18,412 s**, `python -m src.main verificar` concluído com envio automático desativado e `git diff --check` sem erros. Sem novas dependências ou chamadas reais a modelos nesta correção.

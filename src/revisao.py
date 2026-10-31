@@ -12,6 +12,7 @@ import hashlib
 import json
 import sqlite3
 import uuid
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -49,10 +50,15 @@ class RepositorioRevisao:
                 """
             )
 
+    @contextmanager
     def _conexao(self):
         c = sqlite3.connect(self.caminho)
         c.row_factory = sqlite3.Row
-        return c
+        try:
+            with c:
+                yield c
+        finally:
+            c.close()
 
     def criar_minuta(self, caso_id, conteudo, *, gerador, ia_participou=True, modalidade=None, metadados=None) -> str:
         minuta_id = f"M-{caso_id}-{uuid.uuid4().hex[:8]}"
@@ -96,8 +102,16 @@ class RepositorioRevisao:
         if origem not in ORIGENS:
             raise ValueError("Origem de decisão inválida")
         operador, justificativa = (operador or "").strip(), (justificativa or "").strip()
-        if len(operador) < 3 or len(justificativa) < 5:
-            raise ValueError("Operador e justificativa são obrigatórios; nenhuma decisão registrada")
+        faltas = []
+        if len(operador) < 3:
+            faltas.append("operador (mínimo de 3 caracteres)")
+        if len(justificativa) < 5:
+            faltas.append("justificativa (mínimo de 5 caracteres)")
+        if faltas:
+            raise ValueError(
+                "Operador e justificativa são obrigatórios; preencha " + " e ".join(faltas)
+                + "; nenhuma decisão registrada"
+            )
         with self._conexao() as c:
             linha = c.execute("SELECT status, sha256 FROM minutas WHERE id=?", (minuta_id,)).fetchone()
             if not linha:

@@ -87,7 +87,8 @@ class TestGuardrails(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Formato"):
             guardrails.validar_documento("a.docx", b"x", self.cfg)
         with self.assertRaisesRegex(ValueError, "limite"):
-            guardrails.validar_documento("a.pdf", b"%PDF-" + b"0" * (3 * 1024 * 1024), self.cfg)
+            tamanho = int(self.cfg["guardrails"]["max_mb_documento"] * 1024 * 1024) + 1
+            guardrails.validar_documento("a.pdf", b"%PDF-" + b"0" * (tamanho - 5), self.cfg)
         with self.assertRaisesRegex(ValueError, "assinatura"):
             guardrails.validar_documento("a.pdf", b"nao e pdf", self.cfg)
         with self.assertRaisesRegex(ValueError, "UTF-8"):

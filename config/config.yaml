@@ -121,8 +121,9 @@ guardrails:
   # Entrada sem termo do vocabulário de atendimento só segue se a similaridade com o
   # acervo atingir este limiar (escopo semântico); caso contrário, "fora_de_escopo".
   limiar_escopo_semantico: 0.35
-  max_mb_documento: 2
-  formatos_documento: [".txt", ".pdf"]
+  max_mb_documento: 10
+  formatos_documento: [".txt", ".pdf", ".mp3", ".wav", ".m4a", ".ogg", ".webm"]
+  max_paginas_pdf_documento: 10
   max_chamadas_execucao: 30       # inclui repetições e chamadas de correção de esquema
   max_tokens_execucao: 60000
   segredo_env_demo: "SEGREDO_FICTICIO_DEMO"

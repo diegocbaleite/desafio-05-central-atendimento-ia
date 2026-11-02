@@ -106,3 +106,57 @@ Regressões em `testes/test_d6_app_streamlit.py` e `testes/test_d6_revisao_senti
 A primeira execução completa rodou 332 testes: 330 passaram e dois de RF14 falharam na limpeza do banco temporário com `WinError 32`. O contexto de `sqlite3.Connection` confirmava/desfazia a transação, mas não fechava a conexão. `_conexao` passou a fechá-la em `finally`, preservando a transação existente. Acrescentada regressão de mover/reabrir o banco após operações de revisão; os dois testes de RF14 também cobrem a exclusão do banco temporário no Windows.
 
 Validação final: **333 testes aprovados em 18,412 s**, `python -m src.main verificar` concluído com envio automático desativado e `git diff --check` sem erros. Sem novas dependências ou chamadas reais a modelos nesta correção.
+
+## 19. Proteção de segredos antes do transporte e da correção JSON — 02/11/2026
+
+A conferência do enunciado reproduziu duas falhas com credencial fictícia e HTTP simulado: um trecho recuperado contendo segredo configurado era enviado ao LLM; uma resposta inválida contendo esse segredo era reenviada no histórico da correção de JSON. A proteção adicional de `avaliacao_llm_real.TrilhaChamadas` não era aplicada ao cliente comum. Os testes novos reproduziram esses problemas antes da correção.
+
+Correção: `guardrails.contem_segredo` verifica valores configurados e padrões conhecidos em estruturas aninhadas, inclusive strings JSON com escapes Unicode. `cliente.conversar` aplica a verificação ao corpo completo antes de cada envio, antes de consumir o orçamento, e bloqueia respostas contaminadas antes de retorná-las ao validador ou ao histórico de correção. Corpos de erro também são verificados; as exceções não incluem o conteúdo detectado. Autenticação permanece exclusivamente no cabeçalho HTTP. O adaptador paralelo `desafio6.servicos` aplica a mesma proteção a geração e embeddings enviados ao provedor.
+
+O guardrail de entrada bloqueia credenciais antes da busca. O RAG verifica dinamicamente os trechos e metadados recuperados, inclusive em índices preexistentes; quando encontra segredo, bloqueia a consulta, registra a quarentena sem conteúdo e exige revisão. Texto e identificadores contaminados não são exibidos nem gravados na auditoria. Consultas com padrões de chave não configurados também têm seu texto omitido do log.
+
+Regressões em `testes/test_protecao_segredos.py`: mensagens, conteúdo aninhado, esquema, outro provedor, padrão de chave não configurado, repetição transitória, resposta contaminada sem correção, escapes Unicode, erros HTTP, auditoria, índices preexistentes e adaptador paralelo. JSON inválido sem segredo continua admitindo uma única correção. Todas as credenciais são fictícias e o HTTP é simulado.
+
+Limites: a detecção usa correspondência dos valores configurados com pelo menos oito caracteres e padrões conhecidos; não é reconhecimento universal de segredos desconhecidos ou de codificações arbitrárias. Nenhum original, gabarito, prompt, evidência histórica ou decisão humana foi alterado; nenhuma chamada real ou envio institucional foi efetuado. Esta correção não gera nem atualiza o ZIP de entrega.
+
+Validação: **345 testes aprovados em 16,840 s** (333 anteriores e 12 novos), Python 3.14.6/Windows; `python -m src.main verificar` concluído com envio automático desativado; `git diff --check` sem erros. A verificação usa credenciais fictícias e transportes simulados, sem representar nova avaliação com modelo real.
+
+## 20. Cobertura complementar de ATQ02 e preparação de T11 — 02/11/2026
+
+A pedido do usuário, foi investigada a ressalva de ATQ02 e a ausência de rejeição humana literal em T11. No acervo completo, a pergunta original continua recuperando apenas a parte legítima do DOC-07. Não foram alterados documentos, pergunta, gabarito, embedding, top-k, chunking ou ranking para fabricar recuperação da instrução maliciosa.
+
+Foi acrescentado `scripts/validar_ponto3.py`: mede o cenário global e um cenário adversarial isolado com os dois trechos do DOC-07 original, usando o mesmo embedding em cache e os mesmos parâmetros. O teste isolado coloca a instrução no top-k e observa os trechos realmente recebidos pelo gerador extrativo: o trecho malicioso fica em quarentena e não é entregue à geração. A execução inicial aprovou o cenário isolado, manteve o global parcial e preservou os hashes de originais, acervo e gabaritos. É evidência local com embedding real e geração não-LLM; não é nova chamada a modelo generativo nem melhora da busca global.
+
+Foi corrigida a classificação de novas avaliações T04 em `avaliacao_integrada.py`: comportamento seguro com quarentena não exercitada no top-k passa a parcial, em vez de aprovado. Evidências históricas e gabaritos não foram reclassificados ou reescritos.
+
+Para T11, foi criada somente a minuta pendente `M-T11-REJEICAO-467c0184`, a partir de ATQ01, no banco local. A aprovação anterior foi preservada. O usuário recebeu o endereço e as instruções para rejeitar pela interface. O coletor `--somente-revisao` lê decisões existentes em SQLite com `mode=ro`, confere hashes e exige aprovação e rejeição de minutas distintas pela interface. Decisões simuladas e pedidos de revisão não são usados para declarar essa demonstração concluída. A rejeição humana permanece pendente até o registro efetivo pelo operador.
+
+Sete regressões em `testes/test_validar_ponto3.py` cobrem o contexto adversarial isolado, ausência da instrução no top-k, classificação parcial de T04, distinção das origens de decisão, hashes divergentes, ausência de banco e preservação de hashes técnicos. Os testes usam embeddings determinísticos e decisões fictícias em diretórios temporários; não criam decisões no banco da demonstração. Detalhes e comandos em [evidencias_complementares/README.md](evidencias_complementares/README.md).
+
+Validação: **352 testes aprovados em 24,331 s**, `python -m src.main verificar` concluído com envio automático desativado e `git diff --check` sem erros. A execução complementar `ponto3_20261102T184927647020Z.json` registrou 0 chamadas LLM, cenário isolado aprovado, global parcial e T11 ainda pendente; repetir a preparação reutilizou a mesma minuta sem criar outra ou decidir pelo operador.
+
+## 21. Confirmação da rejeição humana de T11 — 02/11/2026
+
+Após informar que havia registrado a rejeição, Ayron teve sua decisão conferida por leitura do SQLite com `mode=ro`. A minuta `M-T11-REJEICAO-467c0184` está `rejeitada`, com decisão `rejeitar`, operador `Ayron`, justificativa “instrucao maliciosa” e origem `humana_interface`, registrada em `2026-11-02T19:13:49.763140+00:00` (15:13:49 em America/Cuiaba). O hash da decisão coincide com o da minuta e com o conteúdo armazenado. A aprovação anterior da minuta distinta `M-UI-001-9cf1623f` foi preservada e também teve seu hash conferido.
+
+O comando `python scripts/validar_ponto3.py --somente-revisao` exportou [ponto3_20261102T191410010739Z.json](evidencias_complementares/ponto3_20261102T191410010739Z.json), com T11 `demonstrado_por_registros_da_interface`, zero decisões criadas pelo script, envio automático falso e hashes de originais/acervo/gabaritos preservados. O [evento preexistente de auditoria](evidencias_complementares/auditoria_rejeicao_T11_20261102.json) confirma a rejeição pela interface. O agente não produziu a decisão humana; apenas a verificou e copiou os registros.
+
+A demonstração literal de aprovação e rejeição de T11 fica concluída com esta evidência posterior, sem reclassificar a matriz automática histórica ou as decisões simuladas. O complemento isolado de ATQ02 permanece aprovado e o cenário de acervo completo permanece parcial. Esta etapa altera somente documentação e cópias de evidências: não requer nova suíte além dos 352 testes da etapa anterior; JSONs novos conferidos e `git diff --check` sem erros. Nenhuma nova chamada LLM ou envio institucional foi efetuado.
+
+## 22. Inclusão de áudio e PDF digitalizado no acervo — 02/11/2026
+
+A pedido do usuário, a aba Acervo passou a aceitar MP3, WAV, M4A, OGG e WebM, além de TXT e PDF textual/digitalizado. `acervo_upload.py` reaproveita `audio.transcrever` e o OCR de `visao`, oferece opção local e mantém a extração em temporária até a conferência do usuário. Em PDF misto, páginas com texto são lidas diretamente e as demais usam OCR; a renderização aceita página inicial explícita. O limite de 10 páginas é verificado antes do OCR, sem truncamento silencioso no limite antigo de três páginas. O limite de arquivo permanece 2 MiB; assinaturas de áudio são conferidas antes do processamento.
+
+A interface exibe o texto por página, permite correções e exige conferência antes de salvar. A troca do arquivo invalida a prévia. Original e texto conferido são salvos separadamente, com hashes vinculados e numeração de páginas preservada. O catálogo é atualizado por substituição atômica; IDs/arquivos existentes não são sobrescritos e falhas desfazem apenas os novos arquivos da operação. A configuração em cache é renovada quando o YAML muda.
+
+`ingestao` e `indice` leem o derivado conferido de mídia sem repetir STT/OCR. Textos livres enviados também são divididos em trechos sem exigir cabeçalhos de seção, mantendo o comportamento anterior do acervo de referência. Alteração do original ou do texto derivado exige nova conferência; validações ocorrem antes de remover vetores anteriores. A exclusão remove original e texto conferido, com verificação do destino dentro da pasta de enviados. Extrações ou textos editados contendo segredo reconhecido são bloqueados antes de salvar.
+
+Validação: **363 testes aprovados em 19,699 s**, incluindo 10 testes de ingestão e um fluxo Streamlit com upload de áudio, edição, conferência e salvamento. Foram verificados PDF misto com preservação de página, quatro páginas digitalizadas sem truncamento, erros/limites, segredo, duplicação, deriva de hash, reversão de gravação e exclusão conjunta segura. STT/OCR remotos foram simulados. Um PDF fictício gerado como imagem também foi processado com Poppler/Tesseract reais, em modo local, com texto reconhecido e zero chamadas API. Não foram modificados originais, gabaritos ou decisões humanas nem realizadas chamadas pagas.
+
+## 23. Limite de upload de 10 MiB — 02/11/2026
+
+A pedido do usuário, o fluxo principal passou a aceitar arquivos de até 10 MiB: `server.maxUploadSize` em `.streamlit/config.toml` e `guardrails.max_mb_documento` em `config/config.yaml` foram alinhados, incluindo o valor padrão do validador. A mudança se aplica a TXT, PDF e áudio do acervo; o limite de 10 páginas para PDF foi mantido. O servidor Streamlit precisa ser iniciado/reiniciado para aplicar o novo limite de upload; não foi iniciado pelo agente nesta etapa.
+
+A avaliação T05 agora constrói o arquivo excessivo com o limite configurado mais um byte e registra ambos os valores, em vez de fixar 2,5 MiB. Isso preserva o cenário de arquivo excessivo do gabarito, sem alterar os gabaritos ou as evidências históricas. O README foi atualizado. A regressão confirma o alinhamento dos limites, aceita TXT/áudio com exatamente 10 MiB e bloqueia um byte acima antes de chamar STT.
+
+Validação: **364 testes aprovados em 19,444 s**; configuração conferida com 10 MiB no Streamlit e no acervo. Extração de áudio simulada; nenhuma chamada paga, modificação de originais/gabaritos ou decisão humana foi realizada.

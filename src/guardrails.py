@@ -9,6 +9,7 @@ esquema e de citações na saída; (5) filtro de segredos/dados pessoais na saí
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from pathlib import Path
@@ -76,6 +77,37 @@ def pede_segredo(texto: str) -> bool:
     return bool(_PEDIDO_SEGREDO.search(texto) or _NOME_VARIAVEL_SECRETA.search(texto))
 
 
+def contem_segredo(conteudo, cfg: dict, segredos=()) -> bool:
+    """Inspeciona valores e chaves sem retornar nem registrar a credencial encontrada.
+
+    O conteúdo é examinado antes da serialização JSON para preservar Unicode;
+    strings JSON também são decodificadas para conferir escapes de caracteres.
+    Detecta valores configurados (mínimo de 8 caracteres) e os padrões de chave
+    conhecidos; não pretende reconhecer qualquer segredo desconhecido/codificado.
+    """
+    conhecidos = segredos_conhecidos(cfg) + [s for s in segredos if s and len(s) >= 8]
+
+    def verificar(valor):
+        if isinstance(valor, str):
+            if any(s in valor for s in conhecidos) or any(p.search(valor) for p in _PADROES_CHAVE):
+                return True
+            if valor.lstrip().startswith(("{", "[", '"')):
+                try:
+                    decodificado = json.loads(valor)
+                except (ValueError, RecursionError):
+                    pass
+                else:
+                    return verificar(decodificado)
+            return False
+        if isinstance(valor, dict):
+            return any(verificar(k) or verificar(v) for k, v in valor.items())
+        if isinstance(valor, (list, tuple)):
+            return any(verificar(v) for v in valor)
+        return False
+
+    return verificar(conteudo)
+
+
 def avaliar_entrada(texto: str, cfg: dict, similaridade_acervo: float | None = None) -> dict:
     """Decisão permitir/revisar/bloquear para uma solicitação ou pergunta."""
     g = cfg.get("guardrails", {})
@@ -88,6 +120,8 @@ def avaliar_entrada(texto: str, cfg: dict, similaridade_acervo: float | None = N
         motivos.append(
             _motivo("entrada_excessiva", "entrada", "bloquear", f"{len(texto)} > {limite} caracteres")
         )
+    if contem_segredo(texto, cfg):
+        motivos.append(_motivo("segredo_na_entrada", "entrada", "bloquear", "conteúdo com credencial omitido"))
     if pede_segredo(texto):
         motivos.append(
             _motivo("tentativa_obter_segredo", "entrada", "bloquear", "pedido de credencial, segredo ou prompt interno")
@@ -126,7 +160,7 @@ def validar_documento(nome: str, conteudo: bytes, cfg: dict) -> None:
     """Tipo, tamanho e assinatura de documento enviado ao acervo; lança ValueError."""
     g = cfg.get("guardrails", {})
     formatos = set(g.get("formatos_documento", [".txt", ".pdf"]))
-    max_mb = float(g.get("max_mb_documento", 2))
+    max_mb = float(g.get("max_mb_documento", 10))
     extensao = Path(nome).suffix.lower()
     if extensao not in formatos:
         raise ValueError(f"Formato não permitido: {extensao or '(sem extensão)'}")
@@ -136,6 +170,14 @@ def validar_documento(nome: str, conteudo: bytes, cfg: dict) -> None:
         raise ValueError(f"Arquivo acima do limite de {max_mb:g} MiB")
     if extensao == ".pdf" and not conteudo.startswith(b"%PDF-"):
         raise ValueError("Arquivo sem assinatura PDF válida")
+    assinaturas_audio = {
+        ".mp3": conteudo.startswith(b"ID3") or (len(conteudo) >= 2 and conteudo[0] == 255 and conteudo[1] & 224 == 224),
+        ".wav": conteudo.startswith(b"RIFF") and conteudo[8:12] == b"WAVE",
+        ".m4a": conteudo[4:8] == b"ftyp", ".ogg": conteudo.startswith(b"OggS"),
+        ".webm": conteudo.startswith(b"\x1a\x45\xdf\xa3"),
+    }
+    if extensao in assinaturas_audio and not assinaturas_audio[extensao]:
+        raise ValueError("Arquivo sem assinatura de áudio válida")
     if extensao == ".txt":
         try:
             conteudo.decode("utf-8")
@@ -177,7 +219,7 @@ def avaliar_trecho(texto: str) -> dict:
 
 
 def segredos_conhecidos(cfg: dict) -> list[str]:
-    """Valores de credenciais presentes no ambiente (para filtrar saídas e logs)."""
+    """Valores de credenciais presentes no ambiente (proteção de entrada, transporte e saída)."""
     nomes = [p.get("env_chave") for p in cfg.get("provedores", {}).values()]
     nomes += [p.get("env_conta") for p in cfg.get("provedores", {}).values()]
     nomes.append(cfg.get("guardrails", {}).get("segredo_env_demo", "SEGREDO_FICTICIO_DEMO"))

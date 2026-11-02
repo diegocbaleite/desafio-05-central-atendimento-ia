@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 from pathlib import Path
 
@@ -58,13 +59,28 @@ def ler_paginas(caminho: Path) -> list[tuple[int | None, str]]:
     raise ValueError("Formato não suportado no acervo: " + caminho.suffix)
 
 
-def _blocos(paginas):
+def ler_documento(doc: dict) -> list[tuple[int | None, str]]:
+    """Lê texto conferido de mídia enviada, mantendo páginas e vínculo ao original."""
+    if not doc.get("texto_extraido"):
+        return ler_paginas(doc["caminho"])
+    arquivo = ROOT / doc["texto_extraido"]
+    if not arquivo.is_file() or sha256_arquivo(arquivo) != doc.get("sha256_texto_extraido"):
+        raise ValueError("Texto extraído alterado; importe e confira o documento novamente")
+    dados = json.loads(arquivo.read_text(encoding="utf-8"))
+    if dados["sha256_original"] != sha256_arquivo(doc["caminho"]):
+        raise ValueError("Original mudou após a conferência; importe o documento novamente")
+    return [(p["pagina"], p["texto"]) for p in dados["paginas"]]
+
+
+def _blocos(paginas, incluir_preambulo=False):
     """Gera (pagina, secao, numero_secao, texto) ignorando o cabeçalho antes da 1ª seção.
 
     Uma seção que continua na página seguinte vira um novo bloco com a nova página,
     para que a citação aponte a página correta.
     """
-    secao = numero = None
+    # Mídias e textos livres enviados não precisam inventar cabeçalhos de seção
+    # para produzir vetores. O acervo de referência mantém seu tratamento anterior.
+    secao, numero = ("Conteúdo", 0) if incluir_preambulo else (None, None)
     for pagina, texto in paginas:
         linhas = []
         for linha in texto.splitlines():
@@ -88,7 +104,7 @@ def dividir(doc: dict, paginas, rotulo: str, tamanho: int, sobreposicao: int, un
     sha_doc = doc.get("sha256") or sha256_arquivo(doc["caminho"])
     trechos = []
     passo = tamanho - sobreposicao
-    for pagina, secao, numero, texto in _blocos(paginas):
+    for pagina, secao, numero, texto in _blocos(paginas, incluir_preambulo=doc.get("enviado", False)):
         palavras = texto.split()
         inicio, n = 0, 0
         while True:

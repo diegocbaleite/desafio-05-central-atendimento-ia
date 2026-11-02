@@ -14,7 +14,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .ingestao import dividir, ler_paginas, sha256_arquivo
+from .config import ROOT
+from .ingestao import dividir, ler_documento, sha256_arquivo
 
 
 def _agora():
@@ -109,6 +110,12 @@ class IndiceVetorial:
                 nao_indexados.append(doc["id"])
             elif atual["sha256"] != sha256_arquivo(doc["caminho"]) or atual["versao"] != doc["versao"]:
                 desatualizados.append(doc["id"])
+            elif doc.get("texto_extraido") and (
+                atual.get("sha256_texto_extraido") != doc.get("sha256_texto_extraido")
+                or not (ROOT / doc["texto_extraido"]).is_file()
+                or sha256_arquivo(ROOT / doc["texto_extraido"]) != doc.get("sha256_texto_extraido")
+            ):
+                desatualizados.append(doc["id"])
         orfaos = sorted(set(docs) - {d["id"] for d in catalogo})
         if motivo:
             estado = "reindexacao_exigida"
@@ -159,14 +166,18 @@ class IndiceVetorial:
                 continue
             sha = sha256_arquivo(doc["caminho"])
             atual = m["documentos"].get(doc["id"])
-            if atual and atual["sha256"] == sha and atual["versao"] == doc["versao"]:
+            if (atual and atual["sha256"] == sha and atual["versao"] == doc["versao"]
+                    and atual.get("sha256_texto_extraido") == doc.get("sha256_texto_extraido")):
+                if doc.get("texto_extraido"):
+                    ler_documento(doc)  # Não ignorar adulteração do derivado em disco.
                 relatorio["sem_alteracao"].append(doc["id"])
                 continue
+            paginas = ler_documento(doc)
             if atual:
                 colecao.delete(where={"doc_id": doc["id"]})
             trechos = dividir(
                 {**doc, "sha256": sha},
-                ler_paginas(doc["caminho"]),
+                paginas,
                 self.rotulo,
                 int(self.chunking["tamanho"]),
                 int(self.chunking["sobreposicao"]),
@@ -184,6 +195,7 @@ class IndiceVetorial:
                 "titulo": doc["titulo"],
                 "arquivo": doc["arquivo"],
                 "sha256": sha,
+                "sha256_texto_extraido": doc.get("sha256_texto_extraido"),
                 "trechos": len(trechos),
                 "suspeitos": sum(1 for t in trechos if t["metadados"]["suspeito_injecao"]),
                 "indexado_em": _agora(),

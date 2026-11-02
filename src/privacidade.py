@@ -30,12 +30,18 @@ def _remover_de_catalogo_enviados(cfg: dict, doc_id: str, remover_arquivo: bool)
     alvo = next((d for d in docs if d["id"] == doc_id), None)
     if not alvo:
         return {"no_catalogo_enviados": False, "arquivo_removido": False}
+    base = (ROOT / acervo.get("diretorio_enviados", "dados/acervo/enviados")).resolve()
+    arquivos = [(ROOT / alvo[campo]).resolve() for campo in ("arquivo", "texto_extraido") if alvo.get(campo)]
+    if remover_arquivo and any(not p.is_relative_to(base) or p == caminho.resolve() for p in arquivos):
+        raise ValueError("Exclusão recusada: arquivo fora da pasta de documentos enviados")
     dados["documentos"] = [d for d in docs if d["id"] != doc_id]
     caminho.write_text(yaml.safe_dump(dados, allow_unicode=True, sort_keys=False), encoding="utf-8")
     removido = False
-    if remover_arquivo and (ROOT / alvo["arquivo"]).is_file():
-        (ROOT / alvo["arquivo"]).unlink()
-        removido = True
+    if remover_arquivo:
+        for arquivo in arquivos:
+            if arquivo.is_file():
+                arquivo.unlink()
+                removido = True
     return {"no_catalogo_enviados": True, "arquivo_removido": removido}
 
 

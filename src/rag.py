@@ -238,6 +238,17 @@ def responder(
             saida["motivos_revisao"].append("entrada bloqueada: " + ", ".join(m["codigo"] for m in previa["motivos"]))
             return saida
         rec = recuperar(indice, pergunta, top_k, limiar)
+        # A proteção vale também para índices criados antes desta validação ou
+        # antes de uma credencial ser configurada. Não expor o trecho na UI/log.
+        contaminados = [t for t in rec["todos"] if guardrails.contem_segredo(t, cfg)]
+        if contaminados:
+            saida.update(status="bloqueada", resposta="Consulta bloqueada: credencial detectada no conteúdo recuperado.")
+            saida["quarentena"] = [
+                {"chunk_id": "[identificador omitido]" if guardrails.contem_segredo(t["chunk_id"], cfg) else t["chunk_id"],
+                 "motivos": "segredo_no_conteudo_recuperado"} for t in contaminados
+            ]
+            saida["motivos_revisao"].append("conteúdo recuperado com credencial colocado em quarentena; consulta bloqueada")
+            return saida
         maior = max((t["similaridade"] for t in rec["todos"]), default=None)
         guarda = guardrails.avaliar_entrada(pergunta, cfg, similaridade_acervo=maior)
         saida["guardrail_entrada"] = guarda
@@ -356,7 +367,8 @@ def responder(
                 inicio=inicio.isoformat(),
                 fim=datetime.now(timezone.utc).isoformat(),
                 latencia_ms=saida["latencia_ms"],
-                consulta_minimizada=minimizar(pergunta)[:200],
+                consulta_minimizada=("[consulta omitida: credencial detectada]"
+                                     if guardrails.contem_segredo(pergunta, cfg) else minimizar(pergunta)[:200]),
                 consulta_sha256=saida["pergunta_sha256"],
                 versao_indice=saida["indice"],
                 prompt=saida["gerador"].get("prompt", "não se aplica (gerador local)"),

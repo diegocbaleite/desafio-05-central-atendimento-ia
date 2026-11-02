@@ -1,0 +1,17 @@
+{
+  "natureza": "cópia de evento preexistente; extração somente leitura, sem registrar decisão pelo agente",
+  "fonte": "resultados/logs/auditoria_d6.jsonl",
+  "evento": {
+    "id_evento": "e1dd1a387de54a77",
+    "tipo": "decisao_humana",
+    "registrado_em": "2026-11-02T19:13:49.769404+00:00",
+    "minuta_id": "M-T11-REJEICAO-467c0184",
+    "decisao_humana": "rejeitar",
+    "status_novo": "rejeitada",
+    "origem": "humana_interface",
+    "sha256_minuta": "29e5ec77947b5de4a02a91bb8b740974c03cea244015cc81945c8161fc54acf3",
+    "operador_informado": true
+  },
+  "decisoes_criadas_pelo_exportador": 0,
+  "envio_automatico": false
+}

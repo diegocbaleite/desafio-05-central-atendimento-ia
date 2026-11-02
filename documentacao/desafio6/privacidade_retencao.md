@@ -10,14 +10,17 @@ Protótipo acadêmico com **dados exclusivamente fictícios**. Uma implantação
 | Nome, protocolo e data | ficha estruturada e minuta | Necessários ao atendimento; nos logs o protocolo é mascarado (`2026-****42`) |
 | Pergunta ao acervo | consulta RAG | Log com versão minimizada (máx. 200 caracteres) + SHA-256 |
 | Acervo institucional | `dados/acervo/`, índice | Documentos fictícios; embeddings gerados localmente, sem envio a terceiros |
-| Credenciais | `.env` | Nunca em prompt, código, log ou evidência; saídas e logs filtram valores configurados |
+| Áudio/PDF enviado ao acervo | original e texto conferido em `dados/acervo/enviados/` | STT/OCR pelo serviço configurado ou opção local; conferir antes de salvar; páginas de PDF preservadas; original e texto derivado excluídos juntos |
+| Credenciais | `.env` | Valores configurados e padrões conhecidos são bloqueados antes do transporte e na resposta; conteúdo contaminado não entra na correção JSON; consultas/trechos contaminados são omitidos da auditoria e da exibição |
+
+A proteção de transporte cobre o chat do cliente comum e a geração/embeddings do adaptador paralelo. O RAG confere também os índices preexistentes, sem exigir reindexação para bloquear um segredo reconhecido. A detecção compara valores configurados com pelo menos oito caracteres e padrões conhecidos, incluindo escapes Unicode em JSON; não reconhece universalmente segredos desconhecidos ou codificações arbitrárias. Ver ajuste 19 em [registro_ajustes.md](registro_ajustes.md).
 
 ## Retenção (padrões do protótipo, em `config.yaml → privacidade`)
 
 | Artefato | Local | Retenção |
 |---|---|---|
 | Documentos versionados do acervo | `dados/acervo/` | Enquanto o exercício existir |
-| Documentos enviados pela interface | `dados/acervo/enviados/` (fora do Git) | Até exclusão explícita |
+| Documentos enviados e seus textos conferidos | `dados/acervo/enviados/` (fora do Git) | Até exclusão explícita; original e derivado removidos juntos |
 | Vetores | `indice/` (fora do Git) | Até exclusão do documento ou `indexar --recriar` |
 | Respostas RAG salvas e resultados de avaliação | `resultados/rag/`, `resultados/avaliacao_d6/` | 90 dias (`privacidade.aplicar_retencao`) |
 | Minutas e decisões | `resultados/revisao/revisoes.sqlite3` | Preservadas como registro da decisão humana; descarte manual ao fim do exercício |

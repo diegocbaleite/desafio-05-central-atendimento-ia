@@ -13,6 +13,7 @@ import requests
 
 from src.cliente import _payload
 from src.config import carregar, chave
+from src.guardrails import contem_segredo
 
 
 class ErroServico(RuntimeError):
@@ -69,6 +70,8 @@ class ClienteOpenAI:
         perfil = self.cfg["provedores"]["openai"]
         inicio = time.monotonic()
         for tentativa in range(2):  # Uma repetição transitória, contabilizada no mesmo orçamento.
+            if contem_segredo(payload, self.cfg, segredos=(token,)):
+                raise ErroServico("Chamada bloqueada: segredo detectado no conteúdo enviado ao modelo")
             self.orcamento.reservar(tokens)
             registro = {"endpoint": endpoint, "modelo": payload.get("model"),
                         "tentativa": tentativa + 1, "simulada": False}
@@ -109,6 +112,9 @@ class ClienteOpenAI:
             except ValueError:
                 registro.update(status="falha", erro="json_invalido")
                 raise ErroServico("OpenAI retornou JSON inválido") from None
+            if contem_segredo(dados, self.cfg, segredos=(token,)):
+                registro.update(status="falha", erro="segredo_na_saida")
+                raise ErroServico("Resposta bloqueada: dado indevido (segredo) retornado pelo modelo")
             uso = dados.get("usage") or {}
             if not isinstance(uso, dict):
                 uso = {}

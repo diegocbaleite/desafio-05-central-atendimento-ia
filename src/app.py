@@ -8,6 +8,7 @@ D6_ARQUIVO_AUDITORIA.
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import sys
 from pathlib import Path
@@ -26,7 +27,7 @@ st.set_page_config(page_title="Central Inteligente — Desafio 6", page_icon="�
 
 
 @st.cache_resource
-def recursos():
+def recursos(versao_config=0):
     from src.embeddings import criar_embedder
     from src.revisao import RepositorioRevisao
 
@@ -94,7 +95,8 @@ def mostrar_rag(r: dict) -> None:
 
 
 def main():
-    cfg, embedder, repo = recursos()
+    # Alterações no YAML também invalidam os recursos de uma sessão já aberta.
+    cfg, embedder, repo = recursos((ROOT / "config/config.yaml").stat().st_mtime_ns)
     perfis = list(cfg["geracao"]["perfis"])
     with st.sidebar:
         st.header("Configuração")
@@ -161,31 +163,63 @@ def main():
         if c2.button("Recriar índice (troca de embedding)"):
             with st.spinner("Recriando índice..."):
                 st.json(ix.indexar(catalogo, recriar=True))
-        with st.expander("Incluir documento (TXT ou PDF textual, fictício)"):
-            arq = st.file_uploader("Arquivo", type=["txt", "pdf"], key="up_doc")
+        aviso_acervo = st.session_state.pop("aviso_acervo", None)
+        if aviso_acervo:
+            st.success(aviso_acervo)
+        with st.expander("Incluir documento (TXT, PDF textual/digitalizado ou áudio fictício)"):
+            from src.acervo_upload import extrair_documento, salvar_documento
+
+            formatos = cfg["guardrails"].get("formatos_documento", [".txt", ".pdf"])
+            arq = st.file_uploader("Arquivo", type=[f.lstrip(".") for f in formatos], key="up_doc")
             novo_id = st.text_input("ID (ex.: DOC-08)")
             titulo = st.text_input("Título")
             versao = st.text_input("Versão", value="1.0")
             tema = st.text_input("Tema", value="atendimento_cidadao")
-            if st.button("Salvar no acervo") and arq is not None:
+            conteudo = arq.getvalue() if arq is not None else b""
+            sha_upload = hashlib.sha256(conteudo).hexdigest()
+            local = False
+            if arq is not None and Path(arq.name).suffix.lower() != ".txt":
+                modo_extracao = st.selectbox("Processamento de áudio/OCR", ["Serviço configurado", "Local"])
+                local = modo_extracao == "Local"
+                st.caption("PDFs com texto são lidos diretamente. Páginas digitalizadas usam OCR; áudio usa transcrição. "
+                           "O serviço configurado pode enviar a mídia ao provedor e consumir créditos. "
+                           "O modo local requer Tesseract/Poppler para PDF e faster-whisper para áudio.")
+            if st.button("Extrair texto para conferência", disabled=arq is None):
                 try:
-                    conteudo = arq.getvalue()
-                    guardrails.validar_documento(arq.name, conteudo, cfg)
-                    if not novo_id or not titulo or any(d["id"] == novo_id for d in catalogo):
-                        raise ValueError("Informe ID único e título")
-                    pasta = ROOT / cfg["acervo"]["diretorio_enviados"]
-                    destino = guardrails.destino_documento_enviado(pasta, novo_id, Path(arq.name).suffix.lower())
-                    pasta.mkdir(parents=True, exist_ok=True)
-                    destino.write_bytes(conteudo)
-                    cat_path = ROOT / cfg["acervo"]["catalogo_enviados"]
-                    dados = (yaml.safe_load(cat_path.read_text(encoding="utf-8")) if cat_path.is_file() else None) or {"documentos": []}
-                    dados["documentos"].append({"id": novo_id, "titulo": titulo, "versao": versao, "tema": tema,
-                                                "formato": destino.suffix.lstrip("."), "arquivo": str(destino.relative_to(ROOT)).replace("\\", "/"),
-                                                "prioridade": 1, "substitui": []})
-                    cat_path.write_text(yaml.safe_dump(dados, allow_unicode=True, sort_keys=False), encoding="utf-8")
-                    st.success("Documento salvo. O índice ficou desatualizado: clique em 'Indexar acervo'.")
-                except ValueError as exc:
-                    st.error(f"Documento recusado: {exc}")
+                    st.session_state.pop("acervo_preparado", None)
+                    for chave in list(st.session_state):
+                        if chave.startswith("acervo_texto_") or chave.startswith("acervo_conferido_"):
+                            del st.session_state[chave]
+                    with st.spinner("Extraindo texto do documento..."):
+                        st.session_state["acervo_preparado"] = extrair_documento(arq.name, conteudo, cfg, local=local)
+                except Exception as exc:
+                    mensagem = guardrails.filtrar_saida(str(exc), cfg)["texto"]
+                    st.error(f"Não foi possível extrair o documento: {mensagem[:300]}")
+            preparado = st.session_state.get("acervo_preparado")
+            if preparado and arq is not None and (
+                preparado["sha256_original"] != sha_upload or preparado["nome"] != Path(arq.name).name
+            ):
+                preparado = None
+            paginas_conferidas, conferido = [], False
+            if preparado and arq is not None:
+                st.caption("Confira o texto abaixo antes de salvar, especialmente nomes, números e datas. "
+                           "Os números das páginas do PDF serão mantidos nas fontes.")
+                for p in preparado["paginas"]:
+                    rotulo_pagina = f"Página {p['pagina']}" if p["pagina"] is not None else "Transcrição / texto"
+                    valor = st.text_area(f"{rotulo_pagina} — texto para conferência", p["texto"], height=150,
+                                         key=f"acervo_texto_{sha_upload}_{p['pagina']}")
+                    paginas_conferidas.append({"pagina": p["pagina"], "texto": valor})
+                conferido = st.checkbox("Conferi o texto com o documento original", key=f"acervo_conferido_{sha_upload}")
+            if st.button("Salvar no acervo", disabled=not (preparado and arq is not None and conferido)):
+                try:
+                    salvar_documento(preparado, conteudo, paginas_conferidas, documento_id=novo_id, titulo=titulo,
+                                     versao=versao, tema=tema, conferido=conferido, cfg=cfg)
+                    st.session_state.pop("acervo_preparado", None)
+                    st.session_state["aviso_acervo"] = "Documento salvo. Clique em 'Indexar acervo' para atualizar a busca."
+                    st.rerun()
+                except Exception as exc:
+                    mensagem = guardrails.filtrar_saida(str(exc), cfg)["texto"]
+                    st.error(f"Documento recusado: {mensagem[:300]}")
         with st.expander("Excluir documento do índice (RF24)"):
             alvo = st.selectbox("Documento", [d["id"] for d in catalogo], key="del_doc")
             confirmar = st.checkbox("Confirmo a exclusão dos vetores e resultados derivados deste documento")

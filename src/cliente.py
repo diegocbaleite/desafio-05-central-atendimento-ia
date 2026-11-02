@@ -9,6 +9,7 @@ from typing import Any
 import requests
 
 from .config import carregar, chave
+from .guardrails import contem_segredo
 
 
 class ErroAPI(RuntimeError):
@@ -175,13 +176,18 @@ def conversar(
     ultimo_erro = None
     espera = 0.0
     for tentativa in range(tentativas_max):
+        payload = _payload(mensagens, modelo, conf, response_format, provider=provider)
+        # Verificar cada envio, inclusive retries e correções de JSON. O header de
+        # autenticação não faz parte do conteúdo enviado ao modelo.
+        if contem_segredo(payload, cfg, segredos=(token,)):
+            raise ErroAPI("Chamada bloqueada: segredo detectado no conteúdo enviado ao modelo")
         if orcamento is not None:
             orcamento.reservar(f"{provider}:{modelo}:tentativa{tentativa + 1}")
         try:
             resposta = requests.post(
                 perfil["base_url"].rstrip("/") + "/chat/completions",
                 headers={"Authorization": "Bearer " + token},
-                json=_payload(mensagens, modelo, conf, response_format, provider=provider),
+                json=payload,
                 timeout=conf["timeout_s"],
             )
         except (requests.Timeout, requests.ConnectionError) as exc:
@@ -192,6 +198,10 @@ def conversar(
                 dados = resposta.json()
             except ValueError:
                 dados = None
+            # Corpos de erro também são conteúdo não confiável: não os ecoar em
+            # exceções que possam chegar à interface ou à auditoria.
+            if contem_segredo(dados, cfg, segredos=(token,)):
+                raise ErroAPI("Resposta bloqueada: segredo detectado no conteúdo retornado pelo modelo")
             if resposta.status_code in (401, 403):
                 raise ErroAPI(
                     f"Autenticação recusada (HTTP {resposta.status_code})"

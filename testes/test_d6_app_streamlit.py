@@ -160,6 +160,39 @@ class TestApp(unittest.TestCase):
         self.assertNotIn("Operadora de Teste", auditoria)
         self.assertNotIn("Conferido com a fonte fictícia", auditoria)
 
+    def test_incluir_audio_exige_conferencia_e_salva_texto_editado(self):
+        import io
+        import json
+        from testes.d6_apoio import cfg_teste
+
+        cfg = cfg_teste()
+        base = Path(self.tmp.name)
+        cfg["acervo"].update(catalogo_enviados=str(base / "enviados/catalogo.yaml"),
+                             diretorio_enviados=str(base / "enviados"))
+        arq = io.BytesIO(b"ID3audio-ficticio")
+        arq.name = "orientacao.mp3"
+        with patch("src.config.carregar", return_value=cfg), \
+             patch("streamlit.file_uploader", side_effect=lambda *a, **kw: arq if kw.get("key") == "up_doc" else None), \
+             patch("src.audio.transcrever", return_value="Texto transcrito ficticio.") as stt:
+            at = AppTest.from_file(str(ROOT / "src/app.py"), default_timeout=120).run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertTrue(next(b for b in at.button if b.label == "Salvar no acervo").disabled)
+            next(t for t in at.text_input if t.label == "ID (ex.: DOC-08)").set_value("DOC-AUDIO")
+            next(t for t in at.text_input if t.label == "Título").set_value("Orientacao ficticia")
+            next(b for b in at.button if b.label == "Extrair texto para conferência").click().run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertTrue(next(b for b in at.button if b.label == "Salvar no acervo").disabled)
+            next(t for t in at.text_area if t.label.startswith("Transcrição / texto")).set_value(
+                "Texto ficticio conferido pelo operador do teste.")
+            next(c for c in at.checkbox if c.label == "Conferi o texto com o documento original").check().run()
+            next(b for b in at.button if b.label == "Salvar no acervo").click().run()
+            self.assertFalse(at.exception, at.exception)
+            self.assertTrue(any("Documento salvo" in s.value for s in at.success))
+            stt.assert_called_once()
+        texto = json.loads((base / "enviados/DOC-AUDIO.texto.json").read_text(encoding="utf-8"))
+        self.assertEqual(texto["paginas"][0]["texto"], "Texto ficticio conferido pelo operador do teste.")
+        self.assertEqual((base / "enviados/DOC-AUDIO.mp3").read_bytes(), b"ID3audio-ficticio")
+
 
 if __name__ == "__main__":
     unittest.main()

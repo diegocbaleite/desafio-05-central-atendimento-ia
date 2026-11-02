@@ -278,6 +278,10 @@ O índice Chroma fica em `indice/`, fora do versionamento. Reindexar o mesmo ace
 
 Na interface, percorra Acervo → Solicitação → Consulta → Revisão → Sentimentos → Auditoria. Confira ficha, fatos do solicitante, trechos e fontes antes de decidir. Os estados são `pendente`, `aprovada`, `rejeitada` e `revisar`. Cada consulta é independente.
 
+Para incluir documentos no **Acervo**, envie TXT, PDF textual/digitalizado ou áudio (MP3, WAV, M4A, OGG ou WebM). Clique em **Extrair texto para conferência**, confira ou corrija o texto e marque **Conferi o texto com o documento original**. Depois, use **Salvar no acervo** e **Indexar acervo**. PDFs mistos são lidos página a página, com OCR nas páginas sem texto; as fontes mantêm a numeração original. Arquivos de até 10 MiB e PDFs de até 10 páginas são aceitos por padrão, conforme `guardrails` no YAML e o limite de upload em `.streamlit/config.toml`.
+
+O processamento usa o serviço de STT/OCR configurado e pode consumir créditos. A opção **Local** usa Tesseract/Poppler para OCR e faster-whisper para áudio, quando disponíveis. O original e o texto conferido ficam na pasta de enviados e são removidos juntos na exclusão do documento. A indexação usa o texto conferido, sem transcrever novamente.
+
 ### Exemplos de CLI
 
 ```bash

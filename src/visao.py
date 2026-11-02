@@ -29,13 +29,13 @@ como aparecem. Não corrija, complete nem deduza caracteres; use [ilegível] qua
 for possível ler. Responda somente com a transcrição em texto simples."""
 
 
-def _imagens_pdf(caminho: Path, pasta_temporaria: Path, limite_paginas: int) -> list[Path]:
+def _imagens_pdf(caminho: Path, pasta_temporaria: Path, limite_paginas: int, *, pagina_inicial=1) -> list[Path]:
     if not shutil.which("pdftoppm"):
         raise RuntimeError("Instale poppler-utils (pdftoppm) para OCR de PDF local")
     prefixo = pasta_temporaria / "pagina"
     try:
         subprocess.run(
-            ["pdftoppm", "-f", "1", "-l", str(limite_paginas), "-r", "300",
+            ["pdftoppm", "-f", str(pagina_inicial), "-l", str(pagina_inicial + limite_paginas - 1), "-r", "300",
              "-gray", "-png", str(caminho), str(prefixo)],
             check=True, capture_output=True, timeout=90)
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
